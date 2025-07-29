@@ -33,6 +33,18 @@ namespace Backend.Repositories
 
         public virtual async Task<T> UpdateAsync(T entity)
         {
+            // Detach any existing entity with the same key to avoid tracking conflicts
+            var idProperty = typeof(T).GetProperty("Id");
+            if (idProperty != null)
+            {
+                var id = idProperty.GetValue(entity);
+                var existingEntity = await _dbSet.FindAsync(id);
+                if (existingEntity != null)
+                {
+                    _context.Entry(existingEntity).State = EntityState.Detached;
+                }
+            }
+            
             _dbSet.Update(entity);
             await _context.SaveChangesAsync();
             return entity;

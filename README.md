@@ -1,116 +1,172 @@
-# Backend - Sistema de Gestión de Pasantías
+# Backend API - Sistema de Gestión de Pasantías
 
-Backend ASP.NET Core .NET 8 para sistema de gestión de pasantías con arquitectura Clean Architecture simplificada.
-
-## Tecnologías Utilizadas
-
-- **ASP.NET Core .NET 8** - Framework web
-- **Entity Framework Core 8.0** - ORM para acceso a datos
-- **MySQL** - Base de datos
-- **AutoMapper** - Mapeo de objetos
-- **Swagger/OpenAPI** - Documentación de API
-- **Serilog** - Logging
-- **xUnit** - Testing framework
-
-## Estructura del Proyecto
+## 📁 Estructura del Proyecto
 
 ```
 Backend/
-├── Controllers/          # Controladores REST API
-├── Models/              # Entidades de Entity Framework
-├── DTOs/               # Data Transfer Objects
-├── Services/           # Lógica de negocio
-├── Repositories/       # Acceso a datos
-├── Interfaces/         # Interfaces para servicios y repositorios
-├── Mappings/          # Configuración de AutoMapper
-├── Constants/         # Constantes del sistema
-├── Exceptions/        # Excepciones personalizadas
-├── Data/              # Contexto de Entity Framework
-└── Properties/        # Configuración de launch settings
+├── Backend/                    # Código fuente de la aplicación
+│   ├── Controllers/           # Controladores de la API
+│   ├── Models/               # Modelos de datos
+│   ├── Services/             # Lógica de negocio
+│   ├── Repositories/         # Acceso a datos
+│   ├── DTOs/                # Objetos de transferencia de datos
+│   ├── Interfaces/           # Contratos de servicios
+│   ├── Contexts/            # Contexto de Entity Framework
+│   ├── Mappings/            # Configuración de AutoMapper
+│   ├── Exceptions/           # Excepciones personalizadas
+│   └── Constants/            # Constantes de la aplicación
+├── Backend.Tests/            # Pruebas unitarias
+├── docker/                   # Configuración de Docker
+│   ├── docker-compose.dev.yml
+│   ├── docker-compose.prod.yml
+│   ├── Dockerfile
+│   └── .dockerignore
+├── database/                 # Configuración de base de datos
+│   ├── database.env
+│   ├── mysql_conf/
+│   └── scripts/
+├── logs/                     # Archivos de logs
+├── backups/                  # Respaldos de base de datos
+└── manage.ps1               # Script de gestión principal
 ```
 
-## Configuración
+## 🚀 Inicio Rápido
 
-### 1. Base de Datos
+### Prerrequisitos
+- .NET 8.0 SDK
+- Docker Desktop
+- PowerShell (Windows)
 
-Configura la cadena de conexión en `appsettings.json`:
+### Comandos Disponibles
 
-```json
-"ConnectionStrings": {
-  "DefaultConnection": "Server=localhost;Database=internships_db;User=root;Password=password;"
+```powershell
+# Iniciar entorno completo (Docker)
+.\manage.ps1 start
+
+# Ejecutar localmente
+.\manage.ps1 local
+
+# Configurar base de datos
+.\manage.ps1 setup
+
+# Ver logs
+.\manage.ps1 logs
+
+# Ver estado
+.\manage.ps1 status
+
+# Detener servicios
+.\manage.ps1 stop
+
+# Ayuda
+.\manage.ps1 help
+```
+
+## 🐳 Docker
+
+Los archivos de Docker están organizados en la carpeta `docker/`:
+
+- `docker-compose.dev.yml` - Entorno de desarrollo
+- `docker-compose.prod.yml` - Entorno de producción
+- `Dockerfile` - Imagen de la aplicación
+- `.dockerignore` - Archivos a ignorar
+
+## 🗄️ Base de Datos
+
+La configuración de la base de datos está en la carpeta `database/`:
+
+- `database.env` - Variables de entorno
+- `mysql_conf/` - Configuración de MySQL
+- `scripts/` - Scripts de inicialización
+
+### Estructura de la Base de Datos
+
+**Base de datos**: `pasantias_db`
+
+**Tabla principal**: `Estudiantes`
+- `Id` - Identificador único
+- `Nombre` - Nombre del estudiante
+- `Email` - Correo electrónico
+- `Carrera` - Carrera universitaria
+- `FechaCreacion` - Fecha de registro
+
+## 📝 Desarrollo
+
+### Estructura Simple y Funcional
+
+El proyecto sigue principios de simplicidad:
+
+- **Controladores**: Manejan las peticiones HTTP
+- **Servicios**: Contienen la lógica de negocio
+- **Repositorios**: Acceden a los datos
+- **DTOs**: Definen la estructura de datos de entrada/salida
+
+### Ejemplo de Uso
+
+```csharp
+// Controlador simple
+[ApiController]
+[Route("api/[controller]")]
+public class StudentsController : BaseController
+{
+    private readonly IStudentService _studentService;
+
+    public StudentsController(IStudentService studentService)
+    {
+        _studentService = studentService;
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<StudentDto>>> GetStudents()
+    {
+        var students = await _studentService.GetAllAsync();
+        return Ok(students);
+    }
 }
 ```
 
-### 2. Instalación de Dependencias
+## 🔧 Configuración
 
-```bash
-dotnet restore
+### Variables de Entorno
+
+Copiar `env.example` a `.env` y configurar:
+
+```env
+DB_CONNECTION_STRING=Server=localhost;Database=pasantias_db;Uid=appuser;Pwd=TuPasswordSeguro123!;
 ```
 
-### 3. Migraciones (cuando se agreguen nuevas entidades)
+### Base de Datos
 
-```bash
-dotnet ef migrations add InitialCreate
-dotnet ef database update
+La base de datos se configura automáticamente al ejecutar:
+
+```powershell
+.\manage.ps1 setup
 ```
 
-## Ejecución
+## 🧪 Pruebas
 
-### Desarrollo
-
-```bash
-dotnet run
-```
-
-La API estará disponible en:
-- **API**: http://localhost:5000/api
-- **Swagger**: http://localhost:5000/swagger
-
-### Tests
-
-```bash
+```powershell
+cd Backend.Tests
 dotnet test
 ```
 
-## Endpoints Disponibles
+## 📊 Monitoreo
 
-### Students
-- `GET /api/students` - Obtener todos los estudiantes
-- `GET /api/students/{id}` - Obtener estudiante por ID
-- `POST /api/students` - Crear nuevo estudiante
-- `PUT /api/students/{id}` - Actualizar estudiante
-- `DELETE /api/students/{id}` - Eliminar estudiante
+- **Logs**: `.\manage.ps1 logs`
+- **Estado**: `.\manage.ps1 status`
+- **Swagger**: http://localhost:5000/swagger
 
-## Características Implementadas
+## 🔄 Flujo de Trabajo
 
-✅ API responde en http://localhost:5000/api  
-✅ Swagger disponible en /swagger  
-✅ CORS configurado para frontend React  
-✅ CRUD completo para entidad Student  
-✅ AutoMapper configurado  
-✅ Inyección de dependencias con alcance Scoped  
-✅ Tests unitarios para servicios  
-✅ Entity Framework con configuración MySQL  
-✅ Estructura de carpetas según especificación  
-✅ Properties/launchSettings.json configurado  
-✅ .NET 8 implementado  
+1. **Desarrollo**: `.\manage.ps1 local`
+2. **Pruebas**: `.\manage.ps1 start`
+3. **Producción**: `.\manage.ps1 docker`
 
-## Próximos Pasos
+## 📚 Tecnologías
 
-Para agregar nuevas entidades:
-
-1. Crear el modelo en `Models/`
-2. Crear el DTO en `DTOs/`
-3. Crear el repositorio específico en `Repositories/`
-4. Crear el servicio específico en `Services/`
-5. Crear el controlador específico en `Controllers/`
-6. Configurar el mapeo en `Mappings/MappingProfile.cs`
-7. Registrar servicios en `Program.cs`
-8. Agregar tests unitarios
-
-## Notas
-
-- El proyecto usa una arquitectura simplificada con Repository Pattern
-- Todos los servicios usan inyección de dependencias con alcance Scoped
-- AutoMapper está configurado para mapeos automáticos
-- Los tests usan Entity Framework In-Memory para aislamiento
+- **.NET 8.0** - Framework de desarrollo
+- **Entity Framework Core** - ORM
+- **AutoMapper** - Mapeo de objetos
+- **MySQL** - Base de datos
+- **Docker** - Contenedores
+- **Swagger** - Documentación de API

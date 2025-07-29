@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using AutoMapper;
 using Serilog;
-using Backend.Data;
+using Backend.Contexts;
 using Backend.Interfaces;
 using Backend.Repositories;
 using Backend.Services;
@@ -84,11 +84,32 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// Crear la base de datos si no existe
-using (var scope = app.Services.CreateScope())
+// Crear la base de datos si no existe con manejo de errores
+try
 {
-    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    context.Database.EnsureCreated();
+    using (var scope = app.Services.CreateScope())
+    {
+        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        
+        // Verificar conexión
+        if (context.Database.CanConnect())
+        {
+            Log.Information("Conexión a la base de datos establecida correctamente");
+            
+            // Crear la base de datos si no existe
+            context.Database.EnsureCreated();
+            Log.Information("Base de datos inicializada correctamente");
+        }
+        else
+        {
+            Log.Error("No se pudo conectar a la base de datos");
+        }
+    }
+}
+catch (Exception ex)
+{
+    Log.Error(ex, "Error al inicializar la base de datos: {Message}", ex.Message);
+    // No detener la aplicación, solo registrar el error
 }
 
 app.Run();
