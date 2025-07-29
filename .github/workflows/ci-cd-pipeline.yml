@@ -70,6 +70,3 @@ jobs:
 
     - name: Restore dependencies
       run: dotnet restore
-
-    - name: Check for outdated packages
-      run: dotnet list package --outdated 
