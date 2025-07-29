@@ -1,0 +1,28 @@
+# Global owners
+* @gonchyrobinson
+
+# Backend API specific files
+Backend/Controllers/ @gonchyrobinson
+Backend/Services/ @gonchyrobinson
+Backend/Repositories/ @gonchyrobinson
+Backend/Models/ @gonchyrobinson
+Backend/DTOs/ @gonchyrobinson
+Backend/Interfaces/ @gonchyrobinson
+Backend/Data/ @gonchyrobinson
+
+# Configuration files
+Backend/Program.cs @gonchyrobinson
+Backend/appsettings.json @gonchyrobinson
+Backend/Backend.csproj @gonchyrobinson
+
+# Tests
+Backend.Tests/ @gonchyrobinson
+
+# Documentation
+README.md @gonchyrobinson
+GITFLOW.md @gonchyrobinson
+*.md @gonchyrobinson
+
+# Git configuration
+.gitignore @gonchyrobinson
+.gitflow @gonchyrobinson
