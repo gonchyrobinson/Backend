@@ -99,7 +99,6 @@ function Start-Local {
     # Ejecutar aplicación
     Set-Location -Path "Backend"
     dotnet restore
-    dotnet run
 }
 
 function Start-Docker {
