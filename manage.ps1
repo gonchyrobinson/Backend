@@ -73,8 +73,19 @@ function Stop-Services {
 function Start-Local {
     Write-Host "Ejecutando aplicación localmente..." -ForegroundColor Green
     
+    # Verificar Docker Desktop
+    try {
+        docker version | Out-Null
+        Write-Host "Docker está ejecutándose" -ForegroundColor Green
+    } catch {
+        Write-Host "Error: Docker Desktop no está ejecutándose." -ForegroundColor Red
+        Write-Host "Por favor, inicia Docker Desktop y vuelve a intentar." -ForegroundColor Yellow
+        Write-Host "O ejecuta la aplicación sin base de datos usando: dotnet run --no-database" -ForegroundColor Cyan
+        return
+    }
+    
     # Verificar puerto 5000
-    $portInUse = netstat -ano | findstr ":5000"
+    $portInUse = netstat -ano | findstr ":5000" 2>$null
     if ($portInUse) {
         Write-Host "Puerto 5000 está en uso. Deteniendo servicios Docker..." -ForegroundColor Yellow
         docker-compose -f docker/docker-compose.dev.yml down 2>$null
@@ -83,6 +94,7 @@ function Start-Local {
     
     # Configurar base de datos
     Setup-Database
+    Start-Sleep -Seconds 10
     
     # Ejecutar aplicación
     Set-Location -Path "Backend"
@@ -99,17 +111,19 @@ function Setup-Database {
     Write-Host "Configurando base de datos..." -ForegroundColor Green
     
     # Verificar MySQL
-    $mysqlRunning = docker ps --filter "name=backend-mysql-dev" --format "table {{.Names}}" | Select-String "backend-mysql-dev"
+    $mysqlRunning = docker ps --filter "name=backend-mysql-dev" --format "table {{.Names}}" | Select-String "backend-mysql-dev" 2>$null
     
     if (-not $mysqlRunning) {
         Write-Host "Iniciando MySQL..." -ForegroundColor Yellow
-        docker run --name backend-mysql-dev -e MYSQL_ROOT_PASSWORD=TuPasswordRoot123! -e MYSQL_DATABASE=pasantias_db -e MYSQL_USER=appuser -e MYSQL_PASSWORD=TuPasswordSeguro123! -p 3306:3306 -d mysql:8.0 --default-authentication-plugin=mysql_native_password
-        Start-Sleep -Seconds 30
+        try {
+            docker run --name backend-mysql-dev -e MYSQL_ROOT_PASSWORD=TuPasswordRoot123! -e MYSQL_DATABASE=internships_db -e MYSQL_USER=appuser -e MYSQL_PASSWORD=TuPasswordSeguro123! -p 3306:3306 -d mysql:8.0 --default-authentication-plugin=mysql_native_password
+            Write-Host "Esperando a que MySQL esté listo..." -ForegroundColor Yellow
+            Start-Sleep -Seconds 30
+        } catch {
+            Write-Host "Error al iniciar MySQL. Verifica que Docker Desktop esté ejecutándose." -ForegroundColor Red
+            return
+        }
     }
-    
-    # Ejecutar script de inicialización
-    Write-Host "Inicializando base de datos..." -ForegroundColor Yellow
-    Get-Content database/scripts/init_db.sql | docker exec -i backend-mysql-dev mysql -u root -pTuPasswordRoot123!
     
     Write-Host "Base de datos configurada correctamente" -ForegroundColor Green
 }
