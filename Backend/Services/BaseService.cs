@@ -1,6 +1,7 @@
 using AutoMapper;
 using Backend.Interfaces;
 using Backend.Exceptions;
+using System.Reflection;
 
 namespace Backend.Services
 {
@@ -39,8 +40,9 @@ namespace Backend.Services
             return _mapper.Map<TDto>(result);
         }
 
-        public virtual async Task<TDto> UpdateAsync(int id, TDto dto)
+        public virtual async Task<TDto> UpdateAsync(TDto dto)
         {
+            var id = GetIdFromDto(dto);
             var existingEntity = await _repository.GetByIdAsync(id);
             if (existingEntity == null)
                 throw new NotFoundException($"Entidad con ID {id} no encontrada");
@@ -49,7 +51,7 @@ namespace Backend.Services
             var updatedEntity = _mapper.Map<TEntity>(dto);
             
             // Use reflection to set the ID property if it exists
-            var idProperty = typeof(TEntity).GetProperty("Id");
+            var idProperty = GetIdProperty(updatedEntity);
             if (idProperty != null && idProperty.CanWrite)
             {
                 idProperty.SetValue(updatedEntity, id);
@@ -62,6 +64,26 @@ namespace Backend.Services
         public virtual async Task<bool> DeleteAsync(int id)
         {
             return await _repository.DeleteAsync(id);
+        }
+
+        protected abstract int GetIdFromDto(TDto dto);
+
+        private PropertyInfo? GetIdProperty(TEntity entity)
+        {
+            var type = typeof(TEntity);
+            
+            // Buscar propiedades que contengan "Id" en el nombre
+            var idProperties = type.GetProperties()
+                .Where(p => p.Name.ToLower().Contains("id") && p.PropertyType == typeof(int))
+                .ToList();
+
+            // Priorizar propiedades que empiecen con "Id"
+            var primaryIdProperty = idProperties.FirstOrDefault(p => p.Name.StartsWith("Id"));
+            if (primaryIdProperty != null)
+                return primaryIdProperty;
+
+            // Si no hay ninguna que empiece con "Id", devolver la primera que contenga "Id"
+            return idProperties.FirstOrDefault();
         }
     }
 }

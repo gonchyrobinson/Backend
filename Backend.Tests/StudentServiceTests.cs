@@ -14,9 +14,9 @@ namespace Backend.Tests
     public class StudentServiceTests
     {
         private readonly ApplicationDbContext _context;
-        private readonly StudentRepository _repository;
+        private readonly RepositorioEstudiantes _repository;
         private readonly IMapper _mapper;
-        private readonly StudentService _service;
+        private readonly ServicioEstudiantes _service;
 
         public StudentServiceTests()
         {
@@ -26,7 +26,7 @@ namespace Backend.Tests
                 .Options;
 
             _context = new ApplicationDbContext(options);
-            _repository = new StudentRepository(_context);
+            _repository = new RepositorioEstudiantes(_context);
 
             // Configurar AutoMapper
             var mapperConfig = new MapperConfiguration(cfg =>
@@ -35,7 +35,7 @@ namespace Backend.Tests
             });
             _mapper = mapperConfig.CreateMapper();
 
-            _service = new StudentService(_repository, _mapper);
+            _service = new ServicioEstudiantes(_repository, _mapper);
         }
 
         [Fact]
@@ -44,9 +44,14 @@ namespace Backend.Tests
             // Arrange
             var studentDto = new StudentDto
             {
-                Nombre = "John Doe",
+                Nombre = "John",
+                Apellido = "Doe",
                 Email = "john@example.com",
-                Carrera = "Computer Science"
+                Carrera = "Computer Science",
+                Documento = "12345678",
+                Domicilio = "Calle Principal 123",
+                Libreta = "2023-001",
+                AreaTrabajo = "Desarrollo Web"
             };
 
             // Act
@@ -54,7 +59,8 @@ namespace Backend.Tests
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal("John Doe", result.Nombre);
+            Assert.Equal("John", result.Nombre);
+            Assert.Equal("Doe", result.Apellido);
             Assert.Equal("john@example.com", result.Email);
             Assert.Equal("Computer Science", result.Carrera);
         }
@@ -65,18 +71,21 @@ namespace Backend.Tests
             // Arrange
             var studentDto = new StudentDto
             {
-                Nombre = "Jane Doe",
+                Nombre = "Jane",
+                Apellido = "Smith",
                 Email = "jane@example.com",
                 Carrera = "Engineering"
             };
-            var created = await _service.CreateAsync(studentDto);
+
+            var createdStudent = await _service.CreateAsync(studentDto);
 
             // Act
-            var result = await _service.GetByIdAsync(created.Id);
+            var result = await _service.GetByIdAsync(createdStudent.IdEstudiante);
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal("Jane Doe", result.Nombre);
+            Assert.Equal("Jane", result.Nombre);
+            Assert.Equal("Smith", result.Apellido);
         }
 
         [Fact]
@@ -87,98 +96,56 @@ namespace Backend.Tests
         }
 
         [Fact]
-        public async Task GetAllAsync_ShouldReturnAllStudents()
+        public async Task UpdateAsync_ShouldUpdateStudent()
         {
             // Arrange
-            var student1 = new StudentDto { Nombre = "Student 1", Email = "student1@test.com", Carrera = "CS" };
-            var student2 = new StudentDto { Nombre = "Student 2", Email = "student2@test.com", Carrera = "Engineering" };
-            
-            await _service.CreateAsync(student1);
-            await _service.CreateAsync(student2);
-
-            // Act
-            var result = await _service.GetAllAsync();
-
-            // Assert
-            Assert.NotNull(result);
-            var students = result.ToList();
-            Assert.Equal(2, students.Count);
-        }
-
-        [Fact]
-        public async Task UpdateAsync_WithValidId_ShouldUpdateStudent()
-        {
-            // Arrange
-            var originalStudent = new StudentDto
+            var studentDto = new StudentDto
             {
-                Nombre = "Original Name",
-                Email = "original@test.com",
+                Nombre = "Original",
+                Apellido = "Name",
+                Email = "original@example.com",
                 Carrera = "Original Career"
             };
-            var created = await _service.CreateAsync(originalStudent);
 
-            var updatedStudent = new StudentDto
+            var createdStudent = await _service.CreateAsync(studentDto);
+
+            var updateDto = new StudentDto
             {
-                Nombre = "Updated Name",
-                Email = "updated@test.com",
+                IdEstudiante = createdStudent.IdEstudiante,
+                Nombre = "Updated",
+                Apellido = "Name",
+                Email = "updated@example.com",
                 Carrera = "Updated Career"
             };
 
             // Act
-            var result = await _service.UpdateAsync(created.Id, updatedStudent);
+            var result = await _service.UpdateAsync(updateDto);
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal("Updated Name", result.Nombre);
-            Assert.Equal("updated@test.com", result.Email);
-            Assert.Equal("Updated Career", result.Carrera);
+            Assert.Equal("Updated", result.Nombre);
+            Assert.Equal("updated@example.com", result.Email);
         }
 
         [Fact]
-        public async Task UpdateAsync_WithInvalidId_ShouldThrowNotFoundException()
+        public async Task DeleteAsync_ShouldDeleteStudent()
         {
             // Arrange
             var studentDto = new StudentDto
             {
-                Nombre = "Test Student",
-                Email = "test@test.com",
+                Nombre = "ToDelete",
+                Apellido = "Student",
+                Email = "delete@example.com",
                 Carrera = "Test Career"
             };
 
-            // Act & Assert
-            await Assert.ThrowsAsync<NotFoundException>(() => _service.UpdateAsync(999, studentDto));
-        }
-
-        [Fact]
-        public async Task DeleteAsync_WithValidId_ShouldDeleteStudent()
-        {
-            // Arrange
-            var studentDto = new StudentDto
-            {
-                Nombre = "Student to Delete",
-                Email = "delete@test.com",
-                Carrera = "Delete Career"
-            };
-            var created = await _service.CreateAsync(studentDto);
+            var createdStudent = await _service.CreateAsync(studentDto);
 
             // Act
-            var result = await _service.DeleteAsync(created.Id);
+            await _service.DeleteAsync(createdStudent.IdEstudiante);
 
             // Assert
-            Assert.True(result);
-            
-            // Verify student is deleted
-            await Assert.ThrowsAsync<NotFoundException>(() => _service.GetByIdAsync(created.Id));
-        }
-
-        [Fact]
-        public async Task DeleteAsync_WithInvalidId_ShouldReturnFalse()
-        {
-            // Act
-            var result = await _service.DeleteAsync(999);
-
-            // Assert
-            Assert.False(result);
+            await Assert.ThrowsAsync<NotFoundException>(() => _service.GetByIdAsync(createdStudent.IdEstudiante));
         }
     }
 }

@@ -6,15 +6,15 @@ using Backend.Services;
 
 namespace Backend.Controllers
 {
-    public class StudentsController : BaseController<Student, StudentDto>
+    public class StudentsController : BaseController<Estudiante, StudentDto>
     {
-        public StudentsController(StudentService service) : base(service)
+        public StudentsController(ServicioEstudiantes service) : base(service)
         {
         }
 
         protected override int GetIdFromDto(StudentDto dto)
         {
-            return dto.Id;
+            return dto.IdEstudiante;
         }
     }
 }

@@ -8,8 +8,8 @@ namespace Backend.Mappings
     {
         public MappingProfile()
         {
-            // Mapeo para Student
-            CreateMap<Student, StudentDto>().ReverseMap();
+            // Mapeo para Estudiante
+            CreateMap<Estudiante, StudentDto>().ReverseMap();
         }
     }
 }

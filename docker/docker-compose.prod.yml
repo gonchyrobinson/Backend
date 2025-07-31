@@ -8,7 +8,7 @@ services:
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: internships_db
+      MYSQL_DATABASE: pasantias_db
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
@@ -37,7 +37,7 @@ services:
       - "5000:5000"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionStrings__DefaultConnection=Server=mysql;Database=internships_db;User=${MYSQL_USER};Password=${MYSQL_PASSWORD};Port=3306;
+      - ConnectionStrings__DefaultConnection=Server=mysql;Database=pasantias_db;User=${MYSQL_USER};Password=${MYSQL_PASSWORD};Port=3306;
       - ASPNETCORE_URLS=http://+:5000
       - ASPNETCORE_FORWARDEDHEADERS_ENABLED=true
     depends_on:
