@@ -108,14 +108,12 @@ function Start-Docker {
 
 function Setup-Database {
     Write-Host "Configurando base de datos..." -ForegroundColor Green
-    
     # Verificar MySQL
     $mysqlRunning = docker ps --filter "name=backend-mysql-dev" --format "table {{.Names}}" | Select-String "backend-mysql-dev" 2>$null
-    
     if (-not $mysqlRunning) {
         Write-Host "Iniciando MySQL..." -ForegroundColor Yellow
         try {
-            docker run --name backend-mysql-dev -e MYSQL_ROOT_PASSWORD=TuPasswordRoot123! -e MYSQL_DATABASE=internships_db -e MYSQL_USER=appuser -e MYSQL_PASSWORD=TuPasswordSeguro123! -p 3306:3306 -d mysql:8.0 --default-authentication-plugin=mysql_native_password
+            docker run --name backend-mysql-dev -e MYSQL_ROOT_PASSWORD=TuPasswordRoot123! -e MYSQL_DATABASE=pasantias_db -e MYSQL_USER=appuser -e MYSQL_PASSWORD=TuPasswordSeguro123! -p 3306:3306 -d mysql:8.0 --default-authentication-plugin=mysql_native_password
             Write-Host "Esperando a que MySQL esté listo..." -ForegroundColor Yellow
             Start-Sleep -Seconds 30
         } catch {
@@ -123,7 +121,14 @@ function Setup-Database {
             return
         }
     }
-    
+
+    # Ejecutar el script de inicialización dentro del contenedor como root
+    $scriptPath = "c:/facultad/tesis/Backend/dataBase/scripts/init_db.sql"
+    Write-Host "Ejecutando script de inicialización en MySQL..." -ForegroundColor Yellow
+
+    docker cp $scriptPath backend-mysql-dev:/init_db.sql
+    Get-Content $scriptPath | docker exec -i backend-mysql-dev mysql -u root -pTuPasswordRoot123!
+
     Write-Host "Base de datos configurada correctamente" -ForegroundColor Green
 }
 
