@@ -3,8 +3,8 @@
 # =====================================================
 
 param(
-    [Parameter(Position=0)]
-    [ValidateSet("start", "stop", "local", "docker", "setup", "logs", "status", "help")]
+    [Parameter(Position = 0)]
+    [ValidateSet("start", "stop", "local", "docker", "setup", "logs", "status", "reverse-engineer", "help")]
     [string]$Action = "help"
 )
 
@@ -21,12 +21,14 @@ function Show-Help {
     Write-Host "  setup   - Configurar base de datos" -ForegroundColor Green
     Write-Host "  logs    - Mostrar logs de servicios" -ForegroundColor Green
     Write-Host "  status  - Mostrar estado de servicios" -ForegroundColor Green
+    Write-Host "  reverse-engineer - Generar modelos desde DB" -ForegroundColor Green
     Write-Host "  help    - Mostrar esta ayuda" -ForegroundColor Green
     Write-Host ""
     Write-Host "Ejemplos:" -ForegroundColor Yellow
     Write-Host "  .\manage.ps1 start" -ForegroundColor Gray
     Write-Host "  .\manage.ps1 local" -ForegroundColor Gray
     Write-Host "  .\manage.ps1 setup" -ForegroundColor Gray
+    Write-Host "  .\manage.ps1 reverse-engineer" -ForegroundColor Gray
 }
 
 function Start-Services {
@@ -36,7 +38,8 @@ function Start-Services {
     try {
         docker version | Out-Null
         Write-Host "Docker está ejecutándose" -ForegroundColor Green
-    } catch {
+    }
+    catch {
         Write-Host "Error: Docker no está ejecutándose. Inicia Docker Desktop primero." -ForegroundColor Red
         return
     }
@@ -77,7 +80,8 @@ function Start-Local {
     try {
         docker version | Out-Null
         Write-Host "Docker está ejecutándose" -ForegroundColor Green
-    } catch {
+    }
+    catch {
         Write-Host "Error: Docker Desktop no está ejecutándose." -ForegroundColor Red
         Write-Host "Por favor, inicia Docker Desktop y vuelve a intentar." -ForegroundColor Yellow
         Write-Host "O ejecuta la aplicación sin base de datos usando: dotnet run --no-database" -ForegroundColor Cyan
@@ -116,14 +120,15 @@ function Setup-Database {
             docker run --name backend-mysql-dev -e MYSQL_ROOT_PASSWORD=TuPasswordRoot123! -e MYSQL_DATABASE=pasantias_db -e MYSQL_USER=appuser -e MYSQL_PASSWORD=TuPasswordSeguro123! -p 3306:3306 -d mysql:8.0 --default-authentication-plugin=mysql_native_password
             Write-Host "Esperando a que MySQL esté listo..." -ForegroundColor Yellow
             Start-Sleep -Seconds 30
-        } catch {
+        }
+        catch {
             Write-Host "Error al iniciar MySQL. Verifica que Docker Desktop esté ejecutándose." -ForegroundColor Red
             return
         }
     }
 
     # Ejecutar el script de inicialización dentro del contenedor como root
-    $scriptPath = "c:/facultad/tesis/Backend/dataBase/scripts/init_db.sql"
+    $scriptPath = "database/scripts/init_db.sql"
     Write-Host "Ejecutando script de inicialización en MySQL..." -ForegroundColor Yellow
 
     docker cp $scriptPath backend-mysql-dev:/init_db.sql
@@ -145,6 +150,67 @@ function Show-Status {
     docker exec backend-mysql-dev mysql -u root -pTuPasswordRoot123! -e "USE pasantias_db; SELECT COUNT(*) as TotalEstudiantes FROM Estudiantes;" 2>$null
 }
 
+function Start-ReverseEngineer {
+    Write-Host "Generando modelos desde la base de datos..." -ForegroundColor Green
+    
+    # Verificar que MySQL esté ejecutándose
+    $mysqlRunning = docker ps --filter "name=backend-mysql-dev" --format "table {{.Names}}" | Select-String "backend-mysql-dev" 2>$null
+    if (-not $mysqlRunning) {
+        Write-Host "Error: MySQL no está ejecutándose. Ejecuta primero: .\manage.ps1 setup" -ForegroundColor Red
+        return
+    }
+    
+    # Verificar que el proyecto esté en la ubicación correcta
+    if (-not (Test-Path "Backend/Backend.csproj")) {
+        Write-Host "Error: No se encontró el proyecto Backend.csproj" -ForegroundColor Red
+        return
+    }
+    
+    
+    # Instalar herramienta de EF Core si no está disponible
+    Write-Host "Verificando herramienta de Entity Framework Core..." -ForegroundColor Yellow
+    dotnet tool install --global dotnet-ef
+    Write-Host "Herramienta EF Core instalada correctamente" -ForegroundColor Green
+    # Configurar cadena de conexión
+    $connectionString = "Server=localhost;Port=3306;Database=pasantias_db;User=appuser;Password=TuPasswordSeguro123!;"
+    
+    # Ejecutar scaffolding
+    Write-Host "Ejecutando Entity Framework scaffolding..." -ForegroundColor Yellow
+    Set-Location -Path "Backend"
+    
+    try {
+        # Restaurar dependencias primero
+        Write-Host "Restaurando dependencias..." -ForegroundColor Yellow
+        dotnet restore
+        
+        # Generar modelos con scaffolding
+        Write-Host "Generando modelos desde la base de datos..." -ForegroundColor Yellow
+        dotnet ef dbcontext scaffold "$connectionString" "Pomelo.EntityFrameworkCore.MySql" `
+            --context "ApplicationDbContext" `
+            --context-dir "Contexts" `
+            --output-dir "Models" `
+            --force `
+            --no-onconfiguring
+        
+        Write-Host "Modelos generados correctamente!" -ForegroundColor Green
+        Write-Host "Ubicación: Backend/Models/" -ForegroundColor Cyan
+        Write-Host "Contexto: Backend/Contexts/ApplicationDbContext.cs" -ForegroundColor Cyan
+        
+        # Mostrar archivos generados
+        Write-Host "`nArchivos generados:" -ForegroundColor Yellow
+        Get-ChildItem "Models/*.cs" | ForEach-Object { Write-Host "  - $($_.Name)" -ForegroundColor Gray }
+        
+    }
+    catch {
+        Write-Host "Error durante el scaffolding: $($_.Exception.Message)" -ForegroundColor Red
+        Write-Host "Verifica que la base de datos esté ejecutándose y accesible." -ForegroundColor Yellow
+        Write-Host "Asegúrate de que MySQL esté en el puerto 3306 y accesible desde localhost" -ForegroundColor Yellow
+    }
+    finally {
+        Set-Location -Path ".."
+    }
+}
+
 # Ejecutar comando según parámetro
 switch ($Action) {
     "start" { Start-Services }
@@ -154,6 +220,7 @@ switch ($Action) {
     "setup" { Setup-Database }
     "logs" { Show-Logs }
     "status" { Show-Status }
+    "reverse-engineer" { Start-ReverseEngineer }
     "help" { Show-Help }
     default { Show-Help }
 }
