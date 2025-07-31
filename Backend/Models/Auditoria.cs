@@ -4,6 +4,7 @@ using System.Collections.Generic;
 namespace Backend.Models;
 
 public partial class Auditoria
+
 {
     public int IdAuditoria { get; set; }
 

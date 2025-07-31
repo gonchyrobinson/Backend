@@ -45,12 +45,12 @@ namespace Backend.Controllers
             return CreatedAtAction(nameof(GetById), new { id = GetIdFromDto(result) }, result);
         }
 
-        [HttpPut("{id}")]
-        public virtual async Task<ActionResult<TDto>> Update(int id, TDto dto)
+        [HttpPut]
+        public virtual async Task<ActionResult<TDto>> Update(TDto dto)
         {
             try
             {
-                var result = await _service.UpdateAsync(id, dto);
+                var result = await _service.UpdateAsync(dto);
                 return Ok(result);
             }
             catch (NotFoundException ex)
@@ -69,11 +69,6 @@ namespace Backend.Controllers
             return NoContent();
         }
 
-        protected virtual int GetIdFromDto(TDto dto)
-        {
-            // Esta implementación debe ser sobrescrita en controladores específicos
-            // para obtener el ID del DTO
-            return 0;
-        }
+        protected abstract int GetIdFromDto(TDto dto);
     }
 }

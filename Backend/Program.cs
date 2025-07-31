@@ -45,10 +45,10 @@ builder.Services.AddCors(options =>
 
 // Registrar repositorios
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-builder.Services.AddScoped<StudentRepository>();
+builder.Services.AddScoped<RepositorioEstudiantes>();
 
 // Registrar servicios
-builder.Services.AddScoped<StudentService>();
+builder.Services.AddScoped<ServicioEstudiantes>();
 
 // Configurar Swagger
 builder.Services.AddEndpointsApiExplorer();
