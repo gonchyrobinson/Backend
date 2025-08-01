@@ -36,7 +36,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(AppConstants.CorsPolicyName, policy =>
     {
-        policy.WithOrigins("http://localhost:3000", "http://localhost:5173")
+        policy.WithOrigins("http://localhost:3000", "http://localhost:5173", "http://localhost:5000")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -46,9 +46,11 @@ builder.Services.AddCors(options =>
 // Registrar repositorios
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<RepositorioEstudiantes>();
+builder.Services.AddScoped<RepositorioEmpresas>();
 
 // Registrar servicios
 builder.Services.AddScoped<ServicioEstudiantes>();
+builder.Services.AddScoped<ServicioEmpresas>();
 
 // Configurar Swagger
 builder.Services.AddEndpointsApiExplorer();
