@@ -38,7 +38,7 @@ namespace Backend.Controllers
         [HttpPost]
         public async Task<ActionResult<EmpresaDto>> CreateEmpresa([FromBody] EmpresaDto empresaDto)
         {
-            var created = await _servicioEmpresas.AddAsync(empresaDto);
+            var created = await _servicioEmpresas.CreateAsync(empresaDto);
             return CreatedAtAction(nameof(GetEmpresa), new { id = created.IdEmpresa }, created);
         }
 
