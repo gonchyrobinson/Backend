@@ -46,6 +46,8 @@ builder.Services.AddCors(options =>
                 "https://localhost:5173",
                 "http://localhost:4173",
                 "https://localhost:4173",
+                "http://localhost:5000",
+                "https://localhost:5000",
                 "http://127.0.0.1:3000",
                 "https://127.0.0.1:3000",
                 "http://127.0.0.1:5173",
@@ -56,6 +58,14 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
+    });
+    
+    // Configuración para producción (Railway)
+    options.AddPolicy("ProductionCors", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
     });
 });
 
@@ -79,10 +89,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 // Registrar repositorios
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<RepositorioEstudiantes>();
+builder.Services.AddScoped<RepositorioEmpresas>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 
 // Registrar servicios
 builder.Services.AddScoped<ServicioEstudiantes>();
+builder.Services.AddScoped<ServicioEmpresas>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 
@@ -137,7 +149,14 @@ if (app.Environment.IsDevelopment())
 }
 
 // Usar CORS antes de otros middleware
-app.UseCors(AppConstants.CorsPolicyName);
+if (app.Environment.IsDevelopment())
+{
+    app.UseCors(AppConstants.CorsPolicyName);
+}
+else
+{
+    app.UseCors("ProductionCors");
+}
 
 app.UseHttpsRedirection();
 
