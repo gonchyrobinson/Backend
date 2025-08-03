@@ -20,6 +20,4 @@ public partial class Usuario
     public DateTime? FechaEliminacion { get; set; }
 
     public virtual ICollection<Auditoria> Auditoria { get; set; } = new List<Auditoria>();
-    
-    public virtual ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 }

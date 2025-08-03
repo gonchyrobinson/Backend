@@ -11,7 +11,6 @@ namespace Backend.Services;
 public interface IJwtService
 {
     string GenerateAccessToken(Usuario usuario);
-    string GenerateRefreshToken();
     ClaimsPrincipal? ValidateToken(string token);
     UserInfoDto GetUserInfoFromToken(string token);
 }
@@ -50,14 +49,6 @@ public class JwtService : IJwtService
 
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
-    }
-
-    public string GenerateRefreshToken()
-    {
-        var randomNumber = new byte[64];
-        using var rng = RandomNumberGenerator.Create();
-        rng.GetBytes(randomNumber);
-        return Convert.ToBase64String(randomNumber);
     }
 
     public ClaimsPrincipal? ValidateToken(string token)

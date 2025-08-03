@@ -25,8 +25,6 @@ public partial class ApplicationDbContext : DbContext
     public virtual DbSet<Pasantia> Pasantias { get; set; }
 
     public virtual DbSet<Usuario> Usuarios { get; set; }
-    
-    public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -280,46 +278,6 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.Rol)
                 .HasColumnType("enum('admin','empresa','estudiante')")
                 .HasColumnName("rol");
-        });
-
-        modelBuilder.Entity<RefreshToken>(entity =>
-        {
-            entity.HasKey(e => e.Token).HasName("PRIMARY");
-
-            entity.ToTable("REFRESH_TOKENS");
-
-            entity.HasIndex(e => e.UsuarioId, "usuario_id");
-
-            entity.Property(e => e.Token)
-                .HasMaxLength(500)
-                .HasColumnName("token");
-            entity.Property(e => e.UsuarioId).HasColumnName("usuario_id");
-            entity.Property(e => e.ExpiresAt)
-                .HasColumnType("datetime")
-                .HasColumnName("expires_at");
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("datetime")
-                .HasColumnName("created_at");
-            entity.Property(e => e.IsRevoked)
-                .HasDefaultValueSql("'0'")
-                .HasColumnName("is_revoked");
-            entity.Property(e => e.RevokedAt)
-                .HasColumnType("datetime")
-                .HasColumnName("revoked_at");
-            entity.Property(e => e.RevokedBy)
-                .HasMaxLength(100)
-                .HasColumnName("revoked_by");
-            entity.Property(e => e.ReplacedByToken)
-                .HasMaxLength(500)
-                .HasColumnName("replaced_by_token");
-            entity.Property(e => e.ReasonRevoked)
-                .HasMaxLength(255)
-                .HasColumnName("reason_revoked");
-
-            entity.HasOne(d => d.Usuario).WithMany(p => p.RefreshTokens)
-                .HasForeignKey(d => d.UsuarioId)
-                .HasConstraintName("REFRESH_TOKENS_ibfk_1");
         });
 
         OnModelCreatingPartial(modelBuilder);

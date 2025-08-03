@@ -64,7 +64,7 @@ Backend/
 
 ## 🔐 Autenticación JWT
 
-El sistema implementa autenticación JWT con refresh tokens para mayor seguridad.
+El sistema implementa autenticación JWT para la seguridad de la API.
 
 ### Configuración JWT
 
@@ -76,8 +76,7 @@ Asegúrate de que el `appsettings.json` tenga la configuración JWT:
     "SecretKey": "your-super-secret-key-with-at-least-32-characters-for-jwt-signing",
     "Issuer": "BackendAPI",
     "Audience": "ReactApp",
-    "AccessTokenExpirationMinutes": 15,
-    "RefreshTokenExpirationDays": 7
+    "AccessTokenExpirationMinutes": 15
   }
 }
 ```
@@ -111,8 +110,6 @@ Inicia sesión con credenciales de usuario.
 ```json
 {
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "refreshToken": "refresh_token_here",
-  "expiresAt": "2024-01-01T12:00:00Z",
   "user": {
     "id": 1,
     "username": "admin",
@@ -122,27 +119,7 @@ Inicia sesión con credenciales de usuario.
 }
 ```
 
-#### POST /api/v1/authn/logout
-Cierra la sesión del usuario.
 
-**Headers:** `Authorization: Bearer {token}`
-
-**Request:**
-```json
-{
-  "refreshToken": "refresh_token_here"
-}
-```
-
-#### POST /api/v1/authn/refresh
-Refresca el token de acceso.
-
-**Request:**
-```json
-{
-  "refreshToken": "refresh_token_here"
-}
-```
 
 #### GET /api/v1/authn/session
 Obtiene información de la sesión actual.
@@ -181,17 +158,12 @@ public IActionResult AdminOnly()
 
 ### Flujo de Autenticación
 
-1. **Login:** Usuario envía credenciales → Backend valida → Retorna access token + refresh token
+1. **Login:** Usuario envía credenciales → Backend valida → Retorna access token
 2. **Acceso:** Cliente incluye access token en header `Authorization: Bearer {token}`
-3. **Refresh:** Cuando el access token expira, usar refresh token para obtener nuevo access token
-4. **Logout:** Revocar refresh token en la base de datos
 
 ### Seguridad
 
 - **Access Token:** Expira en 15 minutos
-- **Refresh Token:** Expira en 7 días
-- **Almacenamiento:** Refresh tokens se guardan en la base de datos
-- **Revocación:** Los refresh tokens se pueden revocar individualmente
 - **Hash:** Las contraseñas se hashean con SHA256
 
 ### CORS Configuration
@@ -221,7 +193,7 @@ const response = await fetch('/api/v1/authn/login', {
   body: JSON.stringify({ username: 'admin', password: 'admin123' })
 });
 
-const { token, refreshToken } = await response.json();
+const { token } = await response.json();
 
 // Usar token en requests
 const data = await fetch('/api/v1/authn/session', {
