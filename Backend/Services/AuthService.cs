@@ -1,0 +1,121 @@
+using Backend.DTOs;
+using Backend.Interfaces;
+using Backend.Models;
+using Backend.Helpers;
+
+namespace Backend.Services;
+
+public interface IAuthService
+{
+    Task<LoginResponseDto?> LoginAsync(LoginRequestDto request);
+    Task<LoginResponseDto?> RegisterAsync(RegisterRequestDto request);
+    Task<UserInfoDto?> GetUserInfoAsync(int userId);
+    Task<bool> ValidateCredentialsAsync(string username, string password);
+}
+
+public class AuthService : IAuthService
+{
+    private readonly IAuthRepository _authRepository;
+    private readonly IJwtService _jwtService;
+
+    public AuthService(IAuthRepository authRepository, IJwtService jwtService)
+    {
+        _authRepository = authRepository;
+        _jwtService = jwtService;
+    }
+
+    public async Task<LoginResponseDto?> RegisterAsync(RegisterRequestDto request)
+    {
+        try
+        {
+            // Verificar si el usuario ya existe
+            var userExists = await _authRepository.UserExistsAsync(request.Username, request.Email);
+            if (userExists)
+            {
+                var existingUserByUsername = await _authRepository.GetUserByUsernameAsync(request.Username);
+                var existingUserByEmail = await _authRepository.GetUserByEmailAsync(request.Email);
+
+                if (existingUserByUsername != null)
+                    throw new InvalidOperationException("El nombre de usuario ya está en uso");
+                else if (existingUserByEmail != null)
+                    throw new InvalidOperationException("El email ya está registrado");
+            }
+
+            // Crear nuevo usuario
+            var newUser = new Usuario
+            {
+                NombreUsuario = request.Username,
+                Correo = request.Email,
+                ContrasenaHash = PasswordHelper.HashPassword(request.Password),
+                Rol = "admin", // Rol por defecto según ENUM de la DB
+                Eliminado = false
+            };
+
+            var createdUser = await _authRepository.CreateUserAsync(newUser);
+
+            // Generar token y retornar respuesta
+            var token = _jwtService.GenerateAccessToken(createdUser);
+            
+            return new LoginResponseDto
+            {
+                Token = token,
+                User = new UserInfoDto
+                {
+                    Id = createdUser.IdUsuario,
+                    Username = createdUser.NombreUsuario ?? "",
+                    Email = createdUser.Correo ?? "",
+                    Role = createdUser.Rol ?? "admin"
+                }
+            };
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException($"Error al registrar usuario: {ex.Message}");
+        }
+    }
+
+    public async Task<LoginResponseDto?> LoginAsync(LoginRequestDto request)
+    {
+        var usuario = await _authRepository.GetUserByUsernameAsync(request.Username);
+
+        if (usuario == null || !PasswordHelper.VerifyPassword(request.Password, usuario.ContrasenaHash))
+        {
+            return null;
+        }
+
+        var token = _jwtService.GenerateAccessToken(usuario);
+
+        return new LoginResponseDto
+        {
+            Token = token,
+            User = new UserInfoDto
+            {
+                Id = usuario.IdUsuario,
+                Username = usuario.NombreUsuario ?? "",
+                Email = usuario.Correo ?? "",
+                Role = usuario.Rol ?? ""
+            }
+        };
+    }
+
+    public async Task<UserInfoDto?> GetUserInfoAsync(int userId)
+    {
+        var usuario = await _authRepository.GetUserByIdAsync(userId);
+
+        if (usuario == null)
+            return null;
+
+        return new UserInfoDto
+        {
+            Id = usuario.IdUsuario,
+            Username = usuario.NombreUsuario ?? "",
+            Email = usuario.Correo ?? "",
+            Role = usuario.Rol ?? ""
+        };
+    }
+
+    public async Task<bool> ValidateCredentialsAsync(string username, string password)
+    {
+        return await _authRepository.ValidateUserCredentialsAsync(username, password);
+    }
+} 

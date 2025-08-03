@@ -62,6 +62,173 @@ Backend/
 .\manage.ps1 help
 ```
 
+## 🔐 Autenticación JWT
+
+El sistema implementa autenticación JWT con refresh tokens para mayor seguridad.
+
+### Configuración JWT
+
+Asegúrate de que el `appsettings.json` tenga la configuración JWT:
+
+```json
+{
+  "Jwt": {
+    "SecretKey": "your-super-secret-key-with-at-least-32-characters-for-jwt-signing",
+    "Issuer": "BackendAPI",
+    "Audience": "ReactApp",
+    "AccessTokenExpirationMinutes": 15,
+    "RefreshTokenExpirationDays": 7
+  }
+}
+```
+
+### Endpoints de Autenticación
+
+#### POST /api/v1/authn/register
+Registra un nuevo usuario.
+
+**Request:**
+```json
+{
+  "username": "nuevo_usuario",
+  "email": "usuario@ejemplo.com",
+  "password": "contraseña123"
+}
+```
+
+#### POST /api/v1/authn/login
+Inicia sesión con credenciales de usuario.
+
+**Request:**
+```json
+{
+  "username": "admin",
+  "password": "admin123"
+}
+```
+
+**Response:**
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refreshToken": "refresh_token_here",
+  "expiresAt": "2024-01-01T12:00:00Z",
+  "user": {
+    "id": 1,
+    "username": "admin",
+    "email": "admin@pasantias.com",
+    "role": "admin"
+  }
+}
+```
+
+#### POST /api/v1/authn/logout
+Cierra la sesión del usuario.
+
+**Headers:** `Authorization: Bearer {token}`
+
+**Request:**
+```json
+{
+  "refreshToken": "refresh_token_here"
+}
+```
+
+#### POST /api/v1/authn/refresh
+Refresca el token de acceso.
+
+**Request:**
+```json
+{
+  "refreshToken": "refresh_token_here"
+}
+```
+
+#### GET /api/v1/authn/session
+Obtiene información de la sesión actual.
+
+**Headers:** `Authorization: Bearer {token}`
+
+#### GET /api/v1/authn/validate
+Valida si el token actual es válido.
+
+**Headers:** `Authorization: Bearer {token}`
+
+
+### Protección de Endpoints
+
+Para proteger un endpoint, usa el atributo `[Authorize]`:
+
+```csharp
+[HttpGet("protected")]
+[Authorize]
+public IActionResult ProtectedEndpoint()
+{
+    return Ok("Este endpoint está protegido");
+}
+```
+
+Para requerir un rol específico:
+
+```csharp
+[HttpGet("admin-only")]
+[Authorize(Roles = "admin")]
+public IActionResult AdminOnly()
+{
+    return Ok("Solo para administradores");
+}
+```
+
+### Flujo de Autenticación
+
+1. **Login:** Usuario envía credenciales → Backend valida → Retorna access token + refresh token
+2. **Acceso:** Cliente incluye access token en header `Authorization: Bearer {token}`
+3. **Refresh:** Cuando el access token expira, usar refresh token para obtener nuevo access token
+4. **Logout:** Revocar refresh token en la base de datos
+
+### Seguridad
+
+- **Access Token:** Expira en 15 minutos
+- **Refresh Token:** Expira en 7 días
+- **Almacenamiento:** Refresh tokens se guardan en la base de datos
+- **Revocación:** Los refresh tokens se pueden revocar individualmente
+- **Hash:** Las contraseñas se hashean con SHA256
+
+### CORS Configuration
+
+El backend está configurado para aceptar peticiones desde:
+- http://localhost:3000
+- http://localhost:5173
+- http://localhost:4173
+- http://127.0.0.1:3000
+- http://127.0.0.1:5173
+- http://127.0.0.1:4173
+
+### Testing con Swagger
+
+1. Ve a `/swagger` en tu navegador
+2. Haz clic en "Authorize" en la parte superior
+3. Ingresa tu token: `Bearer {tu_token}`
+4. Ahora puedes probar los endpoints protegidos
+
+### Ejemplo de Uso con Frontend
+
+```javascript
+// Login
+const response = await fetch('/api/v1/authn/login', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ username: 'admin', password: 'admin123' })
+});
+
+const { token, refreshToken } = await response.json();
+
+// Usar token en requests
+const data = await fetch('/api/v1/authn/session', {
+  headers: { 'Authorization': `Bearer ${token}` }
+});
+```
+
 ## 🐳 Docker
 
 Los archivos de Docker están organizados en la carpeta `docker/`:
@@ -170,3 +337,4 @@ dotnet test
 - **MySQL** - Base de datos
 - **Docker** - Contenedores
 - **Swagger** - Documentación de API
+- **JWT** - Autenticación y autorización
