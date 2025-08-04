@@ -45,8 +45,8 @@ builder.Services.AddCors(options =>
 
 // Registrar repositorios
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-builder.Services.AddScoped<RepositorioEstudiantes>();
-builder.Services.AddScoped<RepositorioEmpresas>();
+builder.Services.AddScoped<IRepositorioEstudiantes, RepositorioEstudiantes>();
+builder.Services.AddScoped<IRepositorioEmpresas, RepositorioEmpresas>();
 
 // Registrar servicios
 builder.Services.AddScoped<ServicioEstudiantes>();

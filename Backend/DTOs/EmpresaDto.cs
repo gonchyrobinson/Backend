@@ -1,7 +1,7 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Backend.DTOs
 {
-    using System.ComponentModel.DataAnnotations;
-
     public class EmpresaDto
     {
         public int IdEmpresa { get; set; }
@@ -18,5 +18,16 @@ namespace Backend.DTOs
         public string? Celular { get; set; }
         public string? CorreoElectronico { get; set; }
         public DateOnly? Sudocu { get; set; }
+    }
+
+    public class EmpresaBusquedaAvanzadaDto
+    {
+        public string? Nombre { get; set; }
+        public string? Vigencia { get; set; }
+        public string? TipoContrato { get; set; }
+        public DateOnly? FechaInicioDesde { get; set; }
+        public DateOnly? FechaInicioHasta { get; set; }
+        public DateOnly? FechaFinDesde { get; set; }
+        public DateOnly? FechaFinHasta { get; set; }
     }
 }

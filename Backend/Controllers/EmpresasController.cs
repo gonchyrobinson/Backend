@@ -1,4 +1,3 @@
-using AutoMapper;
 using Backend.DTOs;
 using Backend.Models;
 using Backend.Services;
@@ -6,79 +5,24 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class EmpresasController : ControllerBase
+    public class EmpresasController : BaseController<Empresa, EmpresaDto>
     {
-        private readonly ServicioEmpresas _servicioEmpresas;
-        private readonly IMapper _mapper;
+        private readonly ServicioEmpresas _empresasService;
 
-        public EmpresasController(ServicioEmpresas servicioEmpresas, IMapper mapper)
+        public EmpresasController(ServicioEmpresas service) : base(service)
         {
-            _servicioEmpresas = servicioEmpresas;
-            _mapper = mapper;
+            _empresasService = service;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<EmpresaDto>>> GetEmpresas()
+        protected override int GetIdFromDto(EmpresaDto dto)
         {
-            var empresas = await _servicioEmpresas.GetAllAsync();
-            return Ok(empresas);
+            return dto.IdEmpresa;
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<EmpresaDto>> GetEmpresa(int id)
+        [HttpPost("buscar/avanzado")]
+        public async Task<ActionResult<IEnumerable<EmpresaDto>>> BuscarAvanzado([FromBody] EmpresaBusquedaAvanzadaDto filtro)
         {
-            var empresa = await _servicioEmpresas.GetByIdAsync(id);
-            if (empresa == null)
-                return NotFound();
-            return Ok(empresa);
-        }
-
-        [HttpPost]
-        public async Task<ActionResult<EmpresaDto>> CreateEmpresa([FromBody] EmpresaDto empresaDto)
-        {
-            var created = await _servicioEmpresas.CreateAsync(empresaDto);
-            return CreatedAtAction(nameof(GetEmpresa), new { id = created.IdEmpresa }, created);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<ActionResult<EmpresaDto>> UpdateEmpresa(int id, [FromBody] EmpresaDto empresaDto)
-        {
-            if (id != empresaDto.IdEmpresa)
-                return BadRequest();
-            var updated = await _servicioEmpresas.UpdateAsync(empresaDto);
-            return Ok(updated);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEmpresa(int id)
-        {
-            var deleted = await _servicioEmpresas.DeleteAsync(id);
-            if (!deleted)
-                return NotFound();
-            return NoContent();
-        }
-
-        [HttpGet("buscar/avanzado")]
-        public async Task<ActionResult<IEnumerable<EmpresaDto>>> BuscarAvanzado(
-            [FromQuery] string? nombre,
-            [FromQuery] string? vigencia,
-            [FromQuery] string? tipoContrato,
-            [FromQuery] string? fechaInicioDesde,
-            [FromQuery] string? fechaInicioHasta,
-            [FromQuery] string? fechaFinDesde,
-            [FromQuery] string? fechaFinHasta)
-        {
-            DateOnly? fechaInicioDesdeVal = null;
-            DateOnly? fechaInicioHastaVal = null;
-            DateOnly? fechaFinDesdeVal = null;
-            DateOnly? fechaFinHastaVal = null;
-            if (DateOnly.TryParse(fechaInicioDesde, out var fiDesde)) fechaInicioDesdeVal = fiDesde;
-            if (DateOnly.TryParse(fechaInicioHasta, out var fiHasta)) fechaInicioHastaVal = fiHasta;
-            if (DateOnly.TryParse(fechaFinDesde, out var ffDesde)) fechaFinDesdeVal = ffDesde;
-            if (DateOnly.TryParse(fechaFinHasta, out var ffHasta)) fechaFinHastaVal = ffHasta;
-            var result = await _servicioEmpresas.BuscarAvanzadoAsync(nombre, vigencia, tipoContrato, fechaInicioDesdeVal, fechaInicioHastaVal, fechaFinDesdeVal, fechaFinHastaVal);
+            var result = await _empresasService.BuscarAvanzadoAsync(filtro);
             return Ok(result);
         }
     }
