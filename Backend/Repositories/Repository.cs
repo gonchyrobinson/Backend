@@ -46,14 +46,14 @@ namespace Backend.Repositories
         {
             var entity = await _dbSet.FindAsync(id);
             if (entity == null)
-                return null;
+                throw new Backend.Exceptions.NotFoundException($"Entidad de tipo {typeof(T).Name} con ID {id} no encontrada.");
 
             var eliminadoProp = typeof(T).GetProperty("Eliminado");
             if (eliminadoProp != null && eliminadoProp.PropertyType == typeof(bool?))
             {
                 var eliminadoValue = eliminadoProp.GetValue(entity) as bool?;
                 if (eliminadoValue == true)
-                    return null;
+                    throw new Backend.Exceptions.NotFoundException($"Entidad de tipo {typeof(T).Name} con ID {id} no encontrada (eliminada lógicamente).");
             }
             return entity;
         }
@@ -61,7 +61,7 @@ namespace Backend.Repositories
         public virtual async Task<T> AddAsync(T entity)
         {
             if (entity == null)
-                throw new Exceptions.AppException("La entidad no puede ser nula.");
+                throw new Backend.Exceptions.ValidationException("La entidad no puede ser nula.");
             await _dbSet.AddAsync(entity);
             await _context.SaveChangesAsync();
             return entity;
@@ -70,7 +70,7 @@ namespace Backend.Repositories
         public virtual async Task<T> UpdateAsync(T entity)
         {
             if (entity == null)
-                throw new Exceptions.AppException("La entidad no puede ser nula.");
+                throw new Backend.Exceptions.ValidationException("La entidad no puede ser nula.");
             // Detach any existing entity with the same key to avoid tracking conflicts
             var idProperty = GetIdProperty(entity);
             if (idProperty != null)
@@ -90,10 +90,8 @@ namespace Backend.Repositories
         public virtual async Task<bool> DeleteAsync(int id)
         {
             if (id <= 0)
-                throw new Exceptions.AppException("El ID debe ser mayor a cero.");
+                throw new Backend.Exceptions.ValidationException("El ID debe ser mayor a cero.");
             var entity = await GetByIdAsync(id);
-            if (entity == null)
-                return false;
             // Si la entidad tiene la propiedad Eliminado, hacer borrado lógico
             var eliminadoProp = typeof(T).GetProperty("Eliminado");
             var fechaEliminacionProp = typeof(T).GetProperty("FechaEliminacion");

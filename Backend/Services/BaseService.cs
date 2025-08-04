@@ -20,15 +20,8 @@ namespace Backend.Services
 
         public virtual async Task<IEnumerable<TDto>> GetAllAsync()
         {
-            try
-            {
-                var entities = await _repository.GetAllAsync();
-                return _mapper.Map<IEnumerable<TDto>>(entities);
-            }
-            catch (ArgumentException ex)
-            {
-                throw new Exceptions.AppException($"Error de argumentos: {ex.Message}", ex);
-            }
+            var entities = await _repository.GetAllAsync();
+            return _mapper.Map<IEnumerable<TDto>>(entities);
         }
 
         public virtual async Task<TDto> GetByIdAsync(int id)

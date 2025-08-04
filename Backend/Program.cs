@@ -8,6 +8,7 @@ using Backend.Repositories;
 using Backend.Services;
 using Backend.Mappings;
 using Backend.Constants;
+using Backend.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +20,10 @@ Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog();
 
 // Agregar servicios al contenedor
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<Backend.Middleware.ApiExceptionFilter>();
+});
 
 // Configurar Entity Framework
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -65,6 +69,9 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
+
+// Registrar el middleware de excepciones personalizado
+app.UseMiddleware<ExceptionMiddleware>();
 
 // Configurar el pipeline de solicitudes HTTP
 if (app.Environment.IsDevelopment())
