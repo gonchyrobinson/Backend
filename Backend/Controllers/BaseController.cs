@@ -20,8 +20,24 @@ namespace Backend.Controllers
         [HttpGet]
         public virtual async Task<ActionResult<IEnumerable<TDto>>> GetAll()
         {
-            var result = await _service.GetAllAsync();
-            return Ok(result);
+            try
+            {
+                var result = await _service.GetAllAsync();
+                return Ok(result);
+            }
+            catch (Exceptions.AppException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception)
+            {
+                // Loguear la excepción si es necesario
+                return StatusCode(500, "Ocurrió un error inesperado. Por favor contacte al administrador.");
+            }
         }
 
         [HttpGet("{id}")]
@@ -32,17 +48,42 @@ namespace Backend.Controllers
                 var result = await _service.GetByIdAsync(id);
                 return Ok(result);
             }
+            catch (Exceptions.AppException ex)
+            {
+                return BadRequest(ex.Message);
+            }
             catch (NotFoundException ex)
             {
                 return NotFound(ex.Message);
+            }
+            catch (Exception)
+            {
+                // Loguear la excepción si es necesario
+                return StatusCode(500, "Ocurrió un error inesperado. Por favor contacte al administrador.");
             }
         }
 
         [HttpPost]
         public virtual async Task<ActionResult<TDto>> Create(TDto dto)
         {
-            var result = await _service.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = GetIdFromDto(result) }, result);
+            try
+            {
+                var result = await _service.CreateAsync(dto);
+                return CreatedAtAction(nameof(GetById), new { id = GetIdFromDto(result) }, result);
+            }
+            catch (Exceptions.AppException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception)
+            {
+                // Loguear la excepción si es necesario
+                return StatusCode(500, "Ocurrió un error inesperado. Por favor contacte al administrador.");
+            }
         }
 
         [HttpPut]
@@ -53,20 +94,44 @@ namespace Backend.Controllers
                 var result = await _service.UpdateAsync(dto);
                 return Ok(result);
             }
+            catch (Exceptions.AppException ex)
+            {
+                return BadRequest(ex.Message);
+            }
             catch (NotFoundException ex)
             {
                 return NotFound(ex.Message);
+            }
+            catch (Exception)
+            {
+                // Loguear la excepción si es necesario
+                return StatusCode(500, "Ocurrió un error inesperado. Por favor contacte al administrador.");
             }
         }
 
         [HttpDelete("{id}")]
         public virtual async Task<ActionResult> Delete(int id)
         {
-            var result = await _service.DeleteAsync(id);
-            if (!result)
-                return NotFound($"Entidad con ID {id} no encontrada");
-            
-            return NoContent();
+            try
+            {
+                var result = await _service.DeleteAsync(id);
+                if (!result)
+                    return NotFound($"Entidad con ID {id} no encontrada");
+                return NoContent();
+            }
+            catch (Exceptions.AppException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception)
+            {
+                // Loguear la excepción si es necesario
+                return StatusCode(500, "Ocurrió un error inesperado. Por favor contacte al administrador.");
+            }
         }
 
         protected abstract int GetIdFromDto(TDto dto);
