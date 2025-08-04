@@ -78,7 +78,7 @@ public class AuthService : IAuthService
     {
         var usuario = await _authRepository.GetUserByUsernameAsync(request.Username);
 
-        if (usuario == null || !PasswordHelper.VerifyPassword(request.Password, usuario.ContrasenaHash))
+        if (usuario == null || usuario.ContrasenaHash == null || !PasswordHelper.VerifyPassword(request.Password, usuario.ContrasenaHash))
         {
             return null;
         }

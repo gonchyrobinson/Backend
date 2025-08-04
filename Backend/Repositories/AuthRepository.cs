@@ -51,6 +51,6 @@ public class AuthRepository : IAuthRepository
         var user = await GetUserByUsernameAsync(username);
         if (user == null) return false;
 
-        return PasswordHelper.VerifyPassword(password, user.ContrasenaHash);
+        return user.ContrasenaHash != null && PasswordHelper.VerifyPassword(password, user.ContrasenaHash);
     }
 } 

@@ -37,7 +37,20 @@ namespace Backend.Repositories
 
         public virtual async Task<T?> GetByIdAsync(int id)
         {
-            return await _dbSet.FindAsync(id);
+            var entity = await _dbSet.FindAsync(id);
+            if (entity == null)
+                return null;
+
+            // Si la entidad tiene la propiedad Eliminado, verificar que no esté eliminada lógicamente
+            var eliminadoProp = typeof(T).GetProperty("Eliminado");
+            if (eliminadoProp != null && eliminadoProp.PropertyType == typeof(bool?))
+            {
+                var eliminado = eliminadoProp.GetValue(entity) as bool?;
+                if (eliminado == true)
+                    return null;
+            }
+
+            return entity;
         }
 
         public virtual async Task<T> AddAsync(T entity)
