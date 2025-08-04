@@ -62,6 +62,145 @@ Backend/
 .\manage.ps1 help
 ```
 
+## 🔐 Autenticación JWT
+
+El sistema implementa autenticación JWT para la seguridad de la API.
+
+### Configuración JWT
+
+Asegúrate de que el `appsettings.json` tenga la configuración JWT:
+
+```json
+{
+  "Jwt": {
+    "SecretKey": "your-super-secret-key-with-at-least-32-characters-for-jwt-signing",
+    "Issuer": "BackendAPI",
+    "Audience": "ReactApp",
+    "AccessTokenExpirationMinutes": 15
+  }
+}
+```
+
+### Endpoints de Autenticación
+
+#### POST /api/v1/authn/register
+Registra un nuevo usuario.
+
+**Request:**
+```json
+{
+  "username": "nuevo_usuario",
+  "email": "usuario@ejemplo.com",
+  "password": "contraseña123"
+}
+```
+
+#### POST /api/v1/authn/login
+Inicia sesión con credenciales de usuario.
+
+**Request:**
+```json
+{
+  "username": "admin",
+  "password": "admin123"
+}
+```
+
+**Response:**
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "id": 1,
+    "username": "admin",
+    "email": "admin@pasantias.com",
+    "role": "admin"
+  }
+}
+```
+
+
+
+#### GET /api/v1/authn/session
+Obtiene información de la sesión actual.
+
+**Headers:** `Authorization: Bearer {token}`
+
+#### GET /api/v1/authn/validate
+Valida si el token actual es válido.
+
+**Headers:** `Authorization: Bearer {token}`
+
+
+### Protección de Endpoints
+
+Para proteger un endpoint, usa el atributo `[Authorize]`:
+
+```csharp
+[HttpGet("protected")]
+[Authorize]
+public IActionResult ProtectedEndpoint()
+{
+    return Ok("Este endpoint está protegido");
+}
+```
+
+Para requerir un rol específico:
+
+```csharp
+[HttpGet("admin-only")]
+[Authorize(Roles = "admin")]
+public IActionResult AdminOnly()
+{
+    return Ok("Solo para administradores");
+}
+```
+
+### Flujo de Autenticación
+
+1. **Login:** Usuario envía credenciales → Backend valida → Retorna access token
+2. **Acceso:** Cliente incluye access token en header `Authorization: Bearer {token}`
+
+### Seguridad
+
+- **Access Token:** Expira en 15 minutos
+- **Hash:** Las contraseñas se hashean con SHA256
+
+### CORS Configuration
+
+El backend está configurado para aceptar peticiones desde:
+- http://localhost:3000
+- http://localhost:5173
+- http://localhost:4173
+- http://127.0.0.1:3000
+- http://127.0.0.1:5173
+- http://127.0.0.1:4173
+
+### Testing con Swagger
+
+1. Ve a `/swagger` en tu navegador
+2. Haz clic en "Authorize" en la parte superior
+3. Ingresa tu token: `Bearer {tu_token}`
+4. Ahora puedes probar los endpoints protegidos
+
+### Ejemplo de Uso con Frontend
+
+```javascript
+// Login
+const response = await fetch('/api/v1/authn/login', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ username: 'admin', password: 'admin123' })
+});
+
+const { token } = await response.json();
+
+// Usar token en requests
+const data = await fetch('/api/v1/authn/session', {
+  headers: { 'Authorization': `Bearer ${token}` }
+});
+```
+
 ## 🐳 Docker
 
 Los archivos de Docker están organizados en la carpeta `docker/`:
@@ -170,3 +309,4 @@ dotnet test
 - **MySQL** - Base de datos
 - **Docker** - Contenedores
 - **Swagger** - Documentación de API
+- **JWT** - Autenticación y autorización
