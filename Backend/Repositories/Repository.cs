@@ -17,44 +17,51 @@ namespace Backend.Repositories
 
         public virtual async Task<IEnumerable<T>> GetAllAsync()
         {
-            // Si la entidad tiene la propiedad Eliminado, filtrar los eliminados lógicos
-            var eliminadoProp = typeof(T).GetProperty("Eliminado");
-            if (eliminadoProp != null && eliminadoProp.PropertyType == typeof(bool?))
+            try
             {
-                // Construir expresión dinámica para filtrar Eliminado == null || Eliminado == false
-                var param = System.Linq.Expressions.Expression.Parameter(typeof(T), "e");
-                var prop = System.Linq.Expressions.Expression.Property(param, eliminadoProp);
-                var nullConst = System.Linq.Expressions.Expression.Constant(null, typeof(bool?));
-                var falseConst = System.Linq.Expressions.Expression.Constant(false, typeof(bool?));
-                var isNull = System.Linq.Expressions.Expression.Equal(prop, nullConst);
-                var isFalse = System.Linq.Expressions.Expression.Equal(prop, falseConst);
-                var or = System.Linq.Expressions.Expression.OrElse(isNull, isFalse);
-                var lambda = System.Linq.Expressions.Expression.Lambda<Func<T, bool>>(or, param);
-                return await _dbSet.Where(lambda).ToListAsync();
+                // Si la entidad tiene la propiedad Eliminado, filtrar los eliminados lógicos
+                var eliminadoProp = typeof(T).GetProperty("Eliminado");
+                if (eliminadoProp != null && eliminadoProp.PropertyType == typeof(bool?))
+                {
+                    // Construir expresión dinámica para filtrar Eliminado == null || Eliminado == false
+                    var param = System.Linq.Expressions.Expression.Parameter(typeof(T), "e");
+                    var prop = System.Linq.Expressions.Expression.Property(param, eliminadoProp);
+                    var nullConst = System.Linq.Expressions.Expression.Constant(null, typeof(bool?));
+                    var falseConst = System.Linq.Expressions.Expression.Constant(false, typeof(bool?));
+                    var isNull = System.Linq.Expressions.Expression.Equal(prop, nullConst);
+                    var isFalse = System.Linq.Expressions.Expression.Equal(prop, falseConst);
+                    var or = System.Linq.Expressions.Expression.OrElse(isNull, isFalse);
+                    var lambda = System.Linq.Expressions.Expression.Lambda<Func<T, bool>>(or, param);
+                    return await _dbSet.Where(lambda).ToListAsync();
+                }
+                return await _dbSet.ToListAsync();
             }
-            return await _dbSet.ToListAsync();
+            catch (ArgumentException ex)
+            {
+                throw new Exceptions.AppException($"Error de argumentos: {ex.Message}", ex);
+            }
         }
 
         public virtual async Task<T?> GetByIdAsync(int id)
         {
             var entity = await _dbSet.FindAsync(id);
             if (entity == null)
-                return null;
+                throw new Backend.Exceptions.NotFoundException($"Entidad de tipo {typeof(T).Name} con ID {id} no encontrada.");
 
-            // Si la entidad tiene la propiedad Eliminado, verificar que no esté eliminada lógicamente
             var eliminadoProp = typeof(T).GetProperty("Eliminado");
             if (eliminadoProp != null && eliminadoProp.PropertyType == typeof(bool?))
             {
-                var eliminado = eliminadoProp.GetValue(entity) as bool?;
-                if (eliminado == true)
-                    return null;
+                var eliminadoValue = eliminadoProp.GetValue(entity) as bool?;
+                if (eliminadoValue == true)
+                    throw new Backend.Exceptions.NotFoundException($"Entidad de tipo {typeof(T).Name} con ID {id} no encontrada (eliminada lógicamente).");
             }
-
             return entity;
         }
 
         public virtual async Task<T> AddAsync(T entity)
         {
+            if (entity == null)
+                throw new Backend.Exceptions.ValidationException("La entidad no puede ser nula.");
             await _dbSet.AddAsync(entity);
             await _context.SaveChangesAsync();
             return entity;
@@ -62,6 +69,8 @@ namespace Backend.Repositories
 
         public virtual async Task<T> UpdateAsync(T entity)
         {
+            if (entity == null)
+                throw new Backend.Exceptions.ValidationException("La entidad no puede ser nula.");
             // Detach any existing entity with the same key to avoid tracking conflicts
             var idProperty = GetIdProperty(entity);
             if (idProperty != null)
@@ -73,7 +82,6 @@ namespace Backend.Repositories
                     _context.Entry(existingEntity).State = EntityState.Detached;
                 }
             }
-            
             _dbSet.Update(entity);
             await _context.SaveChangesAsync();
             return entity;
@@ -81,10 +89,9 @@ namespace Backend.Repositories
 
         public virtual async Task<bool> DeleteAsync(int id)
         {
+            if (id <= 0)
+                throw new Backend.Exceptions.ValidationException("El ID debe ser mayor a cero.");
             var entity = await GetByIdAsync(id);
-            if (entity == null)
-                return false;
-
             // Si la entidad tiene la propiedad Eliminado, hacer borrado lógico
             var eliminadoProp = typeof(T).GetProperty("Eliminado");
             var fechaEliminacionProp = typeof(T).GetProperty("FechaEliminacion");
