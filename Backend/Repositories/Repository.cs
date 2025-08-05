@@ -46,7 +46,6 @@ namespace Backend.Repositories
         {
             var entity = await _dbSet.FindAsync(id);
             if (entity == null)
-<<<<<<< HEAD
                 throw new Backend.Exceptions.NotFoundException($"Entidad de tipo {typeof(T).Name} con ID {id} no encontrada.");
 
             var eliminadoProp = typeof(T).GetProperty("Eliminado");
@@ -56,19 +55,6 @@ namespace Backend.Repositories
                 if (eliminadoValue == true)
                     throw new Backend.Exceptions.NotFoundException($"Entidad de tipo {typeof(T).Name} con ID {id} no encontrada (eliminada lógicamente).");
             }
-=======
-                return null;
-
-            // Si la entidad tiene la propiedad Eliminado, verificar que no esté eliminada lógicamente
-            var eliminadoProp = typeof(T).GetProperty("Eliminado");
-            if (eliminadoProp != null && eliminadoProp.PropertyType == typeof(bool?))
-            {
-                var eliminado = eliminadoProp.GetValue(entity) as bool?;
-                if (eliminado == true)
-                    return null;
-            }
-
->>>>>>> b6cecff8343294515337a59192a350feeb9c1f4b
             return entity;
         }
 

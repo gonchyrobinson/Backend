@@ -10,11 +10,8 @@ using Backend.Repositories;
 using Backend.Services;
 using Backend.Mappings;
 using Backend.Constants;
-<<<<<<< HEAD
 using Backend.Middleware;
-=======
 using System.Text;
->>>>>>> b6cecff8343294515337a59192a350feeb9c1f4b
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -95,17 +92,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 // Registrar repositorios
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-<<<<<<< HEAD
-builder.Services.AddScoped<IRepositorioEstudiantes, RepositorioEstudiantes>();
+//builder.Services.AddScoped<IRepositorioEstudiantes, RepositorioEstudiantes>();
 builder.Services.AddScoped<IRepositorioEmpresas, RepositorioEmpresas>();
-=======
-builder.Services.AddScoped<RepositorioEstudiantes>();
-builder.Services.AddScoped<RepositorioEmpresas>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
->>>>>>> b6cecff8343294515337a59192a350feeb9c1f4b
 
 // Registrar servicios
-builder.Services.AddScoped<ServicioEstudiantes>();
 builder.Services.AddScoped<ServicioEmpresas>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
