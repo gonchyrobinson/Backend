@@ -4,7 +4,7 @@ using Backend.Models;
 
 namespace Backend.Repositories
 {
-    public class RepositorioEstudiantes : Repository<Estudiante>, IRepository<Estudiante>
+    public class RepositorioEstudiantes : Repository<Estudiante>, IRepositorioEstudiantes
     {
         public RepositorioEstudiantes(ApplicationDbContext context) : base(context)
         {
