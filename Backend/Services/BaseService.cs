@@ -29,7 +29,6 @@ namespace Backend.Services
             var entity = await _repository.GetByIdAsync(id);
             if (entity == null)
                 throw new NotFoundException($"Entidad con ID {id} no encontrada");
-            
             return _mapper.Map<TDto>(entity);
         }
 
@@ -42,21 +41,20 @@ namespace Backend.Services
 
         public virtual async Task<TDto> UpdateAsync(TDto dto)
         {
+            if (dto == null)
+                throw new Exceptions.AppException("El objeto recibido no puede ser nulo.");
             var id = GetIdFromDto(dto);
             var existingEntity = await _repository.GetByIdAsync(id);
             if (existingEntity == null)
                 throw new NotFoundException($"Entidad con ID {id} no encontrada");
-            
             // Create a new entity from the DTO and preserve the ID
             var updatedEntity = _mapper.Map<TEntity>(dto);
-            
             // Use reflection to set the ID property if it exists
             var idProperty = GetIdProperty(updatedEntity);
             if (idProperty != null && idProperty.CanWrite)
             {
                 idProperty.SetValue(updatedEntity, id);
             }
-            
             var result = await _repository.UpdateAsync(updatedEntity);
             return _mapper.Map<TDto>(result);
         }
