@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using AutoMapper;
 using Serilog;
 using Backend.Contexts;
@@ -8,7 +10,11 @@ using Backend.Repositories;
 using Backend.Services;
 using Backend.Mappings;
 using Backend.Constants;
+<<<<<<< HEAD
 using Backend.Middleware;
+=======
+using System.Text;
+>>>>>>> b6cecff8343294515337a59192a350feeb9c1f4b
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,21 +46,69 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(AppConstants.CorsPolicyName, policy =>
     {
-        policy.WithOrigins("http://localhost:3000", "http://localhost:5173", "http://localhost:5000")
+        policy.WithOrigins(
+                "http://localhost:3000", 
+                "https://localhost:3000",
+                "http://localhost:5173",
+                "https://localhost:5173",
+                "http://localhost:4173",
+                "https://localhost:4173",
+                "http://localhost:5000",
+                "https://localhost:5000",
+                "http://127.0.0.1:3000",
+                "https://127.0.0.1:3000",
+                "http://127.0.0.1:5173",
+                "https://127.0.0.1:5173",
+                "http://127.0.0.1:4173",
+                "https://127.0.0.1:4173"
+              )
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
     });
+    
+    // Configuración para producción (Railway)
+    options.AddPolicy("ProductionCors", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
 });
+
+// Configurar JWT Authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["Jwt:SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey not configured"))),
+            ValidateIssuer = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero
+        };
+    });
 
 // Registrar repositorios
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+<<<<<<< HEAD
 builder.Services.AddScoped<IRepositorioEstudiantes, RepositorioEstudiantes>();
 builder.Services.AddScoped<IRepositorioEmpresas, RepositorioEmpresas>();
+=======
+builder.Services.AddScoped<RepositorioEstudiantes>();
+builder.Services.AddScoped<RepositorioEmpresas>();
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+>>>>>>> b6cecff8343294515337a59192a350feeb9c1f4b
 
 // Registrar servicios
 builder.Services.AddScoped<ServicioEstudiantes>();
 builder.Services.AddScoped<ServicioEmpresas>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IJwtService, JwtService>();
 
 // Configurar Swagger
 builder.Services.AddEndpointsApiExplorer();
@@ -65,6 +119,31 @@ builder.Services.AddSwaggerGen(c =>
         Title = "Backend API", 
         Version = "v1",
         Description = "API para sistema de gestión de pasantías"
+    });
+    
+    // Configurar autenticación JWT en Swagger
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
     });
 });
 
@@ -84,11 +163,19 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+// Usar CORS antes de otros middleware
+if (app.Environment.IsDevelopment())
+{
+    app.UseCors(AppConstants.CorsPolicyName);
+}
+else
+{
+    app.UseCors("ProductionCors");
+}
+
 app.UseHttpsRedirection();
 
-// Usar CORS
-app.UseCors(AppConstants.CorsPolicyName);
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
