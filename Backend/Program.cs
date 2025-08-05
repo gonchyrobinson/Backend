@@ -92,12 +92,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 // Registrar repositorios
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-//builder.Services.AddScoped<IRepositorioEstudiantes, RepositorioEstudiantes>();
+builder.Services.AddScoped<IRepositorioEstudiantes, RepositorioEstudiantes>();
 builder.Services.AddScoped<IRepositorioEmpresas, RepositorioEmpresas>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 
 // Registrar servicios
 builder.Services.AddScoped<ServicioEmpresas>();
+builder.Services.AddScoped<ServicioEstudiantes>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 
