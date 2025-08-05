@@ -8,7 +8,7 @@ namespace Backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class StudentsController : BaseController<Estudiante, StudentDto>
+    public class StudentsController : BaseController<Estudiante, StudentDto, StudentCreateDto>
     {
         private readonly ServicioEstudiantes _studentService;
 

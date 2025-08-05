@@ -40,6 +40,42 @@ namespace Backend.DTOs
         }
     }
 
+    public class EmpresaCreateDto: IValidatableObject
+    {
+        public string? Nombre { get; set; }
+
+        [RegularExpression("^(vigente|no_vigente)?$", ErrorMessage = "Vigencia debe ser 'vigente', 'no_vigente' o null.")]
+        public string? Vigencia { get; set; }
+
+        [DataType(DataType.Date, ErrorMessage = "FechaInicio debe ser una fecha válida.")]
+        public DateOnly? FechaInicio { get; set; }
+
+        [DataType(DataType.Date, ErrorMessage = "FechaFin debe ser una fecha válida.")]
+        public DateOnly? FechaFin { get; set; }
+
+        [Required]
+        [RegularExpression("^(temporal|indefinido|otro)$", ErrorMessage = "TipoContrato debe ser 'temporal', 'indefinido' u 'otro'.")]
+        public string? TipoContrato { get; set; }
+
+        public string? Encargado { get; set; }
+
+        [Phone(ErrorMessage = "Celular debe tener formato de número de teléfono válido.")]
+        public string? Celular { get; set; }
+
+        [EmailAddress(ErrorMessage = "CorreoElectronico debe tener formato de correo electrónico válido.")]
+        public string? CorreoElectronico { get; set; }
+
+        [DataType(DataType.Date, ErrorMessage = "Sudocu debe ser una fecha válida.")]
+        public DateOnly? Sudocu { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (FechaInicio.HasValue && FechaFin.HasValue && FechaInicio.Value > FechaFin.Value)
+            {
+                yield return new ValidationResult("FechaInicio debe ser menor o igual a FechaFin.", new[] { nameof(FechaInicio), nameof(FechaFin) });
+            }
+        }
+    }
     public class EmpresaBusquedaAvanzadaDto : IValidatableObject
     {
         public string? Nombre { get; set; }

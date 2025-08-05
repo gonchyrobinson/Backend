@@ -6,7 +6,7 @@ using Backend.Repositories;
 
 namespace Backend.Services
 {
-    public class ServicioEmpresas : BaseService<Empresa, EmpresaDto>
+    public class ServicioEmpresas : BaseService<Empresa, EmpresaDto, EmpresaCreateDto>
     {
         private readonly IRepositorioEmpresas _repoEmpresas;
 
