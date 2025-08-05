@@ -6,6 +6,6 @@ namespace Backend.Interfaces
 {
     public interface IRepositorioEstudiantes : IRepository<Estudiante>
     {
-        // Puedes agregar aquí métodos específicos para estudiantes si los necesitas
+        Task<IEnumerable<Estudiante>> BuscarAvanzadoAsync(StudentBusquedaAvanzadaDto filtro);
     }
 }

@@ -14,6 +14,12 @@ namespace Backend.Services
             _repoEstudiantes = repository;
         }
 
+        public async Task<IEnumerable<StudentDto>> BuscarAvanzadoAsync(StudentBusquedaAvanzadaDto filtro)
+        {
+            var estudiantes = await _repoEstudiantes.BuscarAvanzadoAsync(filtro);
+            return _mapper.Map<IEnumerable<StudentDto>>(estudiantes);
+        }
+
         protected override int GetIdFromDto(StudentDto dto)
         {
             return dto.IdEstudiante;
