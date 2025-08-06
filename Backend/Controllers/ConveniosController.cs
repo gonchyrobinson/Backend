@@ -22,5 +22,21 @@ namespace Backend.Controllers
         }
 
         // Métodos específicos para convenios pueden agregarse aquí
+
+        [HttpGet("con-empresa")]
+        public async Task<ActionResult<IEnumerable<ConvenioEmpresaDto>>> ListarConveniosConEmpresa()
+        {
+            var result = await _conveniosService.ListarConveniosConEmpresaAsync();
+            return Ok(result);
+        }
+
+        [HttpPost("caducar/{id}")]
+        public async Task<ActionResult> CaducarConvenio(int id, [FromBody] DateOnly? fechaCaducidad = null)
+        {
+            var success = await _conveniosService.CaducarConvenioAsync(id, fechaCaducidad);
+            if (success)
+                return Ok();
+            return BadRequest();
+        }
     }
 }
