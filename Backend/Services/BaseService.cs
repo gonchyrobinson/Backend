@@ -5,26 +5,27 @@ using System.Reflection;
 
 namespace Backend.Services
 {
-    public abstract class BaseService<TEntity, TDto> : IService<TEntity, TDto> 
-        where TEntity : class 
-        where TDto : class
+public abstract class BaseService<TEntity, TDto, TCreateDto> : IService<TEntity, TDto, TCreateDto>
+    where TEntity : class
+    where TDto : class
+    where TCreateDto : class
     {
         protected readonly IRepository<TEntity> _repository;
         protected readonly IMapper _mapper;
 
-        protected BaseService(IRepository<TEntity> repository, IMapper mapper)
+    protected BaseService(IRepository<TEntity> repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
         }
 
-        public virtual async Task<IEnumerable<TDto>> GetAllAsync()
+    public virtual async Task<IEnumerable<TDto>> GetAllAsync()
         {
             var entities = await _repository.GetAllAsync();
             return _mapper.Map<IEnumerable<TDto>>(entities);
         }
 
-        public virtual async Task<TDto> GetByIdAsync(int id)
+    public virtual async Task<TDto> GetByIdAsync(int id)
         {
             var entity = await _repository.GetByIdAsync(id);
             if (entity == null)
@@ -32,14 +33,14 @@ namespace Backend.Services
             return _mapper.Map<TDto>(entity);
         }
 
-        public virtual async Task<TDto> CreateAsync(TDto dto)
-        {
-            var entity = _mapper.Map<TEntity>(dto);
-            var result = await _repository.AddAsync(entity);
-            return _mapper.Map<TDto>(result);
-        }
+    public virtual async Task<TDto> CreateAsync(TCreateDto dto)
+    {
+        var entity = _mapper.Map<TEntity>(dto);
+        var result = await _repository.AddAsync(entity);
+        return _mapper.Map<TDto>(result);
+    }
 
-        public virtual async Task<TDto> UpdateAsync(TDto dto)
+    public virtual async Task<TDto> UpdateAsync(TDto dto)
         {
             if (dto == null)
                 throw new Exceptions.AppException("El objeto recibido no puede ser nulo.");
@@ -64,7 +65,7 @@ namespace Backend.Services
             return await _repository.DeleteAsync(id);
         }
 
-        protected abstract int GetIdFromDto(TDto dto);
+    protected abstract int GetIdFromDto(TDto dto);
 
         private PropertyInfo? GetIdProperty(TEntity entity)
         {

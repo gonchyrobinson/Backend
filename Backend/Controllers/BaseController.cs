@@ -6,13 +6,14 @@ namespace Backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public abstract class BaseController<TEntity, TDto> : ControllerBase 
+    public abstract class BaseController<TEntity, TDto, TCreateDto> : ControllerBase 
         where TEntity : class 
         where TDto : class
+        where TCreateDto : class
     {
-        protected readonly IService<TEntity, TDto> _service;
+        protected readonly IService<TEntity, TDto, TCreateDto> _service;
 
-        protected BaseController(IService<TEntity, TDto> service)
+        protected BaseController(IService<TEntity, TDto, TCreateDto> service)
         {
             _service = service;
         }
@@ -64,7 +65,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
-        public virtual async Task<ActionResult<TDto>> Create(TDto dto)
+        public virtual async Task<ActionResult<TDto>> Create(TCreateDto dto)
         {
             try
             {

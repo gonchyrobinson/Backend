@@ -42,7 +42,8 @@ namespace Backend.Tests
         public async Task CreateAsync_ShouldCreateStudent()
         {
             // Arrange
-            var studentDto = new StudentDto
+
+            var studentCreateDto = new StudentCreateDto
             {
                 Nombre = "John",
                 Apellido = "Doe",
@@ -55,7 +56,7 @@ namespace Backend.Tests
             };
 
             // Act
-            var result = await _service.CreateAsync(studentDto);
+            var result = await _service.CreateAsync(studentCreateDto);
 
             // Assert
             Assert.NotNull(result);
@@ -69,7 +70,7 @@ namespace Backend.Tests
         public async Task GetByIdAsync_WithValidId_ShouldReturnStudent()
         {
             // Arrange
-            var studentDto = new StudentDto
+            var studentCreateDto = new StudentCreateDto
             {
                 Nombre = "Jane",
                 Apellido = "Smith",
@@ -77,7 +78,7 @@ namespace Backend.Tests
                 Carrera = "Engineering"
             };
 
-            var createdStudent = await _service.CreateAsync(studentDto);
+            var createdStudent = await _service.CreateAsync(studentCreateDto);
 
             // Act
             var result = await _service.GetByIdAsync(createdStudent.IdEstudiante);
@@ -99,7 +100,7 @@ namespace Backend.Tests
         public async Task UpdateAsync_ShouldUpdateStudent()
         {
             // Arrange
-            var studentDto = new StudentDto
+            var studentCreateDto = new StudentCreateDto
             {
                 Nombre = "Original",
                 Apellido = "Name",
@@ -107,7 +108,7 @@ namespace Backend.Tests
                 Carrera = "Original Career"
             };
 
-            var createdStudent = await _service.CreateAsync(studentDto);
+            var createdStudent = await _service.CreateAsync(studentCreateDto);
 
             var updateDto = new StudentDto
             {
@@ -131,7 +132,7 @@ namespace Backend.Tests
         public async Task DeleteAsync_ShouldDeleteStudent()
         {
             // Arrange
-            var studentDto = new StudentDto
+            var studentCreateDto = new StudentCreateDto
             {
                 Nombre = "ToDelete",
                 Apellido = "Student",
@@ -139,7 +140,7 @@ namespace Backend.Tests
                 Carrera = "Test Career"
             };
 
-            var createdStudent = await _service.CreateAsync(studentDto);
+            var createdStudent = await _service.CreateAsync(studentCreateDto);
 
             // Act
             await _service.DeleteAsync(createdStudent.IdEstudiante);

@@ -95,10 +95,12 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IRepositorioEstudiantes, RepositorioEstudiantes>();
 builder.Services.AddScoped<IRepositorioEmpresas, RepositorioEmpresas>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IRepositorioConvenios, RepositorioConvenios>();
 
 // Registrar servicios
 builder.Services.AddScoped<ServicioEmpresas>();
 builder.Services.AddScoped<ServicioEstudiantes>();
+builder.Services.AddScoped<ServicioConvenios>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 

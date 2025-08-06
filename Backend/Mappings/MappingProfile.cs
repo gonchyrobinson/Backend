@@ -8,6 +8,9 @@ namespace Backend.Mappings
     {
         public MappingProfile()
         {
+            // Mapeo para Convenio
+            CreateMap<Convenio, ConvenioDto>().ReverseMap();
+            CreateMap<ConvenioCreateDto, Convenio>();
 
             // Mapeo para Estudiante
             CreateMap<Estudiante, StudentDto>().ReverseMap();

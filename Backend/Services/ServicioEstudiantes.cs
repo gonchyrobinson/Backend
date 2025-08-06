@@ -5,7 +5,7 @@ using Backend.Models;
 
 namespace Backend.Services
 {
-    public class ServicioEstudiantes : BaseService<Estudiante, StudentDto>
+    public class ServicioEstudiantes : BaseService<Estudiante, StudentDto, StudentCreateDto>
     {
         private readonly IRepositorioEstudiantes _repoEstudiantes;
 
