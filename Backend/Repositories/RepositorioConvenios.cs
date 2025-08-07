@@ -12,7 +12,7 @@ namespace Backend.Repositories
         }
 
         // Listar convenios junto a empresa (nombre)
-        public async Task<IEnumerable<Backend.DTOs.ConvenioEmpresaDto>> ListarConveniosConEmpresaAsync()
+        public async Task<IEnumerable<Backend.DTOs.ConvenioEmpresaDto>> ListarConveniosConEmpresa()
         {
             try
             {
@@ -25,13 +25,36 @@ namespace Backend.Repositories
                         FechaCaducidad = c.FechaCaducidad,
                         IdEmpresa = c.IdEmpresa,
                         NombreEmpresa = c.IdEmpresaNavigation != null ? c.IdEmpresaNavigation.Nombre : null,
-                        RepresentanteEmpresa = c.RepresentanteEmpresa
+                        RepresentanteEmpresa = c.RepresentanteEmpresa,
+                        DomicilioLegal = c.DomicilioLegal,
+                        DocRepresentanteFacultad = c.DocRepresentanteFacultad
                     });
                 return await convenios.ToListAsync();
             }
             catch (Exception ex)
             {
                 throw new Backend.Exceptions.ValidationException("Error al listar convenios con empresa", ex, "Convenio");
+            }
+        }
+
+        public async Task<bool> AsignarEmpresaAsync(Backend.DTOs.AsignarEmpresaDto dto)
+        {
+            if (dto.ConvenioId <= 0 || dto.EmpresaId <= 0)
+                throw new Backend.Exceptions.ValidationException("IDs de convenio y empresa deben ser mayores a cero", "Convenio");
+
+            var convenio = await _dbSet.FindAsync(dto.ConvenioId);
+            if (convenio == null)
+                throw new Backend.Exceptions.NotFoundException($"Convenio con ID {dto.ConvenioId} no encontrado");
+
+            convenio.IdEmpresa = dto.EmpresaId;
+            try
+            {
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Backend.Exceptions.ValidationException("Error al asignar empresa al convenio", ex, "Convenio");
             }
         }
 

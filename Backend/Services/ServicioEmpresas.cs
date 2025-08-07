@@ -29,7 +29,7 @@ namespace Backend.Services
         }
         public override async Task<bool> DeleteAsync(int id)
         {
-            var convenios = await _repoConvenios.ListarConveniosConEmpresaAsync();
+            var convenios = await _repoConvenios.ListarConveniosConEmpresa();
             if (convenios.Any(c => c.IdEmpresa == id))
             {
                 throw new Backend.Exceptions.ValidationException("No se puede eliminar la empresa porque tiene convenios asociados", "Empresa");

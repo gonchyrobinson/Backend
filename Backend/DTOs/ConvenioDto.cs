@@ -10,6 +10,8 @@ namespace Backend.DTOs
         public int? IdEmpresa { get; set; }
         public string? NombreEmpresa { get; set; }
         public string? RepresentanteEmpresa { get; set; }
+        public string? DomicilioLegal { get; set; }
+        public string? DocRepresentanteFacultad { get; set; }
     }
 
     // DTO para asignar empresa a convenio

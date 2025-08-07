@@ -23,6 +23,13 @@ namespace Backend.Controllers
 
         // Métodos específicos para convenios pueden agregarse aquí
 
+        [HttpPost("asignar-empresa")]
+        public async Task<IActionResult> AsignarEmpresa([FromBody] AsignarEmpresaDto dto)
+        {
+            var result = await _conveniosService.AsignarEmpresaAsync(dto);
+            return Ok(result);
+        }
+
         [HttpGet("con-empresa")]
         public async Task<ActionResult<IEnumerable<ConvenioEmpresaDto>>> ListarConveniosConEmpresa()
         {
