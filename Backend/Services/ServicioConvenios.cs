@@ -23,9 +23,19 @@ namespace Backend.Services
         }
 
         // Métodos específicos para convenios pueden agregarse aquí
-        public async Task<IEnumerable<ConvenioEmpresaDto>> ListarConveniosConEmpresaAsync()
+        public async Task<IEnumerable<ConvenioEmpresaDto>> ListarConveniosConEmpresaAsync(ConvenioEmpresaFiltroDto filtro)
         {
-            return await _repoConvenios.ListarConveniosConEmpresaAsync();
+            return await _repoConvenios.ListarConveniosConEmpresa(filtro);
+        }
+
+
+        public async Task<bool> AsignarEmpresaAsync(AsignarEmpresaDto dto)
+        {
+            // Validar existencia de la empresa
+            var empresa = await _repoEmpresas.GetByIdAsync(dto.EmpresaId);
+            if (empresa == null)
+                throw new Backend.Exceptions.NotFoundException($"Empresa con ID {dto.EmpresaId} no encontrada");
+            return await _repoConvenios.AsignarEmpresaAsync(dto);
         }
 
         public async Task<bool> CaducarConvenioAsync(int convenioId, DateOnly? fechaCaducidad = null)
