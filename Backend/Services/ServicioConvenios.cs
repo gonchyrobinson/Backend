@@ -9,12 +9,14 @@ namespace Backend.Services
     {
         private readonly IRepositorioConvenios _repoConvenios;
         private readonly IRepositorioEmpresas _repoEmpresas;
+        private readonly IRepositorioPasantias _repoPasantias;
 
-        public ServicioConvenios(IRepositorioConvenios repoConvenios, IRepositorioEmpresas repoEmpresas, IMapper mapper)
+        public ServicioConvenios(IRepositorioConvenios repoConvenios, IRepositorioEmpresas repoEmpresas, IRepositorioPasantias repoPasantias, IMapper mapper)
             : base(repoConvenios, mapper)
         {
             _repoConvenios = repoConvenios;
             _repoEmpresas = repoEmpresas;
+            _repoPasantias = repoPasantias;
         }
 
         protected override int GetIdFromDto(ConvenioDto dto)
@@ -23,6 +25,21 @@ namespace Backend.Services
         }
 
         // Métodos específicos para convenios pueden agregarse aquí
+
+        public override async Task<bool> DeleteAsync(int id)
+        {
+            // Verificar si existe alguna pasantía asociada al convenio
+            var convenio = await _repoConvenios.GetByIdAsync(id);
+            if (convenio == null)
+                throw new Backend.Exceptions.NotFoundException($"Convenio con ID {id} no encontrado");
+
+            var pasantias = await _repoPasantias.GetByConvenioIdAsync(id);
+            if (pasantias.Any())
+            {
+                throw new Backend.Exceptions.ValidationException($"No se puede eliminar el convenio porque tiene pasantías asociadas.", "Convenio");
+            }
+            return await base.DeleteAsync(id);
+        }
         public async Task<IEnumerable<ConvenioEmpresaDto>> ListarConveniosConEmpresaAsync()
         {
             return await _repoConvenios.ListarConveniosConEmpresaAsync();

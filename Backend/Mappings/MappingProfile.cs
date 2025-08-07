@@ -21,6 +21,10 @@ namespace Backend.Mappings
             CreateMap<Empresa, EmpresaDto>().ReverseMap()
                 .ForMember(dest => dest.Eliminado, opt => opt.MapFrom(src => false))
                 .ForMember(dest => dest.FechaEliminacion, opt => opt.MapFrom(src => (DateTime?)null));
+
+            // Mapeo para Pasantía
+            CreateMap<Pasantia, PasantiaDto>().ReverseMap();
+            CreateMap<PasantiaCreateDto, Pasantia>();
         }
     }
 }
