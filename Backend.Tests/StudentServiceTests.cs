@@ -4,6 +4,7 @@ using Backend.Contexts;
 using Backend.DTOs;
 using Backend.Models;
 using Backend.Repositories;
+using Backend.Interfaces;
 using Backend.Services;
 using Backend.Mappings;
 using Backend.Exceptions;
@@ -15,6 +16,7 @@ namespace Backend.Tests
     {
         private readonly ApplicationDbContext _context;
         private readonly RepositorioEstudiantes _repository;
+        private readonly IRepositorioPasantias _repoPasantias;
         private readonly IMapper _mapper;
         private readonly ServicioEstudiantes _service;
 
@@ -27,6 +29,7 @@ namespace Backend.Tests
 
             _context = new ApplicationDbContext(options);
             _repository = new RepositorioEstudiantes(_context);
+            _repoPasantias = Moq.Mock.Of<IRepositorioPasantias>();
 
             // Configurar AutoMapper
             var mapperConfig = new MapperConfiguration(cfg =>
@@ -35,7 +38,7 @@ namespace Backend.Tests
             });
             _mapper = mapperConfig.CreateMapper();
 
-            _service = new ServicioEstudiantes(_repository, _mapper);
+            _service = new ServicioEstudiantes(_repository, _repoPasantias, _mapper);
         }
 
         [Fact]
