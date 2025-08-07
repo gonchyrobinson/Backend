@@ -6,7 +6,7 @@ namespace Backend.Interfaces
     public interface IRepositorioConvenios : IRepository<Convenio>
     {
         // Listar convenios junto a empresa
-        Task<IEnumerable<ConvenioEmpresaDto>> ListarConveniosConEmpresa();
+        Task<IEnumerable<ConvenioEmpresaDto>> ListarConveniosConEmpresa(ConvenioEmpresaFiltroDto filtro);
 
         // Asignar empresa a convenio
         Task<bool> AsignarEmpresaAsync(AsignarEmpresaDto dto);

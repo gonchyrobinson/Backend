@@ -1,3 +1,4 @@
+using Backend.DTOs;
 using Backend.Interfaces;
 using Backend.Models;
 using Backend.Contexts;
@@ -12,12 +13,30 @@ namespace Backend.Repositories
         }
 
         // Listar convenios junto a empresa (nombre)
-        public async Task<IEnumerable<Backend.DTOs.ConvenioEmpresaDto>> ListarConveniosConEmpresa()
+        public async Task<IEnumerable<ConvenioEmpresaDto>> ListarConveniosConEmpresa(ConvenioEmpresaFiltroDto filtro)
         {
             try
             {
-                var convenios = _dbSet
-                    .Select(c => new Backend.DTOs.ConvenioEmpresaDto
+                var query = _dbSet.AsQueryable();
+
+                if (filtro != null)
+                {
+                    if (filtro.FechaFirmaDesde.HasValue)
+                        query = query.Where(c => c.FechaFirma >= filtro.FechaFirmaDesde);
+                    if (filtro.FechaFirmaHasta.HasValue)
+                        query = query.Where(c => c.FechaFirma <= filtro.FechaFirmaHasta);
+                    if (filtro.FechaCaducidadDesde.HasValue)
+                        query = query.Where(c => c.FechaCaducidad >= filtro.FechaCaducidadDesde);
+                    if (filtro.FechaCaducidadHasta.HasValue)
+                        query = query.Where(c => c.FechaCaducidad <= filtro.FechaCaducidadHasta);
+                    if (!string.IsNullOrWhiteSpace(filtro.NombreEmpresa))
+                        query = query.Where(c => c.IdEmpresaNavigation != null && c.IdEmpresaNavigation.Nombre.Contains(filtro.NombreEmpresa));
+                    if (!string.IsNullOrWhiteSpace(filtro.DocRepresentanteFacultad))
+                        query = query.Where(c => c.DocRepresentanteFacultad != null && c.DocRepresentanteFacultad.Contains(filtro.DocRepresentanteFacultad));
+                }
+
+                var convenios = query
+                    .Select(c => new ConvenioEmpresaDto
                     {
                         IdConvenio = c.IdConvenio,
                         Expediente = c.Expediente,
@@ -37,7 +56,7 @@ namespace Backend.Repositories
             }
         }
 
-        public async Task<bool> AsignarEmpresaAsync(Backend.DTOs.AsignarEmpresaDto dto)
+        public async Task<bool> AsignarEmpresaAsync(AsignarEmpresaDto dto)
         {
             if (dto.ConvenioId <= 0 || dto.EmpresaId <= 0)
                 throw new Backend.Exceptions.ValidationException("IDs de convenio y empresa deben ser mayores a cero", "Convenio");

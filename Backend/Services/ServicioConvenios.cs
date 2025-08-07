@@ -23,9 +23,9 @@ namespace Backend.Services
         }
 
         // Métodos específicos para convenios pueden agregarse aquí
-        public async Task<IEnumerable<ConvenioEmpresaDto>> ListarConveniosConEmpresaAsync()
+        public async Task<IEnumerable<ConvenioEmpresaDto>> ListarConveniosConEmpresaAsync(ConvenioEmpresaFiltroDto filtro)
         {
-            return await _repoConvenios.ListarConveniosConEmpresa();
+            return await _repoConvenios.ListarConveniosConEmpresa(filtro);
         }
 
 
