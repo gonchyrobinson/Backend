@@ -91,6 +91,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 // Registrar repositorios
+builder.Services.AddScoped<IRepositorioPasantias, RepositorioPasantias>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IRepositorioEstudiantes, RepositorioEstudiantes>();
 builder.Services.AddScoped<IRepositorioEmpresas, RepositorioEmpresas>();
@@ -98,6 +99,7 @@ builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IRepositorioConvenios, RepositorioConvenios>();
 
 // Registrar servicios
+builder.Services.AddScoped<ServicioPasantias>();
 builder.Services.AddScoped<ServicioEmpresas>();
 builder.Services.AddScoped<ServicioEstudiantes>();
 builder.Services.AddScoped<ServicioConvenios>();
