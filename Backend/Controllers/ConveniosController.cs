@@ -1,6 +1,7 @@
 using Backend.DTOs;
 using Backend.Models;
 using Backend.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers
@@ -24,6 +25,7 @@ namespace Backend.Controllers
         // Métodos específicos para convenios pueden agregarse aquí
 
         [HttpPost("conEmpresa")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<ConvenioEmpresaDto>>> ListarConveniosConEmpresa([FromBody] ConvenioEmpresaFiltroDto filtro)
         {
             var result = await _conveniosService.ListarConveniosConEmpresaAsync(filtro);
@@ -31,6 +33,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost("asignar-empresa")]
+        [Authorize]
         public async Task<IActionResult> AsignarEmpresa([FromBody] AsignarEmpresaDto dto)
         {
             var result = await _conveniosService.AsignarEmpresaAsync(dto);
@@ -39,6 +42,7 @@ namespace Backend.Controllers
 
 
         [HttpPost("caducar/{id}")]
+        [Authorize]
         public async Task<ActionResult> CaducarConvenio(int id, [FromBody] DateOnly? fechaCaducidad = null)
         {
             var success = await _conveniosService.CaducarConvenioAsync(id, fechaCaducidad);

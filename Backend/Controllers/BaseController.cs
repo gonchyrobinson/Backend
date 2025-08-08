@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Backend.Interfaces;
 using Backend.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Backend.Controllers
 {
@@ -19,6 +20,7 @@ namespace Backend.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public virtual async Task<ActionResult<IEnumerable<TDto>>> GetAll()
         {
             try
@@ -42,6 +44,7 @@ namespace Backend.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public virtual async Task<ActionResult<TDto>> GetById(int id)
         {
             try
@@ -65,6 +68,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public virtual async Task<ActionResult<TDto>> Create(TCreateDto dto)
         {
             try
@@ -88,6 +92,7 @@ namespace Backend.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         public virtual async Task<ActionResult<TDto>> Update(TDto dto)
         {
             try
@@ -111,6 +116,7 @@ namespace Backend.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public virtual async Task<ActionResult> Delete(int id)
         {
             try

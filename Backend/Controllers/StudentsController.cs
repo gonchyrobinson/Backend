@@ -3,6 +3,7 @@ using Backend.DTOs;
 using Backend.Interfaces;
 using Backend.Models;
 using Backend.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Backend.Controllers
 {
@@ -18,6 +19,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost("buscar-avanzado")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<StudentDto>>> BuscarAvanzado([FromBody] StudentBusquedaAvanzadaDto filtro)
         {
             var result = await _studentService.BuscarAvanzadoAsync(filtro);
