@@ -96,6 +96,7 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IRepositorioEstudiantes, RepositorioEstudiantes>();
 builder.Services.AddScoped<IRepositorioEmpresas, RepositorioEmpresas>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IRepositorioPagos, RepositorioPagos>();
 builder.Services.AddScoped<IRepositorioConvenios, RepositorioConvenios>();
 builder.Services.AddScoped<IRepositorioAuditoria, RepositorioAuditoria>();
 
@@ -103,6 +104,7 @@ builder.Services.AddScoped<IRepositorioAuditoria, RepositorioAuditoria>();
 builder.Services.AddScoped<ServicioPasantias>();
 builder.Services.AddScoped<ServicioEmpresas>();
 builder.Services.AddScoped<ServicioEstudiantes>();
+builder.Services.AddScoped<ServicioPagos>();
 builder.Services.AddScoped<ServicioConvenios>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtService, JwtService>();

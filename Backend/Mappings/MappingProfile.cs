@@ -33,6 +33,9 @@ namespace Backend.Mappings
                 .ReverseMap()
                 .ForMember(dest => dest.IdUsuarioNavigation, opt => opt.Ignore());
             CreateMap<AuditoriaBuscarDto, Auditoria>();
+            // Mapeo para Pago
+            CreateMap<Pago, PagosDto>().ReverseMap();
+            CreateMap<CreatePagosDto, Pago>();
         }
     }
 }

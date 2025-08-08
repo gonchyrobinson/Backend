@@ -90,6 +90,7 @@ CREATE TABLE PAGOS (
     id_pago INT PRIMARY KEY AUTO_INCREMENT,
     id_pasantia INT,
     fecha_pago DATE,
+    fecha_vencimiento DATE,
     monto DECIMAL(10,2),
     observaciones TEXT,
     FOREIGN KEY (id_pasantia) REFERENCES PASANTIAS(id_pasantia)
