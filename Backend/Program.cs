@@ -64,12 +64,17 @@ builder.Services.AddCors(options =>
               .AllowCredentials();
     });
     
-    // Configuración para producción (Railway)
+    // Configuración para producción (Azure App Services)
     options.AddPolicy("ProductionCors", policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.WithOrigins(
+                "https://*.azurewebsites.net",
+                "https://*.azurewebsites.net:443",
+                "https://*.azurewebsites.net:80"
+              )
               .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod()
+              .AllowCredentials();
     });
 });
 
