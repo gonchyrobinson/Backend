@@ -1,0 +1,72 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  dotNetVersion: '8.0.x'
+
+jobs:
+- job: Build
+  displayName: 'Build .NET Application'
+  steps:
+  - task: UseDotNet@2
+    displayName: 'Use .NET 8'
+    inputs:
+      version: '8.0.x'
+      includePreviewVersions: false
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Restore NuGet packages'
+    inputs:
+      command: 'restore'
+      projects: '**/*.csproj'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Build solution'
+    inputs:
+      command: 'build'
+      projects: '**/*.csproj'
+      arguments: '--configuration $(buildConfiguration) --no-restore'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Run tests'
+    inputs:
+      command: 'test'
+      projects: '**/*Tests/*.csproj'
+      arguments: '--configuration $(buildConfiguration) --no-build --collect:"XPlat Code Coverage"'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Publish application'
+    inputs:
+      command: 'publish'
+      publishWebProjects: true
+      arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) --no-build'
+      zipAfterPublish: true
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish artifacts'
+    inputs:
+      pathToPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: 'drop'
+
+- job: Deploy
+  displayName: 'Deploy to Azure App Service'
+  dependsOn: Build
+  condition: succeeded()
+  steps:
+  - task: AzureWebApp@1
+    displayName: 'Deploy Azure Web App'
+    inputs:
+      azureSubscription: 'Your-Azure-Subscription-Name'
+      appName: 'your-backend-app-service-name'
+      package: '$(Pipeline.Workspace)/drop/**/*.zip'
+      appType: 'webApp'
+      appSettings: |
+        -MYSQL_PASSWORD $(MYSQL_PASSWORD)
+        -JWT_SECRET_KEY $(JWT_SECRET_KEY)
+        -ASPNETCORE_ENVIRONMENT Production 

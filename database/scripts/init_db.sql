@@ -1,13 +1,3 @@
--- Habilitar triggers sin SUPER privilege (solo si tienes permisos de root)
-SET GLOBAL log_bin_trust_function_creators = 1;
--- =============================================
--- Triggers de auditoría para tablas críticas
-
--- =====================================================
--- Script de inicialización de la base de datos
--- =====================================================
-
-
 SET sql_mode = 'NO_ENGINE_SUBSTITUTION';
 
 -- Crear base de datos y usuarios solo si tienes permisos (ejecuta como root en Docker)
@@ -16,7 +6,7 @@ CREATE USER IF NOT EXISTS 'appuser'@'%' IDENTIFIED BY 'TuPasswordSeguro123!';
 CREATE USER IF NOT EXISTS 'appuser'@'localhost' IDENTIFIED BY 'TuPasswordSeguro123!';
 GRANT ALL PRIVILEGES ON pasantias_db.* TO 'appuser'@'%';
 GRANT ALL PRIVILEGES ON pasantias_db.* TO 'appuser'@'localhost';
-GRANT ALL PRIVILEGES ON pasantias_db.* TO 'root'@'%';
+GRANT ALL PRIVILEGES ON pasantias_db.* TO 'myadmin'@'%';
 FLUSH PRIVILEGES;
 
 -- Seleccionar la base de datos para el resto del script
