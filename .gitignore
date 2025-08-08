@@ -122,10 +122,6 @@ TestResults/
 *.nuget.props
 *.nuget.targets
 
-# Local configuration files
-appsettings.Development.json
-appsettings.Production.json
-appsettings.Staging.json
 
 # SSL certificates
 *.pfx
