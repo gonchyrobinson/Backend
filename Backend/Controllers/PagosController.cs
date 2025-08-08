@@ -1,6 +1,7 @@
 using Backend.DTOs;
 using Backend.Models;
 using Backend.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -26,6 +27,7 @@ namespace Backend.Controllers
         // Métodos específicos para pagos pueden agregarse aquí
 
         [HttpGet("by-pasantia/{idPasantia}")]
+        [Authorize]
         public async Task<ActionResult<PagosDto?>> GetByPasantiaId(int idPasantia)
         {
             var pagoDto = await _pagosService.GetByPasantiaIdAsync(idPasantia);

@@ -1,6 +1,7 @@
 using Backend.DTOs;
 using Backend.Models;
 using Backend.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers
@@ -24,6 +25,7 @@ namespace Backend.Controllers
         // Métodos específicos para pasantías pueden agregarse aquí
 
         [HttpGet("detalle")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<PasantiaDetalleDto>>> GetAllDetalle()
         {
             var result = await _pasantiasService.GetAllDetalleAsync();
@@ -31,6 +33,7 @@ namespace Backend.Controllers
         }
 
         [HttpGet("convenio/{convenioId}")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<PasantiaDto>>> GetByConvenioId(int convenioId)
         {
             var result = await _pasantiasService.GetByConvenioIdAsync(convenioId);
@@ -38,6 +41,7 @@ namespace Backend.Controllers
         }
 
         [HttpGet("estudiante/{estudianteId}")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<PasantiaDto>>> GetByEstudianteId(int estudianteId)
         {
             var result = await _pasantiasService.GetByEstudianteIdAsync(estudianteId);

@@ -21,6 +21,7 @@ public class AuthController : ControllerBase
     /// Registra un nuevo usuario
     /// </summary>
     [HttpPost("register")]
+    [Authorize]
     [ProducesResponseType(typeof(LoginResponseDto), 200)]
     [ProducesResponseType(400)]
     public async Task<IActionResult> Register([FromBody] RegisterRequestDto request)
@@ -101,17 +102,5 @@ public class AuthController : ControllerBase
         {
             return StatusCode(500, new { message = "Error interno del servidor", error = ex.Message });
         }
-    }
-
-    /// <summary>
-    /// Valida si el token actual es válido
-    /// </summary>
-    [HttpGet("validate")]
-    [Authorize]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(401)]
-    public IActionResult ValidateToken()
-    {
-        return Ok(new { message = "Token válido" });
     }
 } 
