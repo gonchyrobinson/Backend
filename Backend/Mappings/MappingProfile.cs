@@ -25,6 +25,10 @@ namespace Backend.Mappings
             // Mapeo para Pasantía
             CreateMap<Pasantia, PasantiaDto>().ReverseMap();
             CreateMap<PasantiaCreateDto, Pasantia>();
+
+            // Mapeo para Pago
+            CreateMap<Pago, PagosDto>().ReverseMap();
+            CreateMap<CreatePagosDto, Pago>();
         }
     }
 }
