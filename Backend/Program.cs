@@ -25,7 +25,7 @@ builder.Host.UseSerilog();
 // Agregar servicios al contenedor
 builder.Services.AddControllers(options =>
 {
-    options.Filters.Add<Backend.Middleware.ApiExceptionFilter>();
+    options.Filters.Add<ApiExceptionFilter>();
 });
 
 // Configurar Entity Framework
@@ -98,6 +98,7 @@ builder.Services.AddScoped<IRepositorioEmpresas, RepositorioEmpresas>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IRepositorioPagos, RepositorioPagos>();
 builder.Services.AddScoped<IRepositorioConvenios, RepositorioConvenios>();
+builder.Services.AddScoped<IRepositorioAuditoria, RepositorioAuditoria>();
 
 // Registrar servicios
 builder.Services.AddScoped<ServicioPasantias>();
@@ -107,6 +108,7 @@ builder.Services.AddScoped<ServicioPagos>();
 builder.Services.AddScoped<ServicioConvenios>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<ServicioAuditoria>();
 
 // Configurar Swagger
 builder.Services.AddEndpointsApiExplorer();

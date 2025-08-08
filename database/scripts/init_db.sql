@@ -1,3 +1,8 @@
+-- Habilitar triggers sin SUPER privilege (solo si tienes permisos de root)
+SET GLOBAL log_bin_trust_function_creators = 1;
+-- =============================================
+-- Triggers de auditoría para tablas críticas
+
 -- =====================================================
 -- Script de inicialización de la base de datos
 -- =====================================================
@@ -120,52 +125,150 @@ CREATE INDEX idx_pasantia ON PAGOS(id_pasantia);
 CREATE INDEX idx_usuario ON USUARIOS(nombre_usuario);
 
 -- Insertar datos de ejemplo (comentado para que no falle si no hay estructura)
-INSERT INTO Estudiantes (Nombre, Email, Carrera) VALUES
-('Juan Pérez', 'juan.perez@email.com', 'Ingeniería Informática'),
-('María García', 'maria.garcia@email.com', 'Administración de Empresas'),
-('Carlos López', 'carlos.lopez@email.com', 'Contabilidad')
-ON DUPLICATE KEY UPDATE Nombre = VALUES(Nombre);
+DELIMITER //
 
--- Script para insertar datos aleatorios de prueba en las tablas principales
-SELECT * FROM PASANTIAS;
--- Insertar empresas
-INSERT INTO EMPRESAS (nombre, vigencia, fecha_inicio, fecha_fin, tipo_contrato, encargado, celular, correo_electronico, sudocu)
-VALUES
-('Empresa Alpha', 'vigente', '2025-01-01', '2026-01-01', 'temporal', 'Juan Encargado', '123456789', 'alpha@empresa.com', '2025-01-01'),
-('Empresa Beta', 'no_vigente', '2024-01-01', '2024-12-31', 'indefinido', 'Maria Encargada', '987654321', 'beta@empresa.com', '2024-01-01');
+-- Trigger para INSERT en EMPRESAS
+CREATE TRIGGER trg_empresas_insert AFTER INSERT ON EMPRESAS
+FOR EACH ROW
+BEGIN
+    INSERT INTO AUDITORIA (id_usuario, tabla_afectada, tipo_operacion, datos_anteriores, datos_nuevos, funcion_llamada)
+    VALUES (NULL, 'EMPRESAS', 'INSERT', NULL, CONCAT('id_empresa=', NEW.id_empresa, ', nombre=', NEW.nombre), 'TRIGGER');
+END;//
 
--- Insertar convenios
-INSERT INTO CONVENIOS (id_empresa, representante_empresa, nro_acuerdo_marco, domicilio_legal, expediente, doc_representante_empresa, representante_facultad, doc_representante_facultad, fecha_firma, fecha_caducidad)
-VALUES
-(1, 'Juan Encargado', 1001, 'Calle Falsa 123', 'EXP-001', '12345678', 'Dr. Facultad', '87654321', '2025-01-10', '2026-01-10'),
-(2, 'Maria Encargada', 1002, 'Avenida Siempreviva 742', 'EXP-002', '23456789', 'Dra. Facultad', '98765432', '2024-02-15', '2024-12-15');
+-- Trigger para UPDATE en EMPRESAS
+CREATE TRIGGER trg_empresas_update AFTER UPDATE ON EMPRESAS
+FOR EACH ROW
+BEGIN
+    INSERT INTO AUDITORIA (id_usuario, tabla_afectada, tipo_operacion, datos_anteriores, datos_nuevos, funcion_llamada)
+    VALUES (NULL, 'EMPRESAS', 'UPDATE', CONCAT('id_empresa=', OLD.id_empresa, ', nombre=', OLD.nombre), CONCAT('id_empresa=', NEW.id_empresa, ', nombre=', NEW.nombre), 'TRIGGER');
+END;//
 
--- Insertar estudiantes
-INSERT INTO ESTUDIANTES (apellido, nombre, documento, domicilio, libreta, carrera, area_trabajo, email)
-VALUES
-('Pérez', 'Juan', '12345678', 'Calle 1', 'L123', 'Ingeniería', 'Sistemas', 'juan.perez@correo.com'),
-('García', 'María', '87654321', 'Calle 2', 'L456', 'Administración', 'Recursos Humanos', 'maria.garcia@correo.com');
+-- Trigger para DELETE en EMPRESAS
+CREATE TRIGGER trg_empresas_delete AFTER DELETE ON EMPRESAS
+FOR EACH ROW
+BEGIN
+    INSERT INTO AUDITORIA (id_usuario, tabla_afectada, tipo_operacion, datos_anteriores, datos_nuevos, funcion_llamada)
+    VALUES (NULL, 'EMPRESAS', 'DELETE', CONCAT('id_empresa=', OLD.id_empresa, ', nombre=', OLD.nombre), NULL, 'TRIGGER');
+END;//
 
--- Insertar pasantías
-INSERT INTO PASANTIAS (id_estudiante, id_convenio, asignacion_mensual, obra_social, art, tutor_empresa, tutor_facultad, expediente, fecha_inicio, fecha_fin, tipo_acuerdo, observaciones)
-VALUES
-(1, 1, 50000.00, 'OSDE', 'ART1', 'Encargado Empresa', 'Tutor Facultad', 'EXP-PA-001', '2025-03-01', '2025-09-01', 'Pasantia', 'Observaciones de prueba'),
-(2, 2, 60000.00, 'Swiss Medical', 'ART2', 'Encargada Empresa', 'Tutora Facultad', 'EXP-PA-002', '2024-04-01', '2024-10-01', 'PPS', 'Observaciones de prueba 2');
+-- Repetir para otras tablas críticas (CONVENIOS, ESTUDIANTES, PASANTIAS, PAGOS, USUARIOS)
 
--- Insertar pagos
--- Insertar pagos
-INSERT INTO PAGOS (id_pasantia, fecha_pago, fecha_vencimiento, monto, observaciones)
-VALUES
-(2, '2025-03-10', '2025-03-30', 10000.00, 'Primer pago'),
-(2, '2025-04-10', '2025-04-30', 10000.00, 'Segundo pago'),
-(3, '2024-04-15', '2024-04-30', 12000.00, 'Pago inicial PPS');
+-- Trigger para INSERT en ESTUDIANTES
+CREATE TRIGGER trg_estudiantes_insert AFTER INSERT ON ESTUDIANTES
+FOR EACH ROW
+BEGIN
+    INSERT INTO AUDITORIA (id_usuario, tabla_afectada, tipo_operacion, datos_anteriores, datos_nuevos, funcion_llamada)
+    VALUES (NULL, 'ESTUDIANTES', 'INSERT', NULL, CONCAT('id_estudiante=', NEW.id_estudiante, ', nombre=', NEW.nombre), 'TRIGGER');
+END;//
 
--- Insertar usuarios
-INSERT INTO USUARIOS (nombre_usuario, contrasena_hash, rol, correo)
-VALUES
-('admin', 'hashadmin', 'admin', 'admin@correo.com'),
-('empresa1', 'hash1', 'empresa', 'empresa1@correo.com'),
-('estudiante1', 'hash2', 'estudiante', 'estudiante1@correo.com');
+-- Trigger para UPDATE en ESTUDIANTES
+CREATE TRIGGER trg_estudiantes_update AFTER UPDATE ON ESTUDIANTES
+FOR EACH ROW
+BEGIN
+    INSERT INTO AUDITORIA (id_usuario, tabla_afectada, tipo_operacion, datos_anteriores, datos_nuevos, funcion_llamada)
+    VALUES (NULL, 'ESTUDIANTES', 'UPDATE', CONCAT('id_estudiante=', OLD.id_estudiante, ', nombre=', OLD.nombre), CONCAT('id_estudiante=', NEW.id_estudiante, ', nombre=', NEW.nombre), 'TRIGGER');
+END;//
 
--- Verificar que la tabla se creó correctamente
-SELECT 'Base de datos inicializada correctamente' AS Estado;
+-- Trigger para DELETE en ESTUDIANTES
+CREATE TRIGGER trg_estudiantes_delete AFTER DELETE ON ESTUDIANTES
+FOR EACH ROW
+BEGIN
+    INSERT INTO AUDITORIA (id_usuario, tabla_afectada, tipo_operacion, datos_anteriores, datos_nuevos, funcion_llamada)
+    VALUES (NULL, 'ESTUDIANTES', 'DELETE', CONCAT('id_estudiante=', OLD.id_estudiante, ', nombre=', OLD.nombre), NULL, 'TRIGGER');
+END;//
+
+-- Trigger para INSERT en PASANTIAS
+CREATE TRIGGER trg_pasantias_insert AFTER INSERT ON PASANTIAS
+FOR EACH ROW
+BEGIN
+    INSERT INTO AUDITORIA (id_usuario, tabla_afectada, tipo_operacion, datos_anteriores, datos_nuevos, funcion_llamada)
+    VALUES (NULL, 'PASANTIAS', 'INSERT', NULL, CONCAT('id_pasantia=', NEW.id_pasantia, ', id_estudiante=', NEW.id_estudiante), 'TRIGGER');
+END;//
+
+-- Trigger para UPDATE en PASANTIAS
+CREATE TRIGGER trg_pasantias_update AFTER UPDATE ON PASANTIAS
+FOR EACH ROW
+BEGIN
+    INSERT INTO AUDITORIA (id_usuario, tabla_afectada, tipo_operacion, datos_anteriores, datos_nuevos, funcion_llamada)
+    VALUES (NULL, 'PASANTIAS', 'UPDATE', CONCAT('id_pasantia=', OLD.id_pasantia, ', id_estudiante=', OLD.id_estudiante), CONCAT('id_pasantia=', NEW.id_pasantia, ', id_estudiante=', NEW.id_estudiante), 'TRIGGER');
+END;//
+
+-- Trigger para DELETE en PASANTIAS
+CREATE TRIGGER trg_pasantias_delete AFTER DELETE ON PASANTIAS
+FOR EACH ROW
+BEGIN
+    INSERT INTO AUDITORIA (id_usuario, tabla_afectada, tipo_operacion, datos_anteriores, datos_nuevos, funcion_llamada)
+    VALUES (NULL, 'PASANTIAS', 'DELETE', CONCAT('id_pasantia=', OLD.id_pasantia, ', id_estudiante=', OLD.id_estudiante), NULL, 'TRIGGER');
+END;//
+
+-- Trigger para INSERT en CONVENIOS
+CREATE TRIGGER trg_convenios_insert AFTER INSERT ON CONVENIOS
+FOR EACH ROW
+BEGIN
+    INSERT INTO AUDITORIA (id_usuario, tabla_afectada, tipo_operacion, datos_anteriores, datos_nuevos, funcion_llamada)
+    VALUES (NULL, 'CONVENIOS', 'INSERT', NULL, CONCAT('id_convenio=', NEW.id_convenio, ', id_empresa=', NEW.id_empresa), 'TRIGGER');
+END;//
+
+-- Trigger para UPDATE en CONVENIOS
+CREATE TRIGGER trg_convenios_update AFTER UPDATE ON CONVENIOS
+FOR EACH ROW
+BEGIN
+    INSERT INTO AUDITORIA (id_usuario, tabla_afectada, tipo_operacion, datos_anteriores, datos_nuevos, funcion_llamada)
+    VALUES (NULL, 'CONVENIOS', 'UPDATE', CONCAT('id_convenio=', OLD.id_convenio, ', id_empresa=', OLD.id_empresa), CONCAT('id_convenio=', NEW.id_convenio, ', id_empresa=', NEW.id_empresa), 'TRIGGER');
+END;//
+
+-- Trigger para DELETE en CONVENIOS
+CREATE TRIGGER trg_convenios_delete AFTER DELETE ON CONVENIOS
+FOR EACH ROW
+BEGIN
+    INSERT INTO AUDITORIA (id_usuario, tabla_afectada, tipo_operacion, datos_anteriores, datos_nuevos, funcion_llamada)
+    VALUES (NULL, 'CONVENIOS', 'DELETE', CONCAT('id_convenio=', OLD.id_convenio, ', id_empresa=', OLD.id_empresa), NULL, 'TRIGGER');
+END;//
+
+-- Trigger para INSERT en PAGOS
+CREATE TRIGGER trg_pagos_insert AFTER INSERT ON PAGOS
+FOR EACH ROW
+BEGIN
+    INSERT INTO AUDITORIA (id_usuario, tabla_afectada, tipo_operacion, datos_anteriores, datos_nuevos, funcion_llamada)
+    VALUES (NULL, 'PAGOS', 'INSERT', NULL, CONCAT('id_pago=', NEW.id_pago, ', id_pasantia=', NEW.id_pasantia), 'TRIGGER');
+END;//
+
+-- Trigger para UPDATE en PAGOS
+CREATE TRIGGER trg_pagos_update AFTER UPDATE ON PAGOS
+FOR EACH ROW
+BEGIN
+    INSERT INTO AUDITORIA (id_usuario, tabla_afectada, tipo_operacion, datos_anteriores, datos_nuevos, funcion_llamada)
+    VALUES (NULL, 'PAGOS', 'UPDATE', CONCAT('id_pago=', OLD.id_pago, ', id_pasantia=', OLD.id_pasantia), CONCAT('id_pago=', NEW.id_pago, ', id_pasantia=', NEW.id_pasantia), 'TRIGGER');
+END;//
+
+CREATE TRIGGER trg_pagos_delete AFTER DELETE ON PAGOS
+FOR EACH ROW
+BEGIN
+    INSERT INTO AUDITORIA (id_usuario, tabla_afectada, tipo_operacion, datos_anteriores, datos_nuevos, funcion_llamada)
+    VALUES (NULL, 'PAGOS', 'DELETE', CONCAT('id_pago=', OLD.id_pago, ', id_pasantia=', OLD.id_pasantia), NULL, 'TRIGGER');
+END;//
+
+-- Trigger para INSERT en USUARIOS
+CREATE TRIGGER trg_usuarios_insert AFTER INSERT ON USUARIOS
+FOR EACH ROW
+BEGIN
+    INSERT INTO AUDITORIA (id_usuario, tabla_afectada, tipo_operacion, datos_anteriores, datos_nuevos, funcion_llamada)
+    VALUES (NEW.id_usuario, 'USUARIOS', 'INSERT', NULL, CONCAT('id_usuario=', NEW.id_usuario, ', nombre_usuario=', NEW.nombre_usuario), 'TRIGGER');
+END;//
+
+-- Trigger para UPDATE en USUARIOS
+CREATE TRIGGER trg_usuarios_update AFTER UPDATE ON USUARIOS
+FOR EACH ROW
+BEGIN
+    INSERT INTO AUDITORIA (id_usuario, tabla_afectada, tipo_operacion, datos_anteriores, datos_nuevos, funcion_llamada)
+    VALUES (NEW.id_usuario, 'USUARIOS', 'UPDATE', CONCAT('id_usuario=', OLD.id_usuario, ', nombre_usuario=', OLD.nombre_usuario), CONCAT('id_usuario=', NEW.id_usuario, ', nombre_usuario=', NEW.nombre_usuario), 'TRIGGER');
+END;//
+
+-- Trigger para DELETE en USUARIOS
+CREATE TRIGGER trg_usuarios_delete AFTER DELETE ON USUARIOS
+FOR EACH ROW
+BEGIN
+    INSERT INTO AUDITORIA (id_usuario, tabla_afectada, tipo_operacion, datos_anteriores, datos_nuevos, funcion_llamada)
+    VALUES (OLD.id_usuario, 'USUARIOS', 'DELETE', CONCAT('id_usuario=', OLD.id_usuario, ', nombre_usuario=', OLD.nombre_usuario), NULL, 'TRIGGER');
+END;//
+DELIMITER ;

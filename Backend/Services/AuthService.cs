@@ -17,11 +17,13 @@ public class AuthService : IAuthService
 {
     private readonly IAuthRepository _authRepository;
     private readonly IJwtService _jwtService;
+    private readonly ServicioAuditoria _servicioAuditoria;
 
-    public AuthService(IAuthRepository authRepository, IJwtService jwtService)
+    public AuthService(IAuthRepository authRepository, IJwtService jwtService, ServicioAuditoria servicioAuditoria)
     {
         _authRepository = authRepository;
         _jwtService = jwtService;
+        _servicioAuditoria = servicioAuditoria;
     }
 
     public async Task<LoginResponseDto?> RegisterAsync(RegisterRequestDto request)
@@ -55,7 +57,7 @@ public class AuthService : IAuthService
 
             // Generar token y retornar respuesta
             var token = _jwtService.GenerateAccessToken(createdUser);
-            
+
             return new LoginResponseDto
             {
                 Token = token,
@@ -78,10 +80,16 @@ public class AuthService : IAuthService
     {
         var usuario = await _authRepository.GetUserByUsernameAsync(request.Username);
 
+
+        // Auditar intento de login fallido
         if (usuario == null || usuario.ContrasenaHash == null || !PasswordHelper.VerifyPassword(request.Password, usuario.ContrasenaHash))
         {
+            await AuditarLoginAsync(null, request.Username, false);
             return null;
         }
+
+        // Auditar login exitoso
+        await AuditarLoginAsync(usuario.IdUsuario, usuario.NombreUsuario, true);
 
         var token = _jwtService.GenerateAccessToken(usuario);
 
@@ -117,5 +125,20 @@ public class AuthService : IAuthService
     public async Task<bool> ValidateCredentialsAsync(string username, string password)
     {
         return await _authRepository.ValidateUserCredentialsAsync(username, password);
+    }
+    
+        private async Task AuditarLoginAsync(int? idUsuario, string? usuarioNombre, bool exito)
+    {
+        await _servicioAuditoria.RegistrarAsync(new AuditoriaDto
+        {
+            IdUsuario = idUsuario,
+            UsuarioNombre = usuarioNombre,
+            TablaAfectada = "USUARIOS",
+            TipoOperacion = "LOGIN",
+            DatosAnteriores = usuarioNombre,
+            DatosNuevos = exito ? "logueado" : "sin loguear",
+            FechaOperacion = DateTime.UtcNow,
+            FuncionLlamada = "LoginAsync"
+        });
     }
 } 
