@@ -72,7 +72,7 @@ namespace Backend.Tests
             }
             catch (NotFoundException ex)
             {
-                Assert.Equal("No se encontraron pasantías para el convenio con ID 1", ex.Message);
+                Assert.Equal("No se encontraron pasantias para el convenio con ID 1", ex.Message);
             }
         }
 

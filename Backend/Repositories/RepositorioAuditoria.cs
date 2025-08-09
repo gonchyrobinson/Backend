@@ -44,7 +44,7 @@ namespace Backend.Repositories
 
             var result = await query.ToListAsync();
             if (result == null || result.Count == 0)
-                throw new Backend.Exceptions.NotFoundException("No se encontraron registros de auditoría con los filtros especificados.");
+                throw new Backend.Exceptions.NotFoundException("No se encontraron registros de auditoria con los filtros especificados.");
             return result;
         }
     }

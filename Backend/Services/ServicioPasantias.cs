@@ -35,7 +35,7 @@ namespace Backend.Services
         {
             var entities = await _repoPasantias.GetByConvenioIdAsync(convenioId);
             if (entities == null || !entities.Any())
-                throw new Backend.Exceptions.NotFoundException($"No se encontraron pasantías para el convenio con ID {convenioId}");
+                throw new Backend.Exceptions.NotFoundException($"No se encontraron pasantias para el convenio con ID {convenioId}");
             return _mapper.Map<IEnumerable<PasantiaDto>>(entities);
         }
 
@@ -43,7 +43,7 @@ namespace Backend.Services
         {
             var entities = await _repoPasantias.GetByEstudianteIdAsync(estudianteId);
             if (entities == null || !entities.Any())
-                throw new Backend.Exceptions.NotFoundException($"No se encontraron pasantías para el estudiante con ID {estudianteId}");
+                throw new Backend.Exceptions.NotFoundException($"No se encontraron pasantias para el estudiante con ID {estudianteId}");
             return _mapper.Map<IEnumerable<PasantiaDto>>(entities);
         }
         public override async Task<PasantiaDto> CreateAsync(PasantiaCreateDto dto)

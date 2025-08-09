@@ -66,7 +66,7 @@ namespace Backend.Tests
                 await _controller.Buscar(filtro);
             });
 
-            Assert.Equal("No se encontraron registros de auditoría con los filtros especificados.", exception.Message);
+            Assert.Equal("No se encontraron registros de auditoria con los filtros especificados.", exception.Message);
         }
     }
 }
