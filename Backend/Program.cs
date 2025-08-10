@@ -59,7 +59,8 @@ builder.Services.AddCors(options =>
                 "http://127.0.0.1:5173",
                 "https://127.0.0.1:5173",
                 "http://127.0.0.1:4173",
-                "https://127.0.0.1:4173"
+                "https://127.0.0.1:4173",
+                "https://gestion-pasantias-facet-g9ascqg9ckd5eggd.centralus-01.azurewebsites.net"
               )
               .AllowAnyHeader()
               .AllowAnyMethod()
