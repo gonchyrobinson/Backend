@@ -11,41 +11,42 @@ using Backend.Services;
 using Backend.Mappings;
 using Backend.Constants;
 using Backend.Middleware;
-using AspNetCoreRateLimit;
 using System.Text;
+using System.Threading.RateLimiting; // <= .NET 8 Rate Limiter
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configurar Serilog
+// Serilog
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
     .CreateLogger();
 
 builder.Host.UseSerilog();
 
-// Agregar servicios al contenedor
+// Controllers + filtro global de excepciones
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<ApiExceptionFilter>();
 });
 
-// Configurar Entity Framework
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseMySql(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
-        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
-    ));
+// === Entity Framework (sin AutoDetect) ===
+var cs = builder.Configuration.GetConnectionString("DefaultConnection");
+// Asegurate de ajustar la versión si cambia tu servidor
+var serverVersion = new MySqlServerVersion(new Version(8, 0, 42));
 
-// Configurar AutoMapper
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseMySql(cs, serverVersion));
+
+// AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
-// Configurar CORS
+// CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(AppConstants.CorsPolicyName, policy =>
     {
         policy.WithOrigins(
-                "http://localhost:3000", 
+                "http://localhost:3000",
                 "https://localhost:3000",
                 "http://localhost:5173",
                 "https://localhost:5173",
@@ -64,8 +65,7 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod()
               .AllowCredentials();
     });
-    
-    // Configuración para producción (Azure App Services)
+
     options.AddPolicy("ProductionCors", policy =>
     {
         policy.WithOrigins(
@@ -77,7 +77,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Configurar JWT Authentication
+// JWT
 var jwtSecret = builder.Configuration["Jwt:SecretKey"];
 if (string.IsNullOrWhiteSpace(jwtSecret) || Encoding.UTF8.GetByteCount(jwtSecret) < 32)
 {
@@ -101,7 +101,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Registrar repositorios
+// Repositorios
 builder.Services.AddScoped<IRepositorioPasantias, RepositorioPasantias>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IRepositorioEstudiantes, RepositorioEstudiantes>();
@@ -111,7 +111,7 @@ builder.Services.AddScoped<IRepositorioPagos, RepositorioPagos>();
 builder.Services.AddScoped<IRepositorioConvenios, RepositorioConvenios>();
 builder.Services.AddScoped<IRepositorioAuditoria, RepositorioAuditoria>();
 
-// Registrar servicios
+// Servicios
 builder.Services.AddScoped<ServicioPasantias>();
 builder.Services.AddScoped<ServicioEmpresas>();
 builder.Services.AddScoped<ServicioEstudiantes>();
@@ -121,18 +121,17 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<ServicioAuditoria>();
 
-// Configurar Swagger
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo 
-    { 
-        Title = "Backend API", 
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Backend API",
         Version = "v1",
         Description = "API para sistema de gestión de pasantías"
     });
-    
-    // Configurar autenticación JWT en Swagger
+
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
@@ -158,10 +157,27 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+// === Rate Limiting nativo (.NET 8) ===
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    // 60 req por minuto global
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(_ =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: "global",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 60,
+                Window = TimeSpan.FromMinutes(1),
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0
+            }));
+});
+
 var app = builder.Build();
 
-
-// Middleware de headers de seguridad (CSP, X-Frame-Options, etc.)
+// Security headers
 app.Use(async (context, next) =>
 {
     context.Response.Headers["X-Frame-Options"] = "DENY";
@@ -176,10 +192,10 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-// Registrar el middleware de excepciones personalizado
+// Middleware de excepciones
 app.UseMiddleware<ExceptionMiddleware>();
 
-// Configurar el pipeline de solicitudes HTTP
+// Swagger en desarrollo
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -190,7 +206,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-// Usar CORS antes de otros middleware
+// CORS
 if (app.Environment.IsDevelopment())
 {
     app.UseCors(AppConstants.CorsPolicyName);
@@ -198,44 +214,41 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseCors("ProductionCors");
-
-    // Middleware de Rate Limiting
-    app.UseIpRateLimiting();
 }
 
+// HTTPS
 app.UseHttpsRedirection();
 
+// Rate Limiter nativo
+app.UseRateLimiter();
+
+// Auth
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Endpoints
 app.MapControllers();
 
-// Crear la base de datos si no existe con manejo de errores
+// Inicialización DB segura (sin frenar la app si falla)
 try
 {
-    using (var scope = app.Services.CreateScope())
+    using var scope = app.Services.CreateScope();
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+    if (context.Database.CanConnect())
     {
-        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        
-        // Verificar conexión
-        if (context.Database.CanConnect())
-        {
-            Log.Information("Conexión a la base de datos establecida correctamente");
-            
-            // Crear la base de datos si no existe
-            context.Database.EnsureCreated();
-            Log.Information("Base de datos inicializada correctamente");
-        }
-        else
-        {
-            Log.Error("No se pudo conectar a la base de datos");
-        }
+        Log.Information("Conexión a la base de datos establecida correctamente");
+        context.Database.EnsureCreated();
+        Log.Information("Base de datos inicializada correctamente");
+    }
+    else
+    {
+        Log.Error("No se pudo conectar a la base de datos");
     }
 }
 catch (Exception ex)
 {
     Log.Error(ex, "Error al inicializar la base de datos: {Message}", ex.Message);
-    // No detener la aplicación, solo registrar el error
 }
 
 app.Run();
