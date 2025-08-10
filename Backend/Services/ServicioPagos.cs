@@ -54,5 +54,11 @@ namespace Backend.Services
             var pago = await _repoPagos.GetByPasantiaIdAsync(idPasantia);
             return _mapper.Map<PagosDto>(pago);
         }
+
+        public async Task<PagosDto> MarcarComoPagadoAsync(MarcarPagoDto dto)
+        {
+            var pago = await _repoPagos.MarcarComoPagadoAsync(dto.IdPago, dto.FechaPago);
+            return _mapper.Map<PagosDto>(pago);
+        }
     }
 }

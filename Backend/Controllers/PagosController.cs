@@ -33,5 +33,13 @@ namespace Backend.Controllers
             var pagoDto = await _pagosService.GetByPasantiaIdAsync(idPasantia);
             return Ok(pagoDto);
         }
+
+        [HttpPost("marcar-pagado")]
+        [Authorize]
+        public async Task<ActionResult<PagosDto>> MarcarComoPagado([FromBody] MarcarPagoDto dto)
+        {
+            var pagoDto = await _pagosService.MarcarComoPagadoAsync(dto);
+            return Ok(pagoDto);
+        }
     }
 }

@@ -14,6 +14,8 @@ namespace Backend.DTOs
         public DateOnly? FechaInicio { get; set; }
         public DateOnly? FechaFin { get; set; }
         public string? TipoAcuerdo { get; set; }
+        public string? FrecuenciaPago { get; set; }
+        public decimal MontoPago { get; set; }
         public string? Observaciones { get; set; }
         public string? AreaTrabajo { get; set; }
         public string? Estado { get; set; }
@@ -32,9 +34,11 @@ namespace Backend.DTOs
         public DateOnly? FechaInicio { get; set; }
         public DateOnly? FechaFin { get; set; }
         public string? TipoAcuerdo { get; set; }
+        public string? FrecuenciaPago { get; set; }
         public string? Observaciones { get; set; }
         public string? AreaTrabajo { get; set; }
         public string? Estado { get; set; }
+        public decimal MontoPago { get; set; }
     }
 
     public class PasantiaDetalleDto

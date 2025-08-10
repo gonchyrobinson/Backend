@@ -67,7 +67,61 @@ namespace Backend.Services
                 if (convenio == null)
                     throw new Backend.Exceptions.NotFoundException($"Convenio con ID {dto.IdConvenio.Value} no encontrado");
             }
-            return await base.CreateAsync(dto);
+
+            // Crear la pasantía
+            var pasantiaDto = await base.CreateAsync(dto);
+
+            // Lógica para crear los pagos automáticos
+            if (dto.FechaInicio.HasValue && dto.FechaFin.HasValue && !string.IsNullOrEmpty(dto.FrecuenciaPago) && (dto.MontoPago > 0))
+            {
+                var fechaInicio = dto.FechaInicio.Value;
+                var fechaFin = dto.FechaFin.Value;
+                var frecuencia = dto.FrecuenciaPago;
+                var monto = dto.MontoPago * 0.05m; //La empresa debe pagar el 5% de lo que le paga al estudiante
+
+                var pagos = new List<Pago>();
+                var fechaActual = fechaInicio;
+
+                while (fechaActual < fechaFin)
+                {
+                    pagos.Add(new Pago
+                    {
+                        IdPasantia = pasantiaDto.IdPasantia,
+                        FechaVencimiento = fechaActual,
+                        Monto = monto,
+                        Pagado = false,
+                        FechaPago = null,
+                        Observaciones = null
+                    });
+
+                    // Avanzar según la frecuencia
+                    switch (frecuencia)
+                    {
+                        case "Mensual":
+                            fechaActual = fechaActual.AddMonths(1);
+                            break;
+                        case "Trimestral":
+                            fechaActual = fechaActual.AddMonths(3);
+                            break;
+                        case "Semestral":
+                            fechaActual = fechaActual.AddMonths(6);
+                            break;
+                        case "Anual":
+                            fechaActual = fechaActual.AddYears(1);
+                            break;
+                        default:
+                            throw new Backend.Exceptions.ValidationException("FrecuenciaPago inválida", "Pasantia");
+                    }
+                }
+
+                // Guardar los pagos en la base de datos
+                foreach (var pago in pagos)
+                {
+                    await _repoPasantias.AgregarPagoAsync(pago); // Implementa este método en tu repositorio
+                }
+            }
+
+            return pasantiaDto;
         }
 
         public override async Task<PasantiaDto> UpdateAsync(PasantiaDto dto)

@@ -72,6 +72,8 @@ CREATE TABLE PASANTIAS (
     fecha_fin DATE,
     tipo_acuerdo ENUM('Pasantia', 'PPS', 'otro'),
     observaciones TEXT,
+    frecuencia_pago ENUM('Mensual', 'Trimestral', 'Semestral', 'Anual'),
+    monto_pago DECIMAL,
     FOREIGN KEY (id_estudiante) REFERENCES ESTUDIANTES(id_estudiante),
     FOREIGN KEY (id_convenio) REFERENCES CONVENIOS(id_convenio)
 );
@@ -79,7 +81,8 @@ CREATE TABLE PASANTIAS (
 CREATE TABLE PAGOS (
     id_pago INT PRIMARY KEY AUTO_INCREMENT,
     id_pasantia INT,
-    fecha_pago DATE,
+    pagado BOOLEAN DEFAULT FALSE,
+    fecha_pago DATE DEFAULT NULL,
     fecha_vencimiento DATE,
     monto DECIMAL(10,2),
     observaciones TEXT,
