@@ -60,7 +60,8 @@ builder.Services.AddCors(options =>
                 "https://127.0.0.1:5173",
                 "http://127.0.0.1:4173",
                 "https://127.0.0.1:4173",
-                "https://gestion-pasantias-facet-g9ascqg9ckd5eggd.centralus-01.azurewebsites.net"
+                "https://gestion-pasantias-facet-g9ascqg9ckd5eggd.centralus-01.azurewebsites.net",
+                "https://gestionpasantias-cchah8fwd2bqcye0.centralus-01.azurewebsites.net"
               )
               .AllowAnyHeader()
               .AllowAnyMethod()
@@ -70,7 +71,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("ProductionCors", policy =>
     {
         policy.WithOrigins(
-                "https://gestion-pasantias-facet-g9ascqg9ckd5eggd.centralus-01.azurewebsites.net"
+                "https://gestionpasantias-cchah8fwd2bqcye0.centralus-01.azurewebsites.net"
               )
               .AllowAnyHeader()
               .AllowAnyMethod()
