@@ -11,5 +11,8 @@ namespace Backend.Interfaces
         Task<IEnumerable<PasantiaDetalleDto>> GetAllDetalleAsync();
         Task<IEnumerable<Pasantia>> GetByConvenioIdAsync(int convenioId);
         Task<IEnumerable<Pasantia>> GetByEstudianteIdAsync(int estudianteId);
+
+        // Nuevo: agregar pago asociado a una pasantía
+        Task AgregarPagoAsync(Pago pago);
     }
 }

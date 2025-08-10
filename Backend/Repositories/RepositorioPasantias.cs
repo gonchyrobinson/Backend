@@ -63,5 +63,11 @@ namespace Backend.Repositories
         {
             return await _dbSet.Where(p => p.IdEstudiante == estudianteId).ToListAsync();
         }
+        public async Task AgregarPagoAsync(Pago pago)
+        {
+            var context = (ApplicationDbContext)_context;
+            context.Pagos.Add(pago);
+            await context.SaveChangesAsync();
+        }
     }
 }

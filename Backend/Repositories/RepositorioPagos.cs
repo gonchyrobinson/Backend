@@ -24,5 +24,16 @@ namespace Backend.Repositories
                 throw new Backend.Exceptions.NotFoundException($"No se encontró un pago para la pasantía con ID {idPasantia}");
             return pago;
         }
+
+        public async Task<Pago> MarcarComoPagadoAsync(int idPago, DateOnly? fechaPago = null)
+        {
+            var pago = await _context.Pagos.FirstOrDefaultAsync(p => p.IdPago == idPago);
+            if (pago == null)
+                throw new Backend.Exceptions.NotFoundException($"No se encontró el pago con ID {idPago}");
+            pago.Pagado = true;
+            pago.FechaPago = fechaPago ?? DateOnly.FromDateTime(DateTime.Today);
+            await _context.SaveChangesAsync();
+            return pago;
+        }
     }
 }

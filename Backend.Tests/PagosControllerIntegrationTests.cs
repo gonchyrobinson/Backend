@@ -155,5 +155,24 @@ namespace Backend.Tests
 
             Assert.Equal("No se encontró un pago para la pasantía con ID 2", exception.Message);
         }
+
+        [Fact]
+        public async Task MarcarComoPagado_SetsPagadoAndFechaPago()
+        {
+            // Arrange
+            var pago = new Pago { IdPago = 1, Monto = 1000, Pagado = false, FechaPago = null };
+            _dbContext.Pagos.Add(pago);
+            _dbContext.SaveChanges();
+            var dto = new MarcarPagoDto { IdPago = 1 };
+
+            // Act
+            var result = await _controller.MarcarComoPagado(dto);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var pagoDto = Assert.IsType<PagosDto>(okResult.Value);
+            Assert.True(pagoDto.Pagado);
+            Assert.NotNull(pagoDto.FechaPago);
+        }
     }
 }
