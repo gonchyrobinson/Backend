@@ -69,9 +69,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("ProductionCors", policy =>
     {
         policy.WithOrigins(
-                "https://*.azurewebsites.net",
-                "https://*.azurewebsites.net:443",
-                "https://*.azurewebsites.net:80"
+                "https://gestion-pasantias-facet-g9ascqg9ckd5eggd.centralus-01.azurewebsites.net"
               )
               .AllowAnyHeader()
               .AllowAnyMethod()
