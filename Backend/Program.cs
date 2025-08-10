@@ -11,6 +11,7 @@ using Backend.Services;
 using Backend.Mappings;
 using Backend.Constants;
 using Backend.Middleware;
+using AspNetCoreRateLimit;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -154,6 +155,22 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
+
+// Middleware de headers de seguridad (CSP, X-Frame-Options, etc.)
+app.Use(async (context, next) =>
+{
+    context.Response.Headers["X-Frame-Options"] = "DENY";
+    context.Response.Headers["X-Content-Type-Options"] = "nosniff";
+    context.Response.Headers["Referrer-Policy"] = "no-referrer";
+    await next();
+});
+
+// HSTS solo en producción
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHsts();
+}
+
 // Registrar el middleware de excepciones personalizado
 app.UseMiddleware<ExceptionMiddleware>();
 
@@ -176,6 +193,9 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseCors("ProductionCors");
+
+    // Middleware de Rate Limiting
+    app.UseIpRateLimiting();
 }
 
 app.UseHttpsRedirection();
