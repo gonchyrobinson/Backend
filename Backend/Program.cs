@@ -47,6 +47,17 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(
                 "http://localhost:3000",
+                "http://localhost:3001",
+                "https://localhost:3001",
+                "http://localhost:3002",
+                "https://localhost:3002",
+                "http://localhost:3003",
+                "https://localhost:3003",
+                "http://localhost:3004",
+                "https://localhost:3004",
+                "http://localhost:3005",
+                "https://localhost:3005",
+                "http://localhost:3006",
                 "https://localhost:3000",
                 "http://localhost:5173",
                 "https://localhost:5173",
@@ -65,7 +76,8 @@ builder.Services.AddCors(options =>
               )
               .AllowAnyHeader()
               .AllowAnyMethod()
-              .AllowCredentials();
+              .AllowCredentials()
+              .SetIsOriginAllowedToAllowWildcardSubdomains(); 
     });
 
     options.AddPolicy("ProductionCors", policy =>
@@ -197,8 +209,8 @@ if (!app.Environment.IsDevelopment())
 // Middleware de excepciones
 app.UseMiddleware<ExceptionMiddleware>();
 
-// Swagger en desarrollo
-if (app.Environment.IsDevelopment())
+// Swagger en desarrollo y staging
+if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Staging") || app.Environment.IsEnvironment("Production"))
 {
     app.UseSwagger();
     app.UseSwaggerUI(c =>
