@@ -83,11 +83,19 @@ builder.Services.AddCors(options =>
     options.AddPolicy("ProductionCors", policy =>
     {
         policy.WithOrigins(
+                "http://localhost:3000",
+                "https://localhost:3000",
+                "http://localhost:3001",
+                "https://localhost:3001",
+                "http://localhost:3002",
+                "https://localhost:3002",
+                "http://localhost:3003",
                 "https://gestionpasantias-cchah8fwd2bqcye0.centralus-01.azurewebsites.net"
               )
               .AllowAnyHeader()
               .AllowAnyMethod()
-              .AllowCredentials();
+              .AllowCredentials()
+              .SetIsOriginAllowedToAllowWildcardSubdomains();
     });
 });
 
