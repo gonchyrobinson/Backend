@@ -36,7 +36,7 @@ public partial class Pasantia
     [System.ComponentModel.DataAnnotations.Schema.Column("frecuencia_pago")]
     public string? FrecuenciaPago { get; set; }
     [System.ComponentModel.DataAnnotations.Schema.Column("monto_pago")]
-    public decimal MontoPago { get; set; }
+    public decimal? MontoPago { get; set; }
 
     public virtual Convenio? IdConvenioNavigation { get; set; }
 

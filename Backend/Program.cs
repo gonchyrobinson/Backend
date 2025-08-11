@@ -11,6 +11,8 @@ using Backend.Services;
 using Backend.Mappings;
 using Backend.Constants;
 using Backend.Middleware;
+using Backend.Reports;
+using Backend.Reports.Contrato_Pasantia_Estudiante;
 using System.Text;
 using System.Threading.RateLimiting; // <= .NET 8 Rate Limiter
 
@@ -143,6 +145,11 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<ServicioAuditoria>();
 
+// Reporte Contrato Pasantía Estudiante
+builder.Services.AddScoped<IReporteDataAggregator<int, ContratoPasantiaEstudianteReportData>, ContratoPasantiaEstudianteReportAggregator>();
+builder.Services.AddScoped<IReporteRenderer<ContratoPasantiaEstudianteReportData>, ContratoPasantiaEstudianteReportRenderer>();
+builder.Services.AddScoped<ContratoPasantiaEstudianteReportService>();
+
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -208,13 +215,9 @@ app.Use(async (context, next) =>
     await next();
 });
 
-// HSTS solo en producción
-if (!app.Environment.IsDevelopment())
-{
+    // HSTS solo en producción
     app.UseHsts();
-}
 
-// Middleware de excepciones
 app.UseMiddleware<ExceptionMiddleware>();
 
 // Swagger en desarrollo y staging
