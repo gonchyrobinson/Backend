@@ -146,9 +146,13 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<ServicioAuditoria>();
 
 // Reporte Contrato Pasantía Estudiante
-builder.Services.AddScoped<IReporteDataAggregator<int, ContratoPasantiaEstudianteReportData>, ContratoPasantiaEstudianteReportAggregator>();
-builder.Services.AddScoped<IReporteRenderer<ContratoPasantiaEstudianteReportData>, ContratoPasantiaEstudianteReportRenderer>();
+builder.Services.AddScoped<IReporteDataAggregator<int, ReportData>, ReportAggregator>();
+builder.Services.AddScoped<IReporteRenderer<ReportData>, ContratoPasantiaEstudianteReportRenderer>();
 builder.Services.AddScoped<ContratoPasantiaEstudianteReportService>();
+
+// Reporte Extension Seguro
+builder.Services.AddScoped<IReporteRenderer<ReportData>, Backend.Reports.ExtensionSeguro.ExtensionSeguroReportRenderer>();
+builder.Services.AddScoped<Backend.Reports.ExtensionSeguro.ExtensionSeguroReportService>();
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();

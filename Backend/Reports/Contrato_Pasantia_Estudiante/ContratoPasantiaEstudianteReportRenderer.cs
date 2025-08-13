@@ -2,9 +2,9 @@ using System.Collections.Generic;
 
 namespace Backend.Reports.Contrato_Pasantia_Estudiante
 {
-    public class ContratoPasantiaEstudianteReportRenderer : IReporteRenderer<ContratoPasantiaEstudianteReportData>
+    public class ContratoPasantiaEstudianteReportRenderer : IReporteRenderer<ReportData>
     {
-        public Dictionary<string, string> MapFields(ContratoPasantiaEstudianteReportData data)
+        public Dictionary<string, string> MapFields(ReportData data)
         {
             return new Dictionary<string, string>
             {

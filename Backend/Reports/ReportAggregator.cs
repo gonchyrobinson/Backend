@@ -1,17 +1,18 @@
 using System.Threading.Tasks;
 using Backend.Interfaces;
 using Backend.Models;
+using Backend.Reports.Contrato_Pasantia_Estudiante;
 
-namespace Backend.Reports.Contrato_Pasantia_Estudiante
+namespace Backend.Reports
 {
-    public class ContratoPasantiaEstudianteReportAggregator : IReporteDataAggregator<int, ContratoPasantiaEstudianteReportData>
+    public class ReportAggregator : IReporteDataAggregator<int, ReportData>
     {
         private readonly IRepositorioPasantias _repoPasantias;
         private readonly IRepositorioEstudiantes _repoEstudiantes;
         private readonly IRepositorioEmpresas _repoEmpresas;
         private readonly IRepositorioConvenios _repoConvenios;
 
-        public ContratoPasantiaEstudianteReportAggregator(
+        public ReportAggregator(
             IRepositorioPasantias repoPasantias,
             IRepositorioEstudiantes repoEstudiantes,
             IRepositorioEmpresas repoEmpresas,
@@ -23,7 +24,7 @@ namespace Backend.Reports.Contrato_Pasantia_Estudiante
             _repoConvenios = repoConvenios;
         }
 
-        public async Task<ContratoPasantiaEstudianteReportData> GetDataAsync(int id)
+        public async Task<ReportData> GetDataAsync(int id)
         {
             // Obtener la pasantía
             var pasantia = await _repoPasantias.GetByIdAsync(id);
@@ -47,7 +48,7 @@ namespace Backend.Reports.Contrato_Pasantia_Estudiante
 
 
             // Mapear a DTO plano para el reporte
-            return ContratoPasantiaEstudianteReportDataFactory.FromEntities(pasantia, estudiante, empresa, convenio);
+            return ReportDataFactory.FromEntities(pasantia, estudiante, empresa, convenio);
         }
     }
 }

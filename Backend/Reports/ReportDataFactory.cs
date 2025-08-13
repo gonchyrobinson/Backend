@@ -1,10 +1,10 @@
 using Backend.Models;
 
-namespace Backend.Reports.Contrato_Pasantia_Estudiante
+namespace Backend.Reports
 {
-    public static class ContratoPasantiaEstudianteReportDataFactory
+    public static class ReportDataFactory
     {
-        public static ContratoPasantiaEstudianteReportData FromEntities(
+        public static ReportData FromEntities(
             Pasantia pasantia,
             Estudiante estudiante,
             Empresa empresa,
@@ -32,7 +32,7 @@ namespace Backend.Reports.Contrato_Pasantia_Estudiante
                 return null;
             }
 
-            return new ContratoPasantiaEstudianteReportData
+            return new ReportData
             {
                 // Convenio
                 ConvenioRepresentanteEmpresa = SafeString(convenio?.RepresentanteEmpresa),
