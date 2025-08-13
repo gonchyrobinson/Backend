@@ -24,6 +24,15 @@
           "Microsoft.Extensions.Options": "6.0.0"
         }
       },
+      "DocumentFormat.OpenXml": {
+        "type": "Direct",
+        "requested": "[2.13.1, )",
+        "resolved": "2.13.1",
+        "contentHash": "iLoOw/9rhoxPbhxUa8rcHRANpnPlUs3DGqqRlScVjZutGwcUkD2UCRo8YteUUva6nSvAm7ebAXKf5aGF4nQC6Q==",
+        "dependencies": {
+          "System.IO.Packaging": "4.7.0"
+        }
+      },
       "FluentValidation.AspNetCore": {
         "type": "Direct",
         "requested": "[11.3.0, )",
@@ -194,6 +203,16 @@
         "dependencies": {
           "System.IO.Pipelines": "9.0.7",
           "System.Text.Encodings.Web": "9.0.7"
+        }
+      },
+      "TemplateEngine.Docx": {
+        "type": "Direct",
+        "requested": "[1.1.5, )",
+        "resolved": "1.1.5",
+        "contentHash": "8OrDtfR45YuFgBRgldg704F0YFD6fhxwAT3/lSOVyxd0E4e+4lTXbJnUpBq40MOtexNragBcNyVNc+mWvoHimw==",
+        "dependencies": {
+          "DocumentFormat.OpenXml": "2.7.2",
+          "Newtonsoft.Json": "10.0.3"
         }
       },
       "AutoMapper": {
@@ -945,6 +964,11 @@
         "dependencies": {
           "System.Runtime": "4.3.0"
         }
+      },
+      "System.IO.Packaging": {
+        "type": "Transitive",
+        "resolved": "4.7.0",
+        "contentHash": "9VV4KAbgRQZ79iEoG40KIeZy38O30oWwewScAST879+oki8g/Wa2HXZQgrhDDxQM4GkP1PnRJll05NMiVPbYAw=="
       },
       "System.IO.Pipelines": {
         "type": "Transitive",

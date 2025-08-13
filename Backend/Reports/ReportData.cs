@@ -1,9 +1,9 @@
-namespace Backend.Reports.Contrato_Pasantia_Estudiante
+namespace Backend.Reports
 {
     /// <summary>
     /// DTO plano con todos los campos requeridos por el template PDF de Contrato Pasantía Estudiante.
     /// </summary>
-        public class ContratoPasantiaEstudianteReportData
+        public class ReportData
         {
             // Convenio
             public string? ConvenioRepresentanteEmpresa { get; set; }

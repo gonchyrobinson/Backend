@@ -138,6 +138,14 @@
           "System.Diagnostics.EventLog": "6.0.0"
         }
       },
+      "DocumentFormat.OpenXml": {
+        "type": "Transitive",
+        "resolved": "2.13.1",
+        "contentHash": "iLoOw/9rhoxPbhxUa8rcHRANpnPlUs3DGqqRlScVjZutGwcUkD2UCRo8YteUUva6nSvAm7ebAXKf5aGF4nQC6Q==",
+        "dependencies": {
+          "System.IO.Packaging": "4.7.0"
+        }
+      },
       "FluentValidation": {
         "type": "Transitive",
         "resolved": "11.5.1",
@@ -1026,6 +1034,11 @@
           "System.Runtime": "4.3.0"
         }
       },
+      "System.IO.Packaging": {
+        "type": "Transitive",
+        "resolved": "4.7.0",
+        "contentHash": "9VV4KAbgRQZ79iEoG40KIeZy38O30oWwewScAST879+oki8g/Wa2HXZQgrhDDxQM4GkP1PnRJll05NMiVPbYAw=="
+      },
       "System.IO.Pipelines": {
         "type": "Transitive",
         "resolved": "9.0.7",
@@ -1403,6 +1416,15 @@
           "System.Xml.ReaderWriter": "4.3.0"
         }
       },
+      "TemplateEngine.Docx": {
+        "type": "Transitive",
+        "resolved": "1.1.5",
+        "contentHash": "8OrDtfR45YuFgBRgldg704F0YFD6fhxwAT3/lSOVyxd0E4e+4lTXbJnUpBq40MOtexNragBcNyVNc+mWvoHimw==",
+        "dependencies": {
+          "DocumentFormat.OpenXml": "2.7.2",
+          "Newtonsoft.Json": "10.0.3"
+        }
+      },
       "xunit.abstractions": {
         "type": "Transitive",
         "resolved": "2.0.3",
@@ -1448,6 +1470,7 @@
         "dependencies": {
           "AspNetCoreRateLimit": "[5.0.0, )",
           "AutoMapper.Extensions.Microsoft.DependencyInjection": "[12.0.0, )",
+          "DocumentFormat.OpenXml": "[2.13.1, )",
           "FluentValidation.AspNetCore": "[11.3.0, )",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "[8.0.0, )",
           "Microsoft.EntityFrameworkCore": "[8.0.13, )",
@@ -1462,6 +1485,7 @@
           "Swashbuckle.AspNetCore": "[6.6.2, )",
           "System.IdentityModel.Tokens.Jwt": "[8.13.0, )",
           "System.Text.Json": "[9.0.7, )",
+          "TemplateEngine.Docx": "[1.1.5, )",
           "itext7": "[9.2.0, )",
           "itext7.bouncy-castle-adapter": "[9.2.0, )"
         }
