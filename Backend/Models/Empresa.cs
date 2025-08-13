@@ -9,8 +9,6 @@ public partial class Empresa
 
     public string? Nombre { get; set; }
 
-    public string? Vigencia { get; set; }
-
     public DateOnly? FechaInicio { get; set; }
 
     public DateOnly? FechaFin { get; set; }

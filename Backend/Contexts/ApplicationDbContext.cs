@@ -135,9 +135,6 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.TipoContrato)
                 .HasColumnType("enum('temporal','indefinido','otro')")
                 .HasColumnName("tipo_contrato");
-            entity.Property(e => e.Vigencia)
-                .HasColumnType("enum('vigente','no_vigente')")
-                .HasColumnName("vigencia");
         });
 
         modelBuilder.Entity<Estudiante>(entity =>

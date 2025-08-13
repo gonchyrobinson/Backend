@@ -6,9 +6,16 @@ namespace Backend.DTOs
     {
         public int IdEmpresa { get; set; }
         public string? Nombre { get; set; }
-
-        [RegularExpression("^(vigente|no_vigente)?$", ErrorMessage = "Vigencia debe ser 'vigente', 'no_vigente' o null.")]
-        public string? Vigencia { get; set; }
+        public string? Vigencia
+        {
+            get
+            {
+                if (FechaFin.HasValue && FechaFin.Value < DateOnly.FromDateTime(DateTime.Today))
+                    return "no_vigente";
+                return "vigente";
+            }
+            set { /* setter requerido por serialización, pero ignorado */ }
+        }
 
         [DataType(DataType.Date, ErrorMessage = "FechaInicio debe ser una fecha válida.")]
         public DateOnly? FechaInicio { get; set; }
@@ -80,8 +87,7 @@ namespace Backend.DTOs
     {
         public string? Nombre { get; set; }
 
-        [RegularExpression("^(vigente|no_vigente)?$", ErrorMessage = "Vigencia debe ser 'vigente', 'no_vigente' o null.")]
-        public string? Vigencia { get; set; }
+        public bool? Vigencia { get; set; }
 
         [RegularExpression("^(temporal|indefinido|otro)?$", ErrorMessage = "TipoContrato debe ser 'temporal', 'indefinido', 'otro' o null.")]
         public string? TipoContrato { get; set; }

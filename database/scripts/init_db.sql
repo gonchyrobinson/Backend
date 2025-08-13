@@ -17,7 +17,6 @@ USE pasantias_db;
 CREATE TABLE EMPRESAS (
     id_empresa INT PRIMARY KEY AUTO_INCREMENT,
     nombre VARCHAR(255),
-    vigencia ENUM('vigente', 'no_vigente'),
     fecha_inicio DATE,
     fecha_fin DATE,
     tipo_contrato ENUM('temporal', 'indefinido', 'otro'),
