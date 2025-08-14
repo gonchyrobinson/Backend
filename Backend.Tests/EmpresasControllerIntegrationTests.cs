@@ -39,14 +39,12 @@ namespace Backend.Tests
             var empresa = new Empresa {
                 IdEmpresa = 1,
                 Nombre = "Acme Corp",
-                Vigencia = "Activa",
                 FechaInicio = DateOnly.FromDateTime(System.DateTime.Today),
                 FechaFin = DateOnly.FromDateTime(System.DateTime.Today.AddYears(1)),
                 TipoContrato = "Temporal",
                 Encargado = "Juan Perez",
                 Celular = "123456789",
                 CorreoElectronico = "acme@empresa.com",
-                Sudocu = DateOnly.FromDateTime(System.DateTime.Today),
                 Eliminado = false,
                 FechaEliminacion = null
             };

@@ -35,5 +35,11 @@ namespace Backend.Repositories
             await _context.SaveChangesAsync();
             return pago;
         }
+        public async Task<IEnumerable<Pago>> GetPagosPorVencerAsync(DateOnly fecha)
+        {
+            return await _context.Pagos
+                .Where(p => p.FechaVencimiento != null && p.FechaVencimiento >= fecha)
+                .ToListAsync();
+        }
     }
 }

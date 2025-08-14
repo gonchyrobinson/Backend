@@ -35,8 +35,7 @@ namespace Backend.DTOs
         [EmailAddress(ErrorMessage = "CorreoElectronico debe tener formato de correo electrónico válido.")]
         public string? CorreoElectronico { get; set; }
 
-        [DataType(DataType.Date, ErrorMessage = "Sudocu debe ser una fecha válida.")]
-        public DateOnly? Sudocu { get; set; }
+    public string? Sudocu { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -72,8 +71,7 @@ namespace Backend.DTOs
         [EmailAddress(ErrorMessage = "CorreoElectronico debe tener formato de correo electrónico válido.")]
         public string? CorreoElectronico { get; set; }
 
-        [DataType(DataType.Date, ErrorMessage = "Sudocu debe ser una fecha válida.")]
-        public DateOnly? Sudocu { get; set; }
+    public string? Sudocu { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

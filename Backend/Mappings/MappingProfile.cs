@@ -15,7 +15,6 @@ namespace Backend.Mappings
             // Mapeo para Estudiante
             CreateMap<Estudiante, StudentDto>().ReverseMap();
             CreateMap<StudentCreateDto, Estudiante>();
-            CreateMap<StudentUpdateDto, Estudiante>();
 
             // Mapeo para Empresa
             CreateMap<Empresa, EmpresaDto>().ReverseMap()
@@ -32,8 +31,8 @@ namespace Backend.Mappings
                 .ForMember(dest => dest.ObraSocial, opt => opt.MapFrom(src => src.ObraSocial))
                 .ForMember(dest => dest.Art, opt => opt.MapFrom(src => src.Art))
                 .ForMember(dest => dest.TutorEmpresa, opt => opt.MapFrom(src => src.TutorEmpresa))
+                .ForMember(dest => dest.dniTutorFacultad, opt => opt.MapFrom(src => src.dniTutorFacultad))
                 .ForMember(dest => dest.TutorFacultad, opt => opt.MapFrom(src => src.TutorFacultad))
-                .ForMember(dest => dest.Expediente, opt => opt.MapFrom(src => src.Expediente))
                 .ForMember(dest => dest.FechaInicio, opt => opt.MapFrom(src => src.FechaInicio))
                 .ForMember(dest => dest.FechaFin, opt => opt.MapFrom(src => src.FechaFin))
                 .ForMember(dest => dest.TipoAcuerdo, opt => opt.MapFrom(src => src.TipoAcuerdo))
