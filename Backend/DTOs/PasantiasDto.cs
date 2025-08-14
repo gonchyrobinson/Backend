@@ -10,8 +10,9 @@ namespace Backend.DTOs
         public string? Art { get; set; }
         public string? TutorEmpresa { get; set; }
         public string? TutorFacultad { get; set; }
-        public string? Expediente { get; set; }
+        public string? dniTutorFacultad { get; set; }
         public DateOnly? FechaInicio { get; set; }
+        public string? Tramite => $"EXP-FACET-{IdPasantia:D3}";
         public DateOnly? FechaFin { get; set; }
         public string? TipoAcuerdo { get; set; }
         public string? FrecuenciaPago { get; set; }
@@ -30,7 +31,7 @@ namespace Backend.DTOs
         public string? Art { get; set; }
         public string? TutorEmpresa { get; set; }
         public string? TutorFacultad { get; set; }
-        public string? Expediente { get; set; }
+        public string? dniTutorFacultad { get; set; }
         public DateOnly? FechaInicio { get; set; }
         public DateOnly? FechaFin { get; set; }
         public string? TipoAcuerdo { get; set; }

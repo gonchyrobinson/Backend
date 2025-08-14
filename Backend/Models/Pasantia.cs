@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System;
 using System.Collections.Generic;
 
 namespace Backend.Models;
@@ -20,8 +21,7 @@ public partial class Pasantia
     public string? TutorEmpresa { get; set; }
 
     public string? TutorFacultad { get; set; }
-
-    public string? Expediente { get; set; }
+    public string? dniTutorFacultad { get; set; }
 
     public DateOnly? FechaInicio { get; set; }
 
@@ -29,13 +29,12 @@ public partial class Pasantia
 
     public string? TipoAcuerdo { get; set; }
 
-
     public string? Observaciones { get; set; }
 
-    // Mapea la columna frecuencia_pago ENUM('Mensual', 'Trimestral', 'Semestral', 'Anual')
-    [System.ComponentModel.DataAnnotations.Schema.Column("frecuencia_pago")]
+    [Column("frecuencia_pago")]
     public string? FrecuenciaPago { get; set; }
-    [System.ComponentModel.DataAnnotations.Schema.Column("monto_pago")]
+    [Column("monto_pago")]
+
     public decimal? MontoPago { get; set; }
 
     public virtual Convenio? IdConvenioNavigation { get; set; }

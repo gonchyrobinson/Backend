@@ -33,19 +33,27 @@ namespace Backend.Repositories
                         query = query.Where(c => c.IdEmpresaNavigation != null && c.IdEmpresaNavigation.Nombre.Contains(filtro.NombreEmpresa));
                     if (!string.IsNullOrWhiteSpace(filtro.DocRepresentanteFacultad))
                         query = query.Where(c => c.DocRepresentanteFacultad != null && c.DocRepresentanteFacultad.Contains(filtro.DocRepresentanteFacultad));
+                    if(!string.IsNullOrWhiteSpace(filtro.Carrera))
+                    {
+                        query = query.Where(c => c.Pasantia.Any(p =>
+                            p.IdEstudianteNavigation != null &&
+                            !string.IsNullOrEmpty(p.IdEstudianteNavigation.Carrera) &&
+                            p.IdEstudianteNavigation.Carrera == filtro.Carrera
+                        ));
+                    }
                 }
 
                 var convenios = query
                     .Select(c => new ConvenioEmpresaDto
                     {
                         IdConvenio = c.IdConvenio,
-                        Expediente = c.Expediente,
                         FechaFirma = c.FechaFirma,
                         FechaCaducidad = c.FechaCaducidad,
                         IdEmpresa = c.IdEmpresa,
                         NombreEmpresa = c.IdEmpresaNavigation != null ? c.IdEmpresaNavigation.Nombre : null,
                         RepresentanteEmpresa = c.RepresentanteEmpresa,
                         DomicilioLegal = c.DomicilioLegal,
+                        DomicilioAlternativo = c.DomicilioAlternativo,
                         DocRepresentanteFacultad = c.DocRepresentanteFacultad
                     });
                 return await convenios.ToListAsync();

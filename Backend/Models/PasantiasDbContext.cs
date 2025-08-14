@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using Backend.Models;
 using Microsoft.EntityFrameworkCore;
+using Pomelo.EntityFrameworkCore.MySql.Scaffolding.Internal;
 
-namespace Backend.Contexts;
+namespace Backend.Models;
 
-public partial class ApplicationDbContext : DbContext
+public partial class PasantiasDbContext : DbContext
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    public PasantiasDbContext()
+    {
+    }
+
+    public PasantiasDbContext(DbContextOptions<PasantiasDbContext> options)
         : base(options)
     {
     }
@@ -26,17 +30,21 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<Usuario> Usuarios { get; set; }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseMySql("server=dbpasantias.mysql.database.azure.com;port=3306;userid=myadmin;password=SBE_facet2025;database=pasantias_db;sslmode=Required", Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.42-mysql"));
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
             .UseCollation("utf8mb4_unicode_ci")
             .HasCharSet("utf8mb4");
 
-        modelBuilder.Entity<Auditoria>(entity =>
+    modelBuilder.Entity<Auditoria>(entity =>
         {
             entity.HasKey(e => e.IdAuditoria).HasName("PRIMARY");
 
-            entity.ToTable("AUDITORIA");
+            entity.ToTable("auditoria");
 
             entity.HasIndex(e => e.IdUsuario, "id_usuario");
 
@@ -64,14 +72,14 @@ public partial class ApplicationDbContext : DbContext
 
             entity.HasOne(d => d.IdUsuarioNavigation).WithMany(p => p.Auditoria)
                 .HasForeignKey(d => d.IdUsuario)
-                .HasConstraintName("AUDITORIA_ibfk_1");
+                .HasConstraintName("auditoria_ibfk_1");
         });
 
         modelBuilder.Entity<Convenio>(entity =>
         {
             entity.HasKey(e => e.IdConvenio).HasName("PRIMARY");
 
-            entity.ToTable("CONVENIOS");
+            entity.ToTable("convenios");
 
             entity.HasIndex(e => e.IdEmpresa, "id_empresa");
 
@@ -98,14 +106,14 @@ public partial class ApplicationDbContext : DbContext
 
             entity.HasOne(d => d.IdEmpresaNavigation).WithMany(p => p.Convenios)
                 .HasForeignKey(d => d.IdEmpresa)
-                .HasConstraintName("CONVENIOS_ibfk_1");
+                .HasConstraintName("convenios_ibfk_1");
         });
 
         modelBuilder.Entity<Empresa>(entity =>
         {
             entity.HasKey(e => e.IdEmpresa).HasName("PRIMARY");
 
-            entity.ToTable("EMPRESAS");
+            entity.ToTable("empresas");
 
             entity.Property(e => e.IdEmpresa).HasColumnName("id_empresa");
             entity.Property(e => e.Celular)
@@ -140,7 +148,7 @@ public partial class ApplicationDbContext : DbContext
         {
             entity.HasKey(e => e.IdEstudiante).HasName("PRIMARY");
 
-            entity.ToTable("ESTUDIANTES");
+            entity.ToTable("estudiantes");
 
             entity.Property(e => e.IdEstudiante).HasColumnName("id_estudiante");
             entity.Property(e => e.Apellido)
@@ -150,7 +158,7 @@ public partial class ApplicationDbContext : DbContext
                 .HasMaxLength(100)
                 .HasColumnName("area_trabajo");
             entity.Property(e => e.Carrera)
-                .HasMaxLength(100)
+                .HasColumnType("enum('AGRIMENSURA','INGENIERÍA AZUCARERA','INGENIERÍA BIOMÉDICA','INGENIERÍA CIVIL','INGENIERÍA EN COMPUTACIÓN','INGENIERÍA EN INFORMÁTICA','INGENIERÍA ELÉCTRICA','INGENIERÍA ELECTRÓNICA','INGENIERÍA GEODÉSICA Y GEOFÍSICA','INGENIERÍA INDUSTRIAL','INGENIERÍA MECÁNICA','INGENIERÍA QUÍMICA','LICENCIATURA EN FÍSICA','LICENCIATURA EN MATEMÁTICA','LICENCIATURA EN INFORMÁTICA','DISEÑO DE ILUMINACIÓN','PROGRAMADOR UNIVERSITARIO','TECNICATURA UNIVERSITARIA EN TECNOLOGÍA','AZUCARERA E INDUSTRIAS DERIVADAS','TECNICATURA UNIVERSITARIA EN FÍSICA','TECNICATURA UNIVERSITARIA EN FÍSICA AMBIENTAL')")
                 .HasColumnName("carrera");
             entity.Property(e => e.Documento)
                 .HasMaxLength(50)
@@ -179,7 +187,7 @@ public partial class ApplicationDbContext : DbContext
         {
             entity.HasKey(e => e.IdPago).HasName("PRIMARY");
 
-            entity.ToTable("PAGOS");
+            entity.ToTable("pagos");
 
             entity.HasIndex(e => e.IdPasantia, "idx_pasantia");
 
@@ -193,17 +201,20 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.Observaciones)
                 .HasColumnType("text")
                 .HasColumnName("observaciones");
+            entity.Property(e => e.Pagado)
+                .HasDefaultValueSql("'0'")
+                .HasColumnName("pagado");
 
             entity.HasOne(d => d.IdPasantiaNavigation).WithMany(p => p.Pagos)
                 .HasForeignKey(d => d.IdPasantia)
-                .HasConstraintName("PAGOS_ibfk_1");
+                .HasConstraintName("pagos_ibfk_1");
         });
 
         modelBuilder.Entity<Pasantia>(entity =>
         {
             entity.HasKey(e => e.IdPasantia).HasName("PRIMARY");
 
-            entity.ToTable("PASANTIAS");
+            entity.ToTable("pasantias");
 
             entity.HasIndex(e => e.IdConvenio, "idx_convenio");
 
@@ -218,8 +229,14 @@ public partial class ApplicationDbContext : DbContext
                 .HasColumnName("asignacion_mensual");
             entity.Property(e => e.FechaFin).HasColumnName("fecha_fin");
             entity.Property(e => e.FechaInicio).HasColumnName("fecha_inicio");
+            entity.Property(e => e.FrecuenciaPago)
+                .HasColumnType("enum('Mensual','Trimestral','Semestral','Anual')")
+                .HasColumnName("frecuencia_pago");
             entity.Property(e => e.IdConvenio).HasColumnName("id_convenio");
             entity.Property(e => e.IdEstudiante).HasColumnName("id_estudiante");
+            entity.Property(e => e.MontoPago)
+                .HasPrecision(10)
+                .HasColumnName("monto_pago");
             entity.Property(e => e.ObraSocial)
                 .HasMaxLength(100)
                 .HasColumnName("obra_social");
@@ -237,21 +254,22 @@ public partial class ApplicationDbContext : DbContext
                 .HasColumnName("tutor_facultad");
             entity.Property(e => e.dniTutorFacultad)
                 .HasMaxLength(100)
-                .HasColumnName("dni_tutor_facultad");
+                .HasColumnName("dniTutorFacultad");
+
             entity.HasOne(d => d.IdConvenioNavigation).WithMany(p => p.Pasantia)
                 .HasForeignKey(d => d.IdConvenio)
-                .HasConstraintName("PASANTIAS_ibfk_2");
+                .HasConstraintName("pasantias_ibfk_2");
 
             entity.HasOne(d => d.IdEstudianteNavigation).WithMany(p => p.Pasantia)
                 .HasForeignKey(d => d.IdEstudiante)
-                .HasConstraintName("PASANTIAS_ibfk_1");
+                .HasConstraintName("pasantias_ibfk_1");
         });
 
         modelBuilder.Entity<Usuario>(entity =>
         {
             entity.HasKey(e => e.IdUsuario).HasName("PRIMARY");
 
-            entity.ToTable("USUARIOS");
+            entity.ToTable("usuarios");
 
             entity.HasIndex(e => e.Correo, "correo").IsUnique();
 

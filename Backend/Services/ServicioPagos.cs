@@ -47,7 +47,13 @@ namespace Backend.Services
             return dto.IdPago;
         }
 
-        // Métodos específicos para pagos pueden agregarse aquí
+
+        // Pagos por vencer hasta una fecha
+        public async Task<IEnumerable<PagosDto>> GetPagosPorVencerAsync(DateOnly fecha)
+        {
+            var pagos = await _repoPagos.GetPagosPorVencerAsync(fecha);
+            return _mapper.Map<IEnumerable<PagosDto>>(pagos);
+        }
 
         public async Task<PagosDto> GetByPasantiaIdAsync(int idPasantia)
         {

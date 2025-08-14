@@ -48,6 +48,13 @@ namespace Backend.Services
         }
         public override async Task<PasantiaDto> CreateAsync(PasantiaCreateDto dto)
         {
+            // Validar FrecuenciaPago
+            var valoresFrecuencia = new[] { "Mensual", "Trimestral", "Semestral", "Anual" };
+            if (!string.IsNullOrEmpty(dto.FrecuenciaPago) && !valoresFrecuencia.Contains(dto.FrecuenciaPago))
+            {
+                throw new Backend.Exceptions.ValidationException($"FrecuenciaPago debe ser uno de: {string.Join(", ", valoresFrecuencia)}", "Pasantia");
+            }
+
             // Validar ENUM tipo_acuerdo
             var valoresValidos = new[] { "Pasantia", "PPS", "otro" };
             if (!string.IsNullOrEmpty(dto.TipoAcuerdo) && !valoresValidos.Contains(dto.TipoAcuerdo))

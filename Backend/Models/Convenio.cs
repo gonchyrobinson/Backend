@@ -14,8 +14,7 @@ public partial class Convenio
     public int? NroAcuerdoMarco { get; set; }
 
     public string? DomicilioLegal { get; set; }
-
-    public string? Expediente { get; set; }
+    public string? DomicilioAlternativo { get; set; }
 
     public string? DocRepresentanteEmpresa { get; set; }
 
