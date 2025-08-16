@@ -31,11 +31,12 @@ namespace Backend.Repositories
                         Art = p.Art,
                         TutorEmpresa = p.TutorEmpresa,
                         TutorFacultad = p.TutorFacultad,
-                        Expediente = p.Expediente,
                         FechaInicio = p.FechaInicio,
                         FechaFin = p.FechaFin,
                         TipoAcuerdo = p.TipoAcuerdo,
                         Observaciones = p.Observaciones,
+                        Sudocu = p.Sudocu,
+                        FrecuenciaPago = p.FrecuenciaPago,
                     },
                     Estudiante = p.IdEstudianteNavigation != null ? new StudentDto
                     {

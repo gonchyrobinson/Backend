@@ -17,7 +17,6 @@ namespace Backend.DTOs
         public DateOnly? FechaFin { get; set; }
 
         [Required]
-        [RegularExpression("^(temporal|indefinido|otro)$", ErrorMessage = "TipoContrato debe ser 'temporal', 'indefinido' u 'otro'.")]
         public string? TipoContrato { get; set; }
 
         public string? Encargado { get; set; }
@@ -54,7 +53,6 @@ namespace Backend.DTOs
         public DateOnly? FechaFin { get; set; }
 
         [Required]
-        [RegularExpression("^(temporal|indefinido|otro)$", ErrorMessage = "TipoContrato debe ser 'temporal', 'indefinido' u 'otro'.")]
         public string? TipoContrato { get; set; }
 
         public string? Encargado { get; set; }
@@ -83,7 +81,6 @@ namespace Backend.DTOs
         [RegularExpression("^(vigente|no_vigente)?$", ErrorMessage = "Vigencia debe ser 'vigente', 'no_vigente' o null.")]
         public string? Vigencia { get; set; }
 
-        [RegularExpression("^(temporal|indefinido|otro)?$", ErrorMessage = "TipoContrato debe ser 'temporal', 'indefinido', 'otro' o null.")]
         public string? TipoContrato { get; set; }
 
         [DataType(DataType.Date, ErrorMessage = "FechaInicioDesde debe ser una fecha válida.")]

@@ -23,6 +23,32 @@ namespace Backend.DTOs
 
     public class StudentCreateDto
     {
+        private static readonly HashSet<string> CarrerasValidas = new HashSet<string>
+        {
+            "AGRIMENSURA",
+            "INGENIERÍA AZUCARERA",
+            "INGENIERÍA BIOMÉDICA",
+            "INGENIERÍA CIVIL",
+            "INGENIERÍA EN COMPUTACIÓN",
+            "INGENIERÍA EN INFORMÁTICA",
+            "INGENIERÍA ELÉCTRICA",
+            "INGENIERÍA ELECTRÓNICA",
+            "INGENIERÍA GEODÉSICA Y GEOFÍSICA",
+            "INGENIERÍA INDUSTRIAL",
+            "INGENIERÍA MECÁNICA",
+            "INGENIERÍA QUÍMICA",
+            "LICENCIATURA EN FÍSICA",
+            "LICENCIATURA EN MATEMÁTICA",
+            "LICENCIATURA EN INFORMÁTICA",
+            "DISEÑO DE ILUMINACIÓN",
+            "PROGRAMADOR UNIVERSITARIO",
+            "TECNICATURA UNIVERSITARIA EN TECNOLOGÍA",
+            "AZUCARERA E INDUSTRIAS DERIVADAS",
+            "TECNICATURA UNIVERSITARIA EN FÍSICA",
+            "TECNICATURA UNIVERSITARIA EN FÍSICA AMBIENTAL",
+            "OTRA"
+        };
+
         public string? Apellido { get; set; }
         public string? Nombre { get; set; }
         public string? Documento { get; set; }

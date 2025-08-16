@@ -20,8 +20,9 @@ public partial class Pasantia
     public string? TutorEmpresa { get; set; }
 
     public string? TutorFacultad { get; set; }
+    public string? DniTutorFacultad { get; set; }
 
-    public string? Expediente { get; set; }
+
 
     public DateOnly? FechaInicio { get; set; }
 
@@ -37,6 +38,7 @@ public partial class Pasantia
     public string? FrecuenciaPago { get; set; }
     [System.ComponentModel.DataAnnotations.Schema.Column("monto_pago")]
     public decimal? MontoPago { get; set; }
+    public string? Sudocu { get; set; }
 
     public virtual Convenio? IdConvenioNavigation { get; set; }
 

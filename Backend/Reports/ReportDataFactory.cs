@@ -40,7 +40,6 @@ namespace Backend.Reports
                 ConvenioRepresentanteFacultad = SafeString(convenio?.RepresentanteFacultad),
                 ConvenioDNIRepresentanteFacultad = SafeString(convenio?.DocRepresentanteFacultad),
                 ConvenioDomicilioLegal = SafeString(convenio?.DomicilioLegal),
-                ConvenioExpediente = SafeString(convenio?.Expediente),
 
                 // Pasantía
                 AsignacionMensual = SafeDecimal(pasantia?.AsignacionMensual),
@@ -48,7 +47,6 @@ namespace Backend.Reports
                 Art = SafeString(pasantia?.Art),
                 TutorEmpresa = SafeString(pasantia?.TutorEmpresa),
                 TutorFacultad = SafeString(pasantia?.TutorFacultad),
-                Expediente = SafeString(pasantia?.Expediente),
                 MontoPago = SafeDecimal(pasantia?.MontoPago),
                 Observaciones = SafeString(pasantia?.Observaciones),
                 FechaInicio = SafeDate(pasantia?.FechaInicio),

@@ -19,7 +19,7 @@ namespace Backend.Reports.Contrato_Pasantia_Estudiante
                 ["Art"] = data.Art,
                 ["TutorEmpresa"] = data.TutorEmpresa,
                 ["TutorFacultad"] = data.TutorFacultad,
-                ["Expediente"] = data.Expediente,
+                ["Expediente"] = data.ConvenioExpediente,
                 ["MontoPago"] = data.MontoPago,
                 ["Observaciones"] = data.Observaciones,
                 ["TipoAcuerdo"] = data.TipoAcuerdo,

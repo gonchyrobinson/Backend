@@ -33,13 +33,13 @@ namespace Backend.Mappings
                 .ForMember(dest => dest.Art, opt => opt.MapFrom(src => src.Art))
                 .ForMember(dest => dest.TutorEmpresa, opt => opt.MapFrom(src => src.TutorEmpresa))
                 .ForMember(dest => dest.TutorFacultad, opt => opt.MapFrom(src => src.TutorFacultad))
-                .ForMember(dest => dest.Expediente, opt => opt.MapFrom(src => src.Expediente))
                 .ForMember(dest => dest.FechaInicio, opt => opt.MapFrom(src => src.FechaInicio))
                 .ForMember(dest => dest.FechaFin, opt => opt.MapFrom(src => src.FechaFin))
                 .ForMember(dest => dest.TipoAcuerdo, opt => opt.MapFrom(src => src.TipoAcuerdo))
                 .ForMember(dest => dest.Observaciones, opt => opt.MapFrom(src => src.Observaciones))
                 .ForMember(dest => dest.FrecuenciaPago, opt => opt.MapFrom(src => src.FrecuenciaPago))
-                .ForMember(dest => dest.MontoPago, opt => opt.MapFrom(src => src.MontoPago));
+                .ForMember(dest => dest.MontoPago, opt => opt.MapFrom(src => src.MontoPago))
+                .ForMember(dest => dest.Sudocu, opt => opt.MapFrom(src => src.Sudocu));
 
             // Mapeo para Auditoría
             CreateMap<Auditoria, AuditoriaDto>()

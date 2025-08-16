@@ -39,14 +39,17 @@ namespace Backend.Repositories
                     .Select(c => new ConvenioEmpresaDto
                     {
                         IdConvenio = c.IdConvenio,
-                        Expediente = c.Expediente,
+                        //Expediente = c.Expediente,
                         FechaFirma = c.FechaFirma,
                         FechaCaducidad = c.FechaCaducidad,
                         IdEmpresa = c.IdEmpresa,
                         NombreEmpresa = c.IdEmpresaNavigation != null ? c.IdEmpresaNavigation.Nombre : null,
                         RepresentanteEmpresa = c.RepresentanteEmpresa,
                         DomicilioLegal = c.DomicilioLegal,
-                        DocRepresentanteFacultad = c.DocRepresentanteFacultad
+                        DomicilioAlternativo = c.DomicilioAlternativo,
+                        DocRepresentanteFacultad = c.DocRepresentanteFacultad,
+                        Caracter = c.Caracter,
+                        Sudocu = c.Sudocu
                     });
                 return await convenios.ToListAsync();
             }
