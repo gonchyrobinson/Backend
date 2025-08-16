@@ -95,6 +95,15 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.RepresentanteFacultad)
                 .HasMaxLength(255)
                 .HasColumnName("representante_facultad");
+            entity.Property(e => e.DomicilioAlternativo)
+                .HasMaxLength(255)
+                .HasColumnName("domicilio_alternativo");
+            entity.Property(e => e.Caracter)
+                .HasMaxLength(255)
+                .HasColumnName("caracter");
+            entity.Property(e => e.Sudocu)
+                    .HasMaxLength(255)
+                    .HasColumnName("sudocu");
 
             entity.HasOne(d => d.IdEmpresaNavigation).WithMany(p => p.Convenios)
                 .HasForeignKey(d => d.IdEmpresa)
@@ -132,7 +141,7 @@ public partial class ApplicationDbContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("sudocu");
             entity.Property(e => e.TipoContrato)
-                .HasColumnType("enum('temporal','indefinido','otro')")
+                .HasMaxLength(255)
                 .HasColumnName("tipo_contrato");
         });
 
@@ -235,9 +244,12 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.TutorFacultad)
                 .HasMaxLength(100)
                 .HasColumnName("tutor_facultad");
-            entity.Property(e => e.dniTutorFacultad)
+            entity.Property(e => e.DniTutorFacultad)
                 .HasMaxLength(100)
                 .HasColumnName("dni_tutor_facultad");
+            entity.Property(e => e.Sudocu)
+                .HasMaxLength(255)
+                .HasColumnName("sudocu");
             entity.HasOne(d => d.IdConvenioNavigation).WithMany(p => p.Pasantia)
                 .HasForeignKey(d => d.IdConvenio)
                 .HasConstraintName("PASANTIAS_ibfk_2");

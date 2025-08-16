@@ -19,7 +19,7 @@ namespace Backend.Reports
             public string? Art { get; set; }
             public string? TutorEmpresa { get; set; }
             public string? TutorFacultad { get; set; }
-            public string? dniTutorFacultad { get; set; }
+            public string? DniTutorFacultad { get; set; }
             public string? Tramite { get; set; }
             public string? MontoPago { get; set; }
             public string? Observaciones { get; set; }

@@ -47,6 +47,7 @@ namespace Backend.Repositories
                     .Select(c => new ConvenioEmpresaDto
                     {
                         IdConvenio = c.IdConvenio,
+                        //Expediente = c.Expediente,
                         FechaFirma = c.FechaFirma,
                         FechaCaducidad = c.FechaCaducidad,
                         IdEmpresa = c.IdEmpresa,
@@ -54,7 +55,9 @@ namespace Backend.Repositories
                         RepresentanteEmpresa = c.RepresentanteEmpresa,
                         DomicilioLegal = c.DomicilioLegal,
                         DomicilioAlternativo = c.DomicilioAlternativo,
-                        DocRepresentanteFacultad = c.DocRepresentanteFacultad
+                        DocRepresentanteFacultad = c.DocRepresentanteFacultad,
+                        Caracter = c.Caracter,
+                        Sudocu = c.Sudocu
                     });
                 return await convenios.ToListAsync();
             }

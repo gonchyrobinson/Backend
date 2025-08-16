@@ -21,7 +21,7 @@ public partial class Pasantia
     public string? TutorEmpresa { get; set; }
 
     public string? TutorFacultad { get; set; }
-    public string? dniTutorFacultad { get; set; }
+    public string? DniTutorFacultad { get; set; }
 
     public DateOnly? FechaInicio { get; set; }
 
@@ -36,6 +36,7 @@ public partial class Pasantia
     [Column("monto_pago")]
 
     public decimal? MontoPago { get; set; }
+    public string? Sudocu { get; set; }
 
     public virtual Convenio? IdConvenioNavigation { get; set; }
 

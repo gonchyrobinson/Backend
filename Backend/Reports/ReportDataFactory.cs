@@ -49,7 +49,7 @@ namespace Backend.Reports
                 TutorEmpresa = SafeString(pasantia?.TutorEmpresa),
                 Tramite = pasantia != null ? $"TRA-FACET-{pasantia.IdPasantia:D3}" : null,
                 TutorFacultad = SafeString(pasantia?.TutorFacultad),
-                dniTutorFacultad = SafeString(pasantia?.dniTutorFacultad),
+                DniTutorFacultad = SafeString(pasantia?.DniTutorFacultad),
                 MontoPago = SafeDecimal(pasantia?.MontoPago),
                 Observaciones = SafeString(pasantia?.Observaciones),
                 FechaInicio = SafeDate(pasantia?.FechaInicio),

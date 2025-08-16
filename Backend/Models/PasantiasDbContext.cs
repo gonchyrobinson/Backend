@@ -140,7 +140,7 @@ public partial class PasantiasDbContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("sudocu");
             entity.Property(e => e.TipoContrato)
-                .HasColumnType("enum('temporal','indefinido','otro')")
+                .HasMaxLength(255)
                 .HasColumnName("tipo_contrato");
         });
 
@@ -158,7 +158,7 @@ public partial class PasantiasDbContext : DbContext
                 .HasMaxLength(100)
                 .HasColumnName("area_trabajo");
             entity.Property(e => e.Carrera)
-                .HasColumnType("enum('AGRIMENSURA','INGENIERÍA AZUCARERA','INGENIERÍA BIOMÉDICA','INGENIERÍA CIVIL','INGENIERÍA EN COMPUTACIÓN','INGENIERÍA EN INFORMÁTICA','INGENIERÍA ELÉCTRICA','INGENIERÍA ELECTRÓNICA','INGENIERÍA GEODÉSICA Y GEOFÍSICA','INGENIERÍA INDUSTRIAL','INGENIERÍA MECÁNICA','INGENIERÍA QUÍMICA','LICENCIATURA EN FÍSICA','LICENCIATURA EN MATEMÁTICA','LICENCIATURA EN INFORMÁTICA','DISEÑO DE ILUMINACIÓN','PROGRAMADOR UNIVERSITARIO','TECNICATURA UNIVERSITARIA EN TECNOLOGÍA','AZUCARERA E INDUSTRIAS DERIVADAS','TECNICATURA UNIVERSITARIA EN FÍSICA','TECNICATURA UNIVERSITARIA EN FÍSICA AMBIENTAL')")
+                .HasColumnType("enum('AGRIMENSURA','INGENIERÍA AZUCARERA','INGENIERÍA BIOMÉDICA','INGENIERÍA CIVIL','INGENIERÍA EN COMPUTACIÓN','INGENIERÍA EN INFORMÁTICA','INGENIERÍA ELÉCTRICA','INGENIERÍA ELECTRÓNICA','INGENIERÍA GEODÉSICA Y GEOFÍSICA','INGENIERÍA INDUSTRIAL','INGENIERÍA MECÁNICA','INGENIERÍA QUÍMICA','LICENCIATURA EN FÍSICA','LICENCIATURA EN MATEMÁTICA','LICENCIATURA EN INFORMÁTICA','DISEÑO DE ILUMINACIÓN','PROGRAMADOR UNIVERSITARIO','TECNICATURA UNIVERSITARIA EN TECNOLOGÍA','AZUCARERA E INDUSTRIAS DERIVADAS','TECNICATURA UNIVERSITARIA EN FÍSICA','TECNICATURA UNIVERSITARIA EN FÍSICA AMBIENTAL', 'OTRA')")
                 .HasColumnName("carrera");
             entity.Property(e => e.Documento)
                 .HasMaxLength(50)
@@ -252,9 +252,12 @@ public partial class PasantiasDbContext : DbContext
             entity.Property(e => e.TutorFacultad)
                 .HasMaxLength(100)
                 .HasColumnName("tutor_facultad");
-            entity.Property(e => e.dniTutorFacultad)
+            entity.Property(e => e.DniTutorFacultad)
                 .HasMaxLength(100)
-                .HasColumnName("dniTutorFacultad");
+                .HasColumnName("dni_tutor_facultad");
+            entity.Property(e => e.Sudocu)
+                .HasMaxLength(255)
+                .HasColumnName("sudocu");
 
             entity.HasOne(d => d.IdConvenioNavigation).WithMany(p => p.Pasantia)
                 .HasForeignKey(d => d.IdConvenio)
