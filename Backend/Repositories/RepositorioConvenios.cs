@@ -33,6 +33,14 @@ namespace Backend.Repositories
                         query = query.Where(c => c.IdEmpresaNavigation != null && c.IdEmpresaNavigation.Nombre.Contains(filtro.NombreEmpresa));
                     if (!string.IsNullOrWhiteSpace(filtro.DocRepresentanteFacultad))
                         query = query.Where(c => c.DocRepresentanteFacultad != null && c.DocRepresentanteFacultad.Contains(filtro.DocRepresentanteFacultad));
+                    if(!string.IsNullOrWhiteSpace(filtro.Carrera))
+                    {
+                        query = query.Where(c => c.Pasantia.Any(p =>
+                            p.IdEstudianteNavigation != null &&
+                            !string.IsNullOrEmpty(p.IdEstudianteNavigation.Carrera) &&
+                            p.IdEstudianteNavigation.Carrera == filtro.Carrera
+                        ));
+                    }
                 }
 
                 var convenios = query

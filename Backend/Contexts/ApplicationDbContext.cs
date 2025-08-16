@@ -137,13 +137,12 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.Nombre)
                 .HasMaxLength(255)
                 .HasColumnName("nombre");
-            entity.Property(e => e.Sudocu).HasColumnName("sudocu");
+            entity.Property(e => e.Sudocu)
+                .HasMaxLength(255)
+                .HasColumnName("sudocu");
             entity.Property(e => e.TipoContrato)
                 .HasMaxLength(255)
                 .HasColumnName("tipo_contrato");
-            entity.Property(e => e.Vigencia)
-                .HasColumnType("enum('vigente','no_vigente')")
-                .HasColumnName("vigencia");
         });
 
         modelBuilder.Entity<Estudiante>(entity =>
@@ -195,6 +194,7 @@ public partial class ApplicationDbContext : DbContext
 
             entity.Property(e => e.IdPago).HasColumnName("id_pago");
             entity.Property(e => e.FechaPago).HasColumnName("fecha_pago");
+            entity.Property(e => e.FechaVencimiento).HasColumnName("fecha_vencimiento");
             entity.Property(e => e.IdPasantia).HasColumnName("id_pasantia");
             entity.Property(e => e.Monto)
                 .HasPrecision(10, 2)

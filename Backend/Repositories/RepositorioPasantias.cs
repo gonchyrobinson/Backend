@@ -31,6 +31,7 @@ namespace Backend.Repositories
                         Art = p.Art,
                         TutorEmpresa = p.TutorEmpresa,
                         TutorFacultad = p.TutorFacultad,
+                        DniTutorFacultad = p.DniTutorFacultad,
                         FechaInicio = p.FechaInicio,
                         FechaFin = p.FechaFin,
                         TipoAcuerdo = p.TipoAcuerdo,

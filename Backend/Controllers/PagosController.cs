@@ -24,7 +24,15 @@ namespace Backend.Controllers
             return dto.IdPago;
         }
 
-        // Métodos específicos para pagos pueden agregarse aquí
+
+        // Endpoint: pagos por vencer
+        [HttpGet("por-vencer")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<PagosDto>>> GetPagosPorVencer([FromQuery] DateOnly fecha)
+        {
+            var pagos = await _pagosService.GetPagosPorVencerAsync(fecha);
+            return Ok(pagos);
+        }
 
         [HttpGet("by-pasantia/{idPasantia}")]
         [Authorize]

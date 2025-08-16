@@ -40,13 +40,16 @@ namespace Backend.Reports
                 ConvenioRepresentanteFacultad = SafeString(convenio?.RepresentanteFacultad),
                 ConvenioDNIRepresentanteFacultad = SafeString(convenio?.DocRepresentanteFacultad),
                 ConvenioDomicilioLegal = SafeString(convenio?.DomicilioLegal),
+                ConvenioExpediente = convenio != null ? $"TRA-FACET-{convenio.IdConvenio:D3}" : null,
 
                 // Pasantía
                 AsignacionMensual = SafeDecimal(pasantia?.AsignacionMensual),
                 ObraSocial = SafeString(pasantia?.ObraSocial),
                 Art = SafeString(pasantia?.Art),
                 TutorEmpresa = SafeString(pasantia?.TutorEmpresa),
+                Tramite = pasantia != null ? $"TRA-FACET-{pasantia.IdPasantia:D3}" : null,
                 TutorFacultad = SafeString(pasantia?.TutorFacultad),
+                DniTutorFacultad = SafeString(pasantia?.DniTutorFacultad),
                 MontoPago = SafeDecimal(pasantia?.MontoPago),
                 Observaciones = SafeString(pasantia?.Observaciones),
                 FechaInicio = SafeDate(pasantia?.FechaInicio),

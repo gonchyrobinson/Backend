@@ -9,8 +9,6 @@ public partial class Empresa
 
     public string? Nombre { get; set; }
 
-    public string? Vigencia { get; set; }
-
     public DateOnly? FechaInicio { get; set; }
 
     public DateOnly? FechaFin { get; set; }
@@ -23,7 +21,7 @@ public partial class Empresa
 
     public string? CorreoElectronico { get; set; }
 
-    public DateOnly? Sudocu { get; set; }
+    public string? Sudocu { get; set; }
 
     public bool? Eliminado { get; set; }
 
