@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Backend.Models;
+﻿namespace Backend.Models;
 
 public partial class Convenio
 {
@@ -31,5 +28,5 @@ public partial class Convenio
 
     public virtual ICollection<Pasantia> Pasantia { get; set; } = new List<Pasantia>();
     public string? Caracter { get; set; }
-    public string? Sudocu { get; set;}
+    public string? Sudocu { get; set; }
 }

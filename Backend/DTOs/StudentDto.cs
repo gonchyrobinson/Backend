@@ -1,16 +1,15 @@
 using System.ComponentModel.DataAnnotations;
-using System.Collections.Generic;
-    public class StudentBusquedaAvanzadaDto
-    {
-        public string? Apellido { get; set; }
-        public string? Nombre { get; set; }
-        public string? Documento { get; set; }
-        public string? Carrera { get; set; }
-        public string? AreaTrabajo { get; set; }
-    }
+public class StudentBusquedaAvanzadaDto
+{
+    public string? Apellido { get; set; }
+    public string? Nombre { get; set; }
+    public string? Documento { get; set; }
+    public string? Carrera { get; set; }
+    public string? AreaTrabajo { get; set; }
+}
 namespace Backend.DTOs
 {
-    public class StudentDto: IValidatableObject
+    public class StudentDto : IValidatableObject
     {
         public int IdEstudiante { get; set; }
         public string? Apellido { get; set; }
@@ -45,7 +44,7 @@ namespace Backend.DTOs
             "TECNICATURA UNIVERSITARIA EN FÍSICA",
             "TECNICATURA UNIVERSITARIA EN FÍSICA AMBIENTAL"
         };
-                public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (!string.IsNullOrEmpty(Carrera) && !CarrerasValidas.Contains(Carrera))
             {

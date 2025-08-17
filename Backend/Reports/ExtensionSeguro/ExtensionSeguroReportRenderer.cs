@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using Backend.Reports.Contrato_Pasantia_Estudiante;
-
 namespace Backend.Reports.ExtensionSeguro
 {
     public class ExtensionSeguroReportRenderer : IReporteRenderer<ReportData>

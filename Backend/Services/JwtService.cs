@@ -1,10 +1,9 @@
+using Backend.DTOs;
+using Backend.Models;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
-using Microsoft.IdentityModel.Tokens;
-using Backend.Models;
-using Backend.DTOs;
 
 namespace Backend.Services;
 
@@ -25,23 +24,29 @@ public class JwtService : IJwtService
     }
 
     private SymmetricSecurityKey CreateSigningKey()
-{
-    var secret = _configuration["Jwt:SecretKey"] 
-                 ?? throw new InvalidOperationException("JWT SecretKey not configured");
+    {
+        var secret = _configuration["Jwt:SecretKey"]
+                    ?? throw new InvalidOperationException("JWT SecretKey no está configurado en appsettings.json o variables de entorno");
 
-    var keyBytes = Encoding.UTF8.GetBytes(secret);
+        var issuer = _configuration["Jwt:Issuer"]
+                    ?? throw new InvalidOperationException("JWT Issuer no está configurado en appsettings.json o variables de entorno");
 
-    if (keyBytes.Length < 32)
-        throw new InvalidOperationException("JWT key must be at least 256 bits (32 bytes).");
+        var audience = _configuration["Jwt:Audience"]
+                      ?? throw new InvalidOperationException("JWT Audience no está configurado en appsettings.json o variables de entorno");
 
-    return new SymmetricSecurityKey(keyBytes);
-}
+        var keyBytes = Encoding.UTF8.GetBytes(secret);
+
+        if (keyBytes.Length < 32)
+            throw new InvalidOperationException("La clave JWT debe tener al menos 256 bits (32 bytes). Configura una clave más segura.");
+
+        return new SymmetricSecurityKey(keyBytes);
+    }
 
     public string GenerateAccessToken(Usuario usuario)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var signingKey = CreateSigningKey();
-        
+
         var claims = new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, usuario.IdUsuario.ToString()),
@@ -110,4 +115,4 @@ public class JwtService : IJwtService
             Role = roleClaim ?? ""
         };
     }
-} 
+}

@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers
 {
-public class EmpresasController : BaseController<Empresa, EmpresaDto, EmpresaCreateDto>
+    public class EmpresasController : BaseController<Empresa, EmpresaDto, EmpresaCreateDto>
     {
         private readonly ServicioEmpresas _empresasService;
 
-    public EmpresasController(ServicioEmpresas service) : base(service)
+        public EmpresasController(ServicioEmpresas service) : base(service)
         {
             _empresasService = service;
         }

@@ -1,7 +1,8 @@
+using Backend.Contexts;
 using Backend.DTOs;
+using Backend.Exceptions;
 using Backend.Interfaces;
 using Backend.Models;
-using Backend.Contexts;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Repositories
@@ -30,10 +31,10 @@ namespace Backend.Repositories
                     if (filtro.FechaCaducidadHasta.HasValue)
                         query = query.Where(c => c.FechaCaducidad <= filtro.FechaCaducidadHasta);
                     if (!string.IsNullOrWhiteSpace(filtro.NombreEmpresa))
-                        query = query.Where(c => c.IdEmpresaNavigation != null && c.IdEmpresaNavigation.Nombre.Contains(filtro.NombreEmpresa));
+                        query = query.Where(c => c.IdEmpresaNavigation != null && c.IdEmpresaNavigation.Nombre != null && c.IdEmpresaNavigation.Nombre.Contains(filtro.NombreEmpresa));
                     if (!string.IsNullOrWhiteSpace(filtro.DocRepresentanteFacultad))
                         query = query.Where(c => c.DocRepresentanteFacultad != null && c.DocRepresentanteFacultad.Contains(filtro.DocRepresentanteFacultad));
-                    if(!string.IsNullOrWhiteSpace(filtro.Carrera))
+                    if (!string.IsNullOrWhiteSpace(filtro.Carrera))
                     {
                         query = query.Where(c => c.Pasantia.Any(p =>
                             p.IdEstudianteNavigation != null &&
@@ -44,6 +45,7 @@ namespace Backend.Repositories
                 }
 
                 var convenios = query
+                    .AsNoTracking()
                     .Select(c => new ConvenioEmpresaDto
                     {
                         IdConvenio = c.IdConvenio,
@@ -63,18 +65,18 @@ namespace Backend.Repositories
             }
             catch (Exception ex)
             {
-                throw new Backend.Exceptions.ValidationException("Error al listar convenios con empresa", ex, "Convenio");
+                throw new ValidationException("Error al listar convenios con empresa", ex, "Convenio");
             }
         }
 
         public async Task<bool> AsignarEmpresaAsync(AsignarEmpresaDto dto)
         {
             if (dto.ConvenioId <= 0 || dto.EmpresaId <= 0)
-                throw new Backend.Exceptions.ValidationException("IDs de convenio y empresa deben ser mayores a cero", "Convenio");
+                throw new ValidationException("IDs de convenio y empresa deben ser mayores a cero", "Convenio");
 
             var convenio = await _dbSet.FindAsync(dto.ConvenioId);
             if (convenio == null)
-                throw new Backend.Exceptions.NotFoundException($"Convenio con ID {dto.ConvenioId} no encontrado");
+                throw new NotFoundException($"Convenio con ID {dto.ConvenioId} no encontrado");
 
             convenio.IdEmpresa = dto.EmpresaId;
             try
@@ -84,18 +86,18 @@ namespace Backend.Repositories
             }
             catch (Exception ex)
             {
-                throw new Backend.Exceptions.ValidationException("Error al asignar empresa al convenio", ex, "Convenio");
+                throw new ValidationException("Error al asignar empresa al convenio", ex, "Convenio");
             }
         }
 
         public async Task<bool> CaducarConvenioAsync(int convenioId, DateOnly? fechaCaducidad)
         {
             if (convenioId <= 0)
-                throw new Backend.Exceptions.ValidationException("El ID de convenio debe ser mayor a cero", "Convenio");
+                throw new ValidationException("El ID de convenio debe ser mayor a cero", "Convenio");
 
             var convenio = await _dbSet.FindAsync(convenioId);
             if (convenio == null)
-                throw new Backend.Exceptions.NotFoundException($"Convenio con ID {convenioId} no encontrado");
+                throw new NotFoundException($"Convenio con ID {convenioId} no encontrado");
 
             convenio.FechaCaducidad = fechaCaducidad ?? DateOnly.FromDateTime(DateTime.Now);
             try
@@ -105,7 +107,7 @@ namespace Backend.Repositories
             }
             catch (Exception ex)
             {
-                throw new Backend.Exceptions.ValidationException("Error al caducar convenio", ex, "Convenio");
+                throw new ValidationException("Error al caducar convenio", ex, "Convenio");
             }
         }
     }

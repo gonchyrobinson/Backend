@@ -17,13 +17,17 @@ namespace Backend.Mappings
             CreateMap<StudentCreateDto, Estudiante>();
 
             // Mapeo para Empresa
-            CreateMap<Empresa, EmpresaDto>().ReverseMap()
+            CreateMap<Empresa, EmpresaDto>()
+                .ForMember(dest => dest.Vigencia, opt => opt.MapFrom(src => src.FechaFin.HasValue && src.FechaFin.Value < DateOnly.FromDateTime(DateTime.Today) ? "no_vigente" : "vigente"))
+                .ReverseMap()
                 .ForMember(dest => dest.Eliminado, opt => opt.MapFrom(src => false))
                 .ForMember(dest => dest.FechaEliminacion, opt => opt.MapFrom(src => (DateTime?)null));
             CreateMap<EmpresaCreateDto, Empresa>();
 
             // Mapeo para Pasantía
-            CreateMap<Pasantia, PasantiaDto>().ReverseMap();
+            CreateMap<Pasantia, PasantiaDto>()
+                .ForMember(dest => dest.Tramite, opt => opt.MapFrom(src => $"TRA-FACET-{src.IdPasantia:D3}"))
+                .ReverseMap();
             CreateMap<PasantiaCreateDto, Pasantia>()
                 .ForMember(dest => dest.IdEstudiante, opt => opt.MapFrom(src => src.IdEstudiante))
                 .ForMember(dest => dest.IdConvenio, opt => opt.MapFrom(src => src.IdConvenio))

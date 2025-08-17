@@ -1,18 +1,18 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using AutoMapper;
-using Serilog;
-using Backend.Contexts;
-using Backend.Interfaces;
-using Backend.Repositories;
-using Backend.Services;
-using Backend.Mappings;
 using Backend.Constants;
+using Backend.Contexts;
+using Backend.Helpers;
+using Backend.Interfaces;
+using Backend.Mappings;
 using Backend.Middleware;
 using Backend.Reports;
 using Backend.Reports.Contrato_Pasantia_Estudiante;
+using Backend.Repositories;
+using Backend.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Serilog;
 using System.Text;
 using System.Threading.RateLimiting; // <= .NET 8 Rate Limiter
 
@@ -25,11 +25,12 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 
-// Controllers + filtro global de excepciones
-builder.Services.AddControllers(options =>
-{
-    options.Filters.Add<ApiExceptionFilter>();
-});
+// Controllers (sin filtros globales - utilizando middleware)
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
+    });
 
 // === Entity Framework (sin AutoDetect) ===
 var cs = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -79,7 +80,7 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials()
-              .SetIsOriginAllowedToAllowWildcardSubdomains(); 
+              .SetIsOriginAllowedToAllowWildcardSubdomains();
     });
 
     options.AddPolicy("ProductionCors", policy =>
@@ -135,7 +136,14 @@ builder.Services.AddScoped<IRepositorioPagos, RepositorioPagos>();
 builder.Services.AddScoped<IRepositorioConvenios, RepositorioConvenios>();
 builder.Services.AddScoped<IRepositorioAuditoria, RepositorioAuditoria>();
 
-// Servicios
+// Servicios de validación
+builder.Services.AddScoped<EstudianteValidationService>();
+builder.Services.AddScoped<EmpresaValidationService>();
+builder.Services.AddScoped<ConvenioValidationService>();
+builder.Services.AddScoped<PasantiaValidationService>();
+builder.Services.AddScoped<PagoValidationService>();
+
+// Servicios principales
 builder.Services.AddScoped<ServicioPasantias>();
 builder.Services.AddScoped<ServicioEmpresas>();
 builder.Services.AddScoped<ServicioEstudiantes>();
@@ -219,8 +227,8 @@ app.Use(async (context, next) =>
     await next();
 });
 
-    // HSTS solo en producción
-    app.UseHsts();
+// HSTS solo en producción
+app.UseHsts();
 
 app.UseMiddleware<ExceptionMiddleware>();
 

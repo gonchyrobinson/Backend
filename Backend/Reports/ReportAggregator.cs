@@ -1,7 +1,4 @@
-using System.Threading.Tasks;
 using Backend.Interfaces;
-using Backend.Models;
-using Backend.Reports.Contrato_Pasantia_Estudiante;
 
 namespace Backend.Reports
 {
@@ -32,19 +29,22 @@ namespace Backend.Reports
                 throw new System.Exception($"No se encontró la pasantía con id {id}");
 
             // Obtener el estudiante
-            var estudiante = await _repoEstudiantes.GetByIdAsync((int)pasantia.IdEstudiante);
+            var idEstudiante = pasantia.IdEstudiante ?? throw new System.Exception($"La pasantía {id} no tiene IdEstudiante asociado");
+            var estudiante = await _repoEstudiantes.GetByIdAsync(idEstudiante);
             if (estudiante == null)
-                throw new System.Exception($"No se encontró el estudiante con id {pasantia.IdEstudiante}");
+                throw new System.Exception($"No se encontró el estudiante con id {idEstudiante}");
 
             // Obtener el convenio
-            var convenio = await _repoConvenios.GetByIdAsync((int)pasantia.IdConvenio);
+            var idConvenio = pasantia.IdConvenio ?? throw new System.Exception($"La pasantía {id} no tiene IdConvenio asociado");
+            var convenio = await _repoConvenios.GetByIdAsync(idConvenio);
             if (convenio == null)
-                throw new System.Exception($"No se encontró el convenio con id {pasantia.IdConvenio}");
+                throw new System.Exception($"No se encontró el convenio con id {idConvenio}");
 
             // Obtener la empresa
-            var empresa = await _repoEmpresas.GetByIdAsync((int)convenio.IdEmpresa);
+            var idEmpresa = convenio.IdEmpresa ?? throw new System.Exception($"El convenio {idConvenio} no tiene IdEmpresa asociado");
+            var empresa = await _repoEmpresas.GetByIdAsync(idEmpresa);
             if (empresa == null)
-                throw new System.Exception($"No se encontró la empresa con id {convenio.IdEmpresa}");
+                throw new System.Exception($"No se encontró la empresa con id {idEmpresa}");
 
 
             // Mapear a DTO plano para el reporte

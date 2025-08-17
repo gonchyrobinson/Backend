@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Reports.Contrato_Pasantia_Estudiante

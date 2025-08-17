@@ -1,17 +1,12 @@
-using Xunit;
-using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 using Backend.Contexts;
-using Backend.Repositories;
-using Backend.Services;
 using Backend.Controllers;
 using Backend.DTOs;
 using Backend.Models;
-using AutoMapper;
-using Backend.Mappings;
+using Backend.Repositories;
+using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Linq;
+using Xunit;
 
 namespace Backend.Tests
 {
@@ -31,7 +26,8 @@ namespace Backend.Tests
             _mapper = GetMapper();
             _repoEstudiantes = new RepositorioEstudiantes(_dbContext);
             _repoPasantias = new RepositorioPasantias(_dbContext);
-            _servicioEstudiantes = new ServicioEstudiantes(_repoEstudiantes, _repoPasantias, _mapper);
+            var validationService = new EstudianteValidationService(_repoEstudiantes, _repoPasantias);
+            _servicioEstudiantes = new ServicioEstudiantes(_repoEstudiantes, _mapper, validationService);
             _controller = new StudentsController(_servicioEstudiantes);
         }
 

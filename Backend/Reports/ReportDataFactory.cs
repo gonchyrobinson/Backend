@@ -1,3 +1,4 @@
+using Backend.Helpers;
 using Backend.Models;
 
 namespace Backend.Reports
@@ -27,8 +28,8 @@ namespace Backend.Reports
             string? SafeDate(object? value)
             {
                 if (value == null || value is System.DBNull) return null;
-                if (value is DateOnly date) return date.ToString("yyyy-MM-dd");
-                if (DateOnly.TryParse(value.ToString(), out var result)) return result.ToString("yyyy-MM-dd");
+                if (value is DateOnly date) return date.ToString(DateFormats.DefaultDateFormat);
+                if (DateOnly.TryParse(value.ToString(), out var result)) return result.ToString(DateFormats.DefaultDateFormat);
                 return null;
             }
 
