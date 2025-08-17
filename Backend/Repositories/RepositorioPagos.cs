@@ -34,5 +34,17 @@ namespace Backend.Repositories
                 .Where(p => p.FechaVencimiento != null && p.FechaVencimiento >= fecha)
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<Pago>> GetPagosPorVencerEnDiasAsync(int dias)
+        {
+            var fechaLimite = DateOnly.FromDateTime(DateTime.Today.AddDays(dias));
+            return await _dbSet
+                .AsNoTracking()
+                .Where(p => p.FechaVencimiento != null && 
+                           p.FechaVencimiento >= DateOnly.FromDateTime(DateTime.Today) && 
+                           p.FechaVencimiento <= fechaLimite &&
+                           (p.Pagado == null || p.Pagado == false))
+                .ToListAsync();
+        }
     }
 }

@@ -35,10 +35,10 @@ namespace Backend.Services
         }
 
 
-        // Pagos por vencer hasta una fecha
-        public async Task<IEnumerable<PagosDto>> GetPagosPorVencerAsync(DateOnly fecha)
+        // Pagos por vencer en X días desde hoy
+        public async Task<IEnumerable<PagosDto>> GetPagosPorVencerEnDiasAsync(int dias)
         {
-            var pagos = await _repoPagos.GetPagosPorVencerAsync(fecha);
+            var pagos = await _repoPagos.GetPagosPorVencerEnDiasAsync(dias);
             return _mapper.Map<IEnumerable<PagosDto>>(pagos);
         }
 
