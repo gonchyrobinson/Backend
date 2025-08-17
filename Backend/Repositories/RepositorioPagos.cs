@@ -12,12 +12,9 @@ namespace Backend.Repositories
         {
         }
 
-        public async Task<Pago> GetByPasantiaIdAsync(int idPasantia)
+        public async Task<IEnumerable<Pago>> GetByPasantiaIdAsync(int idPasantia)
         {
-            var pago = await _dbSet.FirstOrDefaultAsync(p => p.IdPasantia == idPasantia);
-            if (pago == null)
-                throw new NotFoundException($"No se encontró un pago para la pasantía con ID {idPasantia}");
-            return pago;
+            return await _dbSet.Where(p => p.IdPasantia == idPasantia).ToListAsync();
         }
 
         public async Task<Pago> MarcarComoPagadoAsync(int idPago, DateOnly? fechaPago = null)

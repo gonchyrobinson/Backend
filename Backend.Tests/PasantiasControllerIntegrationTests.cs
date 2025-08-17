@@ -18,6 +18,7 @@ namespace Backend.Tests
         private readonly RepositorioPasantias _repoPasantias;
         private readonly RepositorioConvenios _repoConvenios;
         private readonly RepositorioEstudiantes _repoEstudiantes;
+        private readonly RepositorioPagos _repoPagos;
         private readonly ServicioPasantias _servicioPasantias;
         private readonly PasantiasController _controller;
 
@@ -28,7 +29,8 @@ namespace Backend.Tests
             _repoPasantias = new RepositorioPasantias(_dbContext);
             _repoConvenios = new RepositorioConvenios(_dbContext);
             _repoEstudiantes = new RepositorioEstudiantes(_dbContext);
-            _servicioPasantias = new ServicioPasantias(_repoPasantias, _repoEstudiantes, _repoConvenios, _mapper);
+            _repoPagos = new RepositorioPagos(_dbContext);
+            _servicioPasantias = new ServicioPasantias(_repoPasantias, _repoEstudiantes, _repoConvenios, _repoPagos, _mapper);
             _controller = new PasantiasController(_servicioPasantias);
         }
 

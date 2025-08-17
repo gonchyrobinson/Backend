@@ -131,26 +131,27 @@ namespace Backend.Tests
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
-            var pagoDto = Assert.IsType<PagosDto>(okResult.Value);
-            Assert.Equal(1, pagoDto.IdPasantia);
-            Assert.Equal(1000, pagoDto.Monto);
+            var pagosDto = Assert.IsAssignableFrom<List<PagosDto>>(okResult.Value);
+            Assert.Single(pagosDto);
+            Assert.Equal(1, pagosDto[0].IdPasantia);
+            Assert.Equal(1000, pagosDto[0].Monto);
         }
 
         [Fact]
-        public async Task GetByPasantiaId_ReturnsNotFoundException()
+        public async Task GetByPasantiaId_ReturnsEmptyList_WhenNoPagos()
         {
             // Arrange
             var pasantia = new Pasantia { IdPasantia = 2 };
             _dbContext.Pasantias.Add(pasantia);
             _dbContext.SaveChanges();
 
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<NotFoundException>(async () =>
-            {
-                await _controller.GetByPasantiaId(2);
-            });
+            // Act
+            var result = await _controller.GetByPasantiaId(2);
 
-            Assert.Equal("No se encontró un pago para la pasantía con ID 2", exception.Message);
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var pagosDto = Assert.IsAssignableFrom<List<PagosDto>>(okResult.Value);
+            Assert.Empty(pagosDto);
         }
 
         [Fact]

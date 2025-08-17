@@ -34,10 +34,10 @@ namespace Backend.Controllers
 
         [HttpGet("by-pasantia/{idPasantia}")]
         [Authorize]
-        public async Task<ActionResult<PagosDto?>> GetByPasantiaId(int idPasantia)
+        public async Task<ActionResult<IEnumerable<PagosDto>>> GetByPasantiaId(int idPasantia)
         {
-            var pagoDto = await _pagosService.GetByPasantiaIdAsync(idPasantia);
-            return Ok(pagoDto);
+            var pagosDto = await _pagosService.GetByPasantiaIdAsync(idPasantia);
+            return Ok(pagosDto);
         }
 
         [HttpPost("marcar-pagado")]

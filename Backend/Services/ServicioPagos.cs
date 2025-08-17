@@ -42,10 +42,10 @@ namespace Backend.Services
             return _mapper.Map<IEnumerable<PagosDto>>(pagos);
         }
 
-        public async Task<PagosDto> GetByPasantiaIdAsync(int idPasantia)
+        public async Task<IEnumerable<PagosDto>> GetByPasantiaIdAsync(int idPasantia)
         {
-            var pago = await _repoPagos.GetByPasantiaIdAsync(idPasantia);
-            return _mapper.Map<PagosDto>(pago);
+            var pagos = await _repoPagos.GetByPasantiaIdAsync(idPasantia);
+            return _mapper.Map<IEnumerable<PagosDto>>(pagos);
         }
 
         public async Task<PagosDto> MarcarComoPagadoAsync(MarcarPagoDto dto)
