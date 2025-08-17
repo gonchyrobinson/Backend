@@ -6,16 +6,7 @@ namespace Backend.DTOs
     {
         public int IdEmpresa { get; set; }
         public string? Nombre { get; set; }
-        public string? Vigencia
-        {
-            get
-            {
-                if (FechaFin.HasValue && FechaFin.Value < DateOnly.FromDateTime(DateTime.Today))
-                    return "no_vigente";
-                return "vigente";
-            }
-            set { /* setter requerido por serialización, pero ignorado */ }
-        }
+        public string? Vigencia { get; set; }
 
         [DataType(DataType.Date, ErrorMessage = "FechaInicio debe ser una fecha válida.")]
         public DateOnly? FechaInicio { get; set; }
@@ -34,7 +25,7 @@ namespace Backend.DTOs
         [EmailAddress(ErrorMessage = "CorreoElectronico debe tener formato de correo electrónico válido.")]
         public string? CorreoElectronico { get; set; }
 
-    public string? Sudocu { get; set; }
+        public string? Sudocu { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -45,7 +36,7 @@ namespace Backend.DTOs
         }
     }
 
-    public class EmpresaCreateDto: IValidatableObject
+    public class EmpresaCreateDto : IValidatableObject
     {
         public string? Nombre { get; set; }
 
@@ -69,7 +60,7 @@ namespace Backend.DTOs
         [EmailAddress(ErrorMessage = "CorreoElectronico debe tener formato de correo electrónico válido.")]
         public string? CorreoElectronico { get; set; }
 
-    public string? Sudocu { get; set; }
+        public string? Sudocu { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

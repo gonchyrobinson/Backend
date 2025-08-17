@@ -1,6 +1,5 @@
-using Backend.Models;
 using Backend.DTOs;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using Backend.Models;
 
 namespace Backend.Interfaces
 {

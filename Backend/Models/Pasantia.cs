@@ -1,12 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using System;
-using System.Collections.Generic;
 
 namespace Backend.Models;
 
 public partial class Pasantia
 {
     public int IdPasantia { get; set; }
+
+    [NotMapped]
+    public string Tramite => $"TRA-FACET-{IdPasantia:D3}";
 
     public int? IdEstudiante { get; set; }
 

@@ -1,7 +1,4 @@
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Backend.Reports.Contrato_Pasantia_Estudiante;
-using Backend.Reports;
 
 namespace Backend.Reports.ExtensionSeguro
 {

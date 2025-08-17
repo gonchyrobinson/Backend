@@ -1,7 +1,7 @@
 using Backend.Contexts;
+using Backend.Helpers;
 using Backend.Interfaces;
 using Backend.Models;
-using Backend.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Repositories;
@@ -18,18 +18,21 @@ public class AuthRepository : IAuthRepository
     public async Task<Usuario?> GetUserByUsernameAsync(string username)
     {
         return await _context.Usuarios
+            .AsNoTracking()
             .FirstOrDefaultAsync(u => u.NombreUsuario == username && u.Eliminado != true);
     }
 
     public async Task<Usuario?> GetUserByEmailAsync(string email)
     {
         return await _context.Usuarios
+            .AsNoTracking()
             .FirstOrDefaultAsync(u => u.Correo == email && u.Eliminado != true);
     }
 
     public async Task<Usuario?> GetUserByIdAsync(int userId)
     {
         return await _context.Usuarios
+            .AsNoTracking()
             .FirstOrDefaultAsync(u => u.IdUsuario == userId && u.Eliminado != true);
     }
 
@@ -43,6 +46,7 @@ public class AuthRepository : IAuthRepository
     public async Task<bool> UserExistsAsync(string username, string email)
     {
         return await _context.Usuarios
+            .AsNoTracking()
             .AnyAsync(u => (u.NombreUsuario == username || u.Correo == email) && u.Eliminado != true);
     }
 
@@ -53,4 +57,4 @@ public class AuthRepository : IAuthRepository
 
         return user.ContrasenaHash != null && PasswordHelper.VerifyPassword(password, user.ContrasenaHash);
     }
-} 
+}

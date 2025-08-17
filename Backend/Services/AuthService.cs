@@ -1,7 +1,7 @@
 using Backend.DTOs;
+using Backend.Helpers;
 using Backend.Interfaces;
 using Backend.Models;
-using Backend.Helpers;
 
 namespace Backend.Services;
 
@@ -126,8 +126,8 @@ public class AuthService : IAuthService
     {
         return await _authRepository.ValidateUserCredentialsAsync(username, password);
     }
-    
-        private async Task AuditarLoginAsync(int? idUsuario, string? usuarioNombre, bool exito)
+
+    private async Task AuditarLoginAsync(int? idUsuario, string? usuarioNombre, bool exito)
     {
         await _servicioAuditoria.RegistrarAsync(new AuditoriaDto
         {
@@ -141,4 +141,4 @@ public class AuthService : IAuthService
             FuncionLlamada = "LoginAsync"
         });
     }
-} 
+}

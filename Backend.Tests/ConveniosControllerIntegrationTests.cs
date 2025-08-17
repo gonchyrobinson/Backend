@@ -1,13 +1,12 @@
-using Xunit;
 using AutoMapper;
 using Backend.Contexts;
-using Backend.Models;
+using Backend.Controllers;
 using Backend.DTOs;
+using Backend.Models;
 using Backend.Repositories;
 using Backend.Services;
-
 using Microsoft.AspNetCore.Mvc;
-using Backend.Controllers;
+using Xunit;
 
 
 
@@ -19,9 +18,9 @@ namespace Backend.Tests
         private readonly IMapper _mapper;
         private readonly RepositorioConvenios _repoConvenios;
         private readonly RepositorioEmpresas _repoEmpresas;
-    private readonly RepositorioPasantias _repoPasantias;
-    private readonly ServicioConvenios _servicioConvenios;
-    private readonly ConveniosController _controller;
+        private readonly RepositorioPasantias _repoPasantias;
+        private readonly ServicioConvenios _servicioConvenios;
+        private readonly ConveniosController _controller;
 
         public ConveniosControllerIntegrationTests()
         {
@@ -34,59 +33,60 @@ namespace Backend.Tests
             _controller = new ConveniosController(_servicioConvenios);
         }
 
-                [Fact]
-                public async Task Create_ReturnsCreatedWithData()
-                {
-                    // Arrange
-                    var createDto = new ConvenioCreateDto {
-                        FechaFirma = System.DateOnly.FromDateTime(System.DateTime.Today),
-                        FechaCaducidad = System.DateOnly.FromDateTime(System.DateTime.Today.AddYears(1))
-                    };
+        [Fact]
+        public async Task Create_ReturnsCreatedWithData()
+        {
+            // Arrange
+            var createDto = new ConvenioCreateDto
+            {
+                FechaFirma = System.DateOnly.FromDateTime(System.DateTime.Today),
+                FechaCaducidad = System.DateOnly.FromDateTime(System.DateTime.Today.AddYears(1))
+            };
 
-                    // Act
-                    var actionResult = await _controller.Create(createDto);
+            // Act
+            var actionResult = await _controller.Create(createDto);
 
-                    // Assert
-                    var createdResult = Assert.IsType<CreatedAtActionResult>(actionResult.Result);
-                    var dto = Assert.IsAssignableFrom<ConvenioDto>(createdResult.Value);
+            // Assert
+            var createdResult = Assert.IsType<CreatedAtActionResult>(actionResult.Result);
+            var dto = Assert.IsAssignableFrom<ConvenioDto>(createdResult.Value);
 
-                    Assert.NotEqual(0, dto.IdConvenio);
-                }
+            Assert.NotEqual(0, dto.IdConvenio);
+        }
 
-                [Fact]
-                public async Task Update_ReturnsOkWithUpdatedData()
-                {
-                    // Arrange
-                    var convenio = new Convenio { IdConvenio = 10, DomicilioAlternativo = "Casa vieja" };
-                    _dbContext.Convenios.Add(convenio);
-                    _dbContext.SaveChanges();
+        [Fact]
+        public async Task Update_ReturnsOkWithUpdatedData()
+        {
+            // Arrange
+            var convenio = new Convenio { IdConvenio = 10, DomicilioAlternativo = "Casa vieja" };
+            _dbContext.Convenios.Add(convenio);
+            _dbContext.SaveChanges();
 
-                    var updateDto = new ConvenioDto { IdConvenio = 10, DomicilioAlternativo = "Mi casa" };
+            var updateDto = new ConvenioDto { IdConvenio = 10, DomicilioAlternativo = "Mi casa" };
 
-                    // Act
-                    var result = await _controller.Update(updateDto);
+            // Act
+            var result = await _controller.Update(updateDto);
 
-                    // Assert
-                    var okResult = Assert.IsType<OkObjectResult>(result.Result);
-                    var dto = Assert.IsType<ConvenioDto>(okResult.Value);
-                    Assert.Equal(10, dto.IdConvenio);
-                    // Assert.Equal("EXP-NEW", dto.Expediente); // Solo si el campo es relevante
-                }
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var dto = Assert.IsType<ConvenioDto>(okResult.Value);
+            Assert.Equal(10, dto.IdConvenio);
+            // Assert.Equal("EXP-NEW", dto.Expediente); // Solo si el campo es relevante
+        }
 
-                [Fact]
-                public async Task Delete_ReturnsNoContent_WhenExists()
-                {
-                    // Arrange
-                    var convenio = new Convenio { IdConvenio = 20 };
-                    _dbContext.Convenios.Add(convenio);
-                    _dbContext.SaveChanges();
+        [Fact]
+        public async Task Delete_ReturnsNoContent_WhenExists()
+        {
+            // Arrange
+            var convenio = new Convenio { IdConvenio = 20 };
+            _dbContext.Convenios.Add(convenio);
+            _dbContext.SaveChanges();
 
-                    // Act
-                    var result = await _controller.Delete(20);
+            // Act
+            var result = await _controller.Delete(20);
 
-                    // Assert
-                    Assert.IsType<NoContentResult>(result);
-                }
+            // Assert
+            Assert.IsType<NoContentResult>(result);
+        }
         [Fact]
         public async Task ListarConveniosConEmpresa_ReturnsOkWithExpectedData()
         {

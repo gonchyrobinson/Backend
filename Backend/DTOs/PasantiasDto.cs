@@ -12,7 +12,7 @@ namespace Backend.DTOs
         public string? TutorFacultad { get; set; }
         public string? DniTutorFacultad { get; set; }
         public DateOnly? FechaInicio { get; set; }
-        public string? Tramite => $"EXP-FACET-{IdPasantia:D3}";
+        public string? Tramite { get; set; }
         public DateOnly? FechaFin { get; set; }
         public string? TipoAcuerdo { get; set; }
         public string? FrecuenciaPago { get; set; }

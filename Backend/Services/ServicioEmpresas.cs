@@ -2,7 +2,6 @@ using AutoMapper;
 using Backend.DTOs;
 using Backend.Interfaces;
 using Backend.Models;
-using Backend.Repositories;
 
 namespace Backend.Services
 {
@@ -10,12 +9,14 @@ namespace Backend.Services
     {
         private readonly IRepositorioEmpresas _repoEmpresas;
         private readonly IRepositorioConvenios _repoConvenios;
+        private readonly EmpresaValidationService _validationService;
 
         public ServicioEmpresas(IRepositorioEmpresas repoEmpresas, IRepositorioConvenios repoConvenios, IMapper mapper)
             : base(repoEmpresas, mapper)
         {
             _repoEmpresas = repoEmpresas;
             _repoConvenios = repoConvenios;
+            _validationService = new EmpresaValidationService(_repoConvenios);
         }
 
         protected override int GetIdFromDto(EmpresaDto dto)
@@ -29,11 +30,7 @@ namespace Backend.Services
         }
         public override async Task<bool> DeleteAsync(int id)
         {
-            var convenios = await _repoConvenios.ListarConveniosConEmpresa(null);
-            if (convenios.Any(c => c.IdEmpresa == id))
-            {
-                throw new Backend.Exceptions.ValidationException("No se puede eliminar la empresa porque tiene convenios asociados", "Empresa");
-            }
+            await _validationService.ValidateDeleteAsync(id);
             return await base.DeleteAsync(id);
         }
     }

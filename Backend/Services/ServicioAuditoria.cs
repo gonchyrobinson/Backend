@@ -2,9 +2,6 @@ using AutoMapper;
 using Backend.DTOs;
 using Backend.Interfaces;
 using Backend.Models;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Backend.Services
 {
@@ -19,7 +16,7 @@ namespace Backend.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<AuditoriaDto>> BuscarAsync(Backend.DTOs.AuditoriaBuscarDto filtro)
+        public async Task<IEnumerable<AuditoriaDto>> BuscarAsync(AuditoriaBuscarDto filtro)
         {
             var logs = await _repo.BuscarAsync(filtro);
             return _mapper.Map<IEnumerable<AuditoriaDto>>(logs);

@@ -1,16 +1,13 @@
-using Xunit;
+using AutoMapper;
 using Backend.Contexts;
+using Backend.Controllers;
+using Backend.DTOs;
+using Backend.Exceptions;
+using Backend.Models;
 using Backend.Repositories;
 using Backend.Services;
-using Backend.Controllers;
-using Backend.Models;
-using Backend.DTOs;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using AutoMapper;
-using System.Collections.Generic;
-using System.Linq;
-using Backend.Exceptions;
+using Xunit;
 
 namespace Backend.Tests
 {

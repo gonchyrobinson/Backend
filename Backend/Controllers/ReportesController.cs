@@ -1,6 +1,5 @@
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 using Backend.Reports;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers
 {

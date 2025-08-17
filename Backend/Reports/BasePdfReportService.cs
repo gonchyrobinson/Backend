@@ -1,8 +1,4 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.IO;
 using iText.Forms;
-using iText.Forms.Fields;
 using iText.Kernel.Pdf;
 
 

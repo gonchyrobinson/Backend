@@ -18,7 +18,7 @@ namespace Backend.Controllers
         public IActionResult Get()
         {
             _logger.LogInformation("Health check requested at {Time}", DateTime.UtcNow);
-            
+
             var healthStatus = new
             {
                 Status = "Healthy",
@@ -39,7 +39,7 @@ namespace Backend.Controllers
         {
             // Aquí puedes agregar verificaciones adicionales
             // como conexión a base de datos, servicios externos, etc.
-            
+
             return Ok(new { Status = "Ready", Timestamp = DateTime.UtcNow });
         }
 
