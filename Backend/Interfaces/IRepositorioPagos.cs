@@ -5,6 +5,6 @@ namespace Backend.Interfaces
     {
         Task<IEnumerable<Pago>> GetByPasantiaIdAsync(int idPasantia);
         Task<Pago> MarcarComoPagadoAsync(int idPago, DateOnly? fechaPago = null);
-        Task<IEnumerable<Pago>> GetPagosPorVencerAsync(DateOnly fecha);
+        Task<IEnumerable<Pago>> GetPagosPorVencerEnDiasAsync(int dias);
     }
 }

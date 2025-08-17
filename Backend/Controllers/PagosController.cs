@@ -26,9 +26,9 @@ namespace Backend.Controllers
         // Endpoint: pagos por vencer
         [HttpGet("por-vencer")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<PagosDto>>> GetPagosPorVencer([FromQuery] DateOnly fecha)
+        public async Task<ActionResult<IEnumerable<PagosDto>>> GetPagosPorVencer([FromQuery] int dias)
         {
-            var pagos = await _pagosService.GetPagosPorVencerAsync(fecha);
+            var pagos = await _pagosService.GetPagosPorVencerEnDiasAsync(dias);
             return Ok(pagos);
         }
 
