@@ -12,6 +12,7 @@ namespace Backend.Reports
         public string? ConvenioDNIRepresentanteFacultad { get; set; }
         public string? ConvenioDomicilioLegal { get; set; }
         public string? ConvenioExpediente { get; set; }
+        public string? ConvenioDomicilioAlternativo { get; set; }
 
         // Pasantía
         public string? AsignacionMensual { get; set; }

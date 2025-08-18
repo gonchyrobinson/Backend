@@ -17,7 +17,9 @@ namespace Backend.Reports.ExtensionSeguro
                 ["FechaFin"] = data.FechaFin ?? string.Empty,
                 ["EmpresaNombre"] = data.EmpresaNombre ?? string.Empty,
                 ["ConvenioDomicilioLegal"] = data.ConvenioDomicilioLegal ?? string.Empty,
-                ["TutorFacultad"] = data.TutorFacultad ?? string.Empty
+                ["TutorFacultad"] = data.TutorFacultad ?? string.Empty,
+                ["ConvenioDomicilioAlternativo"] = data.ConvenioDomicilioAlternativo ?? string.Empty,
+                ["DNITutorFacultad"] = data.DniTutorFacultad ?? string.Empty
             };
         }
     }
