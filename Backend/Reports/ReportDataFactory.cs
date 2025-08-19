@@ -42,6 +42,7 @@ namespace Backend.Reports
                 ConvenioDNIRepresentanteFacultad = SafeString(convenio?.DocRepresentanteFacultad),
                 ConvenioDomicilioLegal = SafeString(convenio?.DomicilioLegal),
                 ConvenioExpediente = convenio != null ? $"TRA-FACET-{convenio.IdConvenio:D3}" : null,
+                ConvenioDomicilioAlternativo = SafeString(convenio?.DomicilioAlternativo),
 
                 // Pasantía
                 AsignacionMensual = SafeDecimal(pasantia?.AsignacionMensual),
@@ -56,6 +57,7 @@ namespace Backend.Reports
                 FechaInicio = SafeDate(pasantia?.FechaInicio),
                 FechaFin = SafeDate(pasantia?.FechaFin),
                 TipoAcuerdo = SafeString(pasantia?.TipoAcuerdo),
+                HorasSemanales = SafeString(pasantia?.HorasSemanales),
 
                 // Estudiante
                 EstudianteApellido = SafeString(estudiante?.Apellido),
