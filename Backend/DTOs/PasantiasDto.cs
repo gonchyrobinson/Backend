@@ -1,5 +1,23 @@
 namespace Backend.DTOs
 {
+    // DTO para filtros de búsqueda avanzada de pasantías
+    public class PasantiaBusquedaAvanzadaDto
+    {
+        public string? Tramite { get; set; }
+        public string? ObraSocial { get; set; }
+        public string? Art { get; set; }
+        public string? TutorEmpresa { get; set; }
+        public string? TutorFacultad { get; set; }
+        public string? TipoAcuerdo { get; set; }
+        public DateOnly? FechaInicioDesde { get; set; }
+        public DateOnly? FechaInicioHasta { get; set; }
+        public DateOnly? FechaFinDesde { get; set; }
+        public DateOnly? FechaFinHasta { get; set; }
+        public int? IdEstudiante { get; set; }
+        public int? IdConvenio { get; set; }
+        public string? Estado { get; set; }
+    }
+
     public class PasantiaDto
     {
         public int IdPasantia { get; set; }

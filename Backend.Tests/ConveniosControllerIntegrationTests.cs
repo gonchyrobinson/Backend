@@ -152,7 +152,11 @@ namespace Backend.Tests
             _dbContext.SaveChanges();
 
             // Act
-            var result = await _controller.CaducarConvenio(2, System.DateOnly.FromDateTime(System.DateTime.Today.AddDays(1)));
+            var dto = new CaducarConvenioDto
+            {
+                FechaCaducidad = System.DateOnly.FromDateTime(System.DateTime.Today.AddDays(1)).ToString("yyyy-MM-dd")
+            };
+            var result = await _controller.CaducarConvenio(2, dto);
 
             // Assert
             Assert.IsType<OkResult>(result);

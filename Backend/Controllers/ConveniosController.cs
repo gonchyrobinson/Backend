@@ -43,12 +43,33 @@ namespace Backend.Controllers
 
         [HttpPost("caducar/{id}")]
         [Authorize]
-        public async Task<ActionResult> CaducarConvenio(int id, [FromBody] DateOnly? fechaCaducidad = null)
+        public async Task<ActionResult> CaducarConvenio(int id, [FromBody] CaducarConvenioDto dto)
         {
+            DateOnly? fechaCaducidad = null;
+            if (!string.IsNullOrEmpty(dto.FechaCaducidad))
+            {
+                if (DateOnly.TryParse(dto.FechaCaducidad, out var fecha))
+                {
+                    fechaCaducidad = fecha;
+                }
+                else
+                {
+                    return BadRequest("Formato de fecha inválido");
+                }
+            }
+
             var success = await _conveniosService.CaducarConvenioAsync(id, fechaCaducidad);
             if (success)
                 return Ok();
             return BadRequest();
+        }
+
+        [HttpGet("sugerencias-dropdown")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<object>>> GetSugerenciasDropdown()
+        {
+            var result = await _conveniosService.GetSugerenciasDropdownAsync();
+            return Ok(result);
         }
     }
 }

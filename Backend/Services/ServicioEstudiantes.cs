@@ -25,6 +25,16 @@ namespace Backend.Services
             return _mapper.Map<IEnumerable<StudentDto>>(estudiantes);
         }
 
+        public async Task<IEnumerable<string>> GetSugerenciasNombresAsync()
+        {
+            return await _repoEstudiantes.GetSugerenciasNombresAsync();
+        }
+
+        public async Task<IEnumerable<string>> GetSugerenciasApellidosAsync()
+        {
+            return await _repoEstudiantes.GetSugerenciasApellidosAsync();
+        }
+
         public override async Task<bool> DeleteAsync(int id)
         {
             await _validationService.ValidateDeleteAsync(id);

@@ -27,5 +27,13 @@ namespace Backend.Controllers
             var result = await _empresasService.BuscarAvanzadoAsync(filtro);
             return Ok(result);
         }
+
+        [HttpGet("sugerencias-nombres")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<string>>> GetSugerenciasNombres()
+        {
+            var result = await _empresasService.GetSugerenciasNombresAsync();
+            return Ok(result);
+        }
     }
 }
