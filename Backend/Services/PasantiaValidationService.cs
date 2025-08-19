@@ -22,7 +22,7 @@ namespace Backend.Services
         {
             ValidateBasicFields(
                 dto.IdEstudiante, dto.IdConvenio, dto.FechaInicio, dto.FechaFin,
-                dto.TutorEmpresa, dto.TutorFacultad, dto.dniTutorFacultad,
+                dto.TutorEmpresa, dto.TutorFacultad, dto.DniTutorFacultad,
                 dto.AsignacionMensual, dto.ObraSocial, dto.Art,
                 dto.TipoAcuerdo, dto.FrecuenciaPago, dto.HorasSemanales
             );
@@ -121,12 +121,12 @@ namespace Backend.Services
         /// </summary>
         private void ValidateBasicFields(
             int? idEstudiante, int? idConvenio, DateOnly? fechaInicio, DateOnly? fechaFin,
-            string? tutorEmpresa, string? tutorFacultad, string? dniTutorFacultad,
+            string? tutorEmpresa, string? tutorFacultad, string? DniTutorFacultad,
             decimal? asignacionMensual, string? obraSocial, string? art,
             string? tipoAcuerdo, string? frecuenciaPago, int? horasSemanales)
         {
             ValidateRequiredFields(idEstudiante, idConvenio, fechaInicio, fechaFin,
-                tutorEmpresa, tutorFacultad, dniTutorFacultad, asignacionMensual, obraSocial, art);
+                tutorEmpresa, tutorFacultad, DniTutorFacultad, asignacionMensual, obraSocial, art);
 
             if (fechaInicio.HasValue && fechaFin.HasValue)
             {
@@ -150,7 +150,7 @@ namespace Backend.Services
 
         private void ValidateRequiredFields(
             int? idEstudiante, int? idConvenio, DateOnly? fechaInicio, DateOnly? fechaFin,
-            string? tutorEmpresa, string? tutorFacultad, string? dniTutorFacultad,
+            string? tutorEmpresa, string? tutorFacultad, string? DniTutorFacultad,
             decimal? asignacionMensual, string? obraSocial, string? art)
         {
             var missingFields = new List<string>();
@@ -161,7 +161,7 @@ namespace Backend.Services
             if (!fechaFin.HasValue) missingFields.Add("Fecha de fin");
             if (string.IsNullOrWhiteSpace(tutorEmpresa)) missingFields.Add("Tutor de empresa");
             if (string.IsNullOrWhiteSpace(tutorFacultad)) missingFields.Add("Tutor de facultad");
-            if (string.IsNullOrWhiteSpace(dniTutorFacultad)) missingFields.Add("DNI del tutor de facultad");
+            if (string.IsNullOrWhiteSpace(DniTutorFacultad)) missingFields.Add("DNI del tutor de facultad");
             if (!asignacionMensual.HasValue || asignacionMensual <= 0) missingFields.Add("Asignación mensual");
             if (string.IsNullOrWhiteSpace(obraSocial)) missingFields.Add("Obra social");
             if (string.IsNullOrWhiteSpace(art)) missingFields.Add("ART");
