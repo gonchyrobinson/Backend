@@ -21,6 +21,7 @@ namespace Backend.DTOs
         public string? Sudocu { get; set; }
         public string? AreaTrabajo { get; set; }
         public string? Estado { get; set; }
+        public int? HorasSemanales { get; set; }
     }
 
     public class PasantiaCreateDto
@@ -32,7 +33,7 @@ namespace Backend.DTOs
         public string? Art { get; set; }
         public string? TutorEmpresa { get; set; }
         public string? TutorFacultad { get; set; }
-        public string? dniTutorFacultad { get; set; }
+        public string? DniTutorFacultad { get; set; }
         public DateOnly? FechaInicio { get; set; }
         public DateOnly? FechaFin { get; set; }
         public string? TipoAcuerdo { get; set; }
@@ -42,6 +43,7 @@ namespace Backend.DTOs
         public string? AreaTrabajo { get; set; }
         public string? Estado { get; set; }
         public decimal MontoPago { get; set; }
+        public int? HorasSemanales { get; set; }
     }
 
     public class PasantiaDetalleDto
