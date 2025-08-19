@@ -15,6 +15,7 @@ namespace Backend.Repositories
         {
             var estudiantes = await _dbSet
                 .AsNoTracking()
+                .Where(e => e.Eliminado == null || e.Eliminado == false)
                 .ToListAsync();
 
             bool IsStringValid(string? s) => !string.IsNullOrWhiteSpace(s) && s != "string";
@@ -35,6 +36,28 @@ namespace Backend.Repositories
                 estudiantes = estudiantes.Where(e => !string.IsNullOrEmpty(e.AreaTrabajo) && e.AreaTrabajo.ToLower().Contains(filtro.AreaTrabajo!.ToLower())).ToList();
 
             return estudiantes;
+        }
+
+        public async Task<IEnumerable<string>> GetSugerenciasNombresAsync()
+        {
+            return await _dbSet
+                .AsNoTracking()
+                .Where(e => (e.Eliminado == null || e.Eliminado == false) && !string.IsNullOrEmpty(e.Nombre))
+                .Select(e => e.Nombre!)
+                .Distinct()
+                .OrderBy(nombre => nombre)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<string>> GetSugerenciasApellidosAsync()
+        {
+            return await _dbSet
+                .AsNoTracking()
+                .Where(e => (e.Eliminado == null || e.Eliminado == false) && !string.IsNullOrEmpty(e.Apellido))
+                .Select(e => e.Apellido!)
+                .Distinct()
+                .OrderBy(apellido => apellido)
+                .ToListAsync();
         }
     }
 }

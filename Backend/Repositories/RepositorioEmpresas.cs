@@ -16,6 +16,7 @@ namespace Backend.Repositories
         {
             var empresas = await _dbSet
                 .AsNoTracking()
+                .Where(e => e.Eliminado == null || e.Eliminado == false)
                 .ToListAsync();
 
             bool IsStringValid(string? s) => !string.IsNullOrWhiteSpace(s) && s != "string";
@@ -53,6 +54,17 @@ namespace Backend.Repositories
                 empresas = empresas.Where(e => e.FechaFin <= filtro.FechaFinHasta).ToList();
 
             return empresas;
+        }
+
+        public async Task<IEnumerable<string>> GetSugerenciasNombresAsync()
+        {
+            return await _dbSet
+                .AsNoTracking()
+                .Where(e => (e.Eliminado == null || e.Eliminado == false) && !string.IsNullOrEmpty(e.Nombre))
+                .Select(e => e.Nombre!)
+                .Distinct()
+                .OrderBy(nombre => nombre)
+                .ToListAsync();
         }
     }
 }

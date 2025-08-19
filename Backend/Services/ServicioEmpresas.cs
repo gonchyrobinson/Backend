@@ -28,6 +28,11 @@ namespace Backend.Services
             var empresas = await _repoEmpresas.BuscarAvanzadoAsync(filtro);
             return _mapper.Map<IEnumerable<EmpresaDto>>(empresas);
         }
+
+        public async Task<IEnumerable<string>> GetSugerenciasNombresAsync()
+        {
+            return await _repoEmpresas.GetSugerenciasNombresAsync();
+        }
         public override async Task<bool> DeleteAsync(int id)
         {
             await _validationService.ValidateDeleteAsync(id);

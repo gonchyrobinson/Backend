@@ -31,13 +31,16 @@ namespace Backend.Repositories
                     if (filtro.FechaCaducidadHasta.HasValue)
                         query = query.Where(c => c.FechaCaducidad <= filtro.FechaCaducidadHasta);
                     if (!string.IsNullOrWhiteSpace(filtro.NombreEmpresa))
-                        query = query.Where(c => c.IdEmpresaNavigation != null && c.IdEmpresaNavigation.Nombre != null && c.IdEmpresaNavigation.Nombre.Contains(filtro.NombreEmpresa));
+                        query = query.Where(c => c.IdEmpresaNavigation != null && 
+                                                (c.IdEmpresaNavigation.Eliminado == null || c.IdEmpresaNavigation.Eliminado == false) &&
+                                                c.IdEmpresaNavigation.Nombre != null && c.IdEmpresaNavigation.Nombre.Contains(filtro.NombreEmpresa));
                     if (!string.IsNullOrWhiteSpace(filtro.DocRepresentanteFacultad))
                         query = query.Where(c => c.DocRepresentanteFacultad != null && c.DocRepresentanteFacultad.Contains(filtro.DocRepresentanteFacultad));
                     if (!string.IsNullOrWhiteSpace(filtro.Carrera))
                     {
                         query = query.Where(c => c.Pasantia.Any(p =>
                             p.IdEstudianteNavigation != null &&
+                            (p.IdEstudianteNavigation.Eliminado == null || p.IdEstudianteNavigation.Eliminado == false) &&
                             !string.IsNullOrEmpty(p.IdEstudianteNavigation.Carrera) &&
                             p.IdEstudianteNavigation.Carrera == filtro.Carrera
                         ));
@@ -46,6 +49,8 @@ namespace Backend.Repositories
 
                 var convenios = query
                     .AsNoTracking()
+                    .Where(c => c.IdEmpresaNavigation == null || 
+                              (c.IdEmpresaNavigation.Eliminado == null || c.IdEmpresaNavigation.Eliminado == false))
                     .Select(c => new ConvenioEmpresaDto
                     {
                         IdConvenio = c.IdConvenio,
@@ -109,6 +114,19 @@ namespace Backend.Repositories
             {
                 throw new ValidationException("Error al caducar convenio", ex, "Convenio");
             }
+        }
+
+        public async Task<IEnumerable<object>> GetSugerenciasDropdownAsync()
+        {
+            return await _dbSet
+                .AsNoTracking()
+                .Select(c => new 
+                {
+                    value = c.IdConvenio,
+                    label = $"EXP-FACET-{c.IdConvenio:D3}"
+                })
+                .OrderBy(x => x.value)
+                .ToListAsync();
         }
     }
 }

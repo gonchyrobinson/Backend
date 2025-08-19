@@ -42,7 +42,8 @@ namespace Backend.DTOs
             "TECNICATURA UNIVERSITARIA EN TECNOLOGÍA",
             "AZUCARERA E INDUSTRIAS DERIVADAS",
             "TECNICATURA UNIVERSITARIA EN FÍSICA",
-            "TECNICATURA UNIVERSITARIA EN FÍSICA AMBIENTAL"
+            "TECNICATURA UNIVERSITARIA EN FÍSICA AMBIENTAL",
+            "OTRA"
         };
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

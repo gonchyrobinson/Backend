@@ -68,5 +68,10 @@ namespace Backend.Services
             // Actualizar convenio
             return await base.UpdateAsync(dto);
         }
+
+        public async Task<IEnumerable<object>> GetSugerenciasDropdownAsync()
+        {
+            return await _repoConvenios.GetSugerenciasDropdownAsync();
+        }
     }
 }

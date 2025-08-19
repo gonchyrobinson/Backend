@@ -47,5 +47,21 @@ namespace Backend.Controllers
             var result = await _pasantiasService.GetByEstudianteIdAsync(estudianteId);
             return Ok(result);
         }
+
+        [HttpGet("sugerencias-tramites")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<string>>> GetSugerenciasTramites()
+        {
+            var result = await _pasantiasService.GetSugerenciasTramitesAsync();
+            return Ok(result);
+        }
+
+        [HttpPost("buscar-avanzado")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<PasantiaDto>>> BuscarAvanzado([FromBody] PasantiaBusquedaAvanzadaDto filtro)
+        {
+            var result = await _pasantiasService.BuscarAvanzadoAsync(filtro);
+            return Ok(result);
+        }
     }
 }

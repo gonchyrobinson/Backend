@@ -13,5 +13,11 @@ namespace Backend.Interfaces
 
         // Nuevo: agregar pago asociado a una pasantía
         Task AgregarPagoAsync(Pago pago);
+
+        // Método para obtener sugerencias de trámites para dropdown
+        Task<IEnumerable<string>> GetSugerenciasTramitesAsync();
+
+        // Método para búsqueda avanzada de pasantías
+        Task<IEnumerable<Pasantia>> BuscarAvanzadoAsync(PasantiaBusquedaAvanzadaDto filtro);
     }
 }

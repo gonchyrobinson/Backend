@@ -55,8 +55,7 @@ namespace Backend.DTOs
     // DTO para caducar convenio
     public class CaducarConvenioDto
     {
-        public int ConvenioId { get; set; }
-        public DateOnly FechaCaducidad { get; set; }
+        public string? FechaCaducidad { get; set; }
     }
 
     public class ConvenioDto
