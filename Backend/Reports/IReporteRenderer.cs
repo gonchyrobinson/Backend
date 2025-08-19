@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Backend.Reports
 {
     // Interface genérica para mapear los datos a los fields del PDF

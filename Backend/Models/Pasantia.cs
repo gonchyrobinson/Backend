@@ -1,11 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Backend.Models;
 
 public partial class Pasantia
 {
     public int IdPasantia { get; set; }
+
+    [NotMapped]
+    public string Tramite => $"TRA-FACET-{IdPasantia:D3}";
 
     public int? IdEstudiante { get; set; }
 
@@ -20,8 +22,7 @@ public partial class Pasantia
     public string? TutorEmpresa { get; set; }
 
     public string? TutorFacultad { get; set; }
-
-    public string? Expediente { get; set; }
+    public string? DniTutorFacultad { get; set; }
 
     public DateOnly? FechaInicio { get; set; }
 
@@ -29,14 +30,15 @@ public partial class Pasantia
 
     public string? TipoAcuerdo { get; set; }
 
-
     public string? Observaciones { get; set; }
 
-    // Mapea la columna frecuencia_pago ENUM('Mensual', 'Trimestral', 'Semestral', 'Anual')
-    [System.ComponentModel.DataAnnotations.Schema.Column("frecuencia_pago")]
+    [Column("frecuencia_pago")]
     public string? FrecuenciaPago { get; set; }
-    [System.ComponentModel.DataAnnotations.Schema.Column("monto_pago")]
+    [Column("monto_pago")]
+
     public decimal? MontoPago { get; set; }
+    public string? Sudocu { get; set; }
+    public int? HorasSemanales { get; set; }
 
     public virtual Convenio? IdConvenioNavigation { get; set; }
 

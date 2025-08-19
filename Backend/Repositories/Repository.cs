@@ -1,6 +1,7 @@
 
-using Backend.Interfaces;
 using Backend.Contexts;
+using Backend.Exceptions;
+using Backend.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -40,7 +41,7 @@ namespace Backend.Repositories
             }
             catch (ArgumentException ex)
             {
-                throw new Exceptions.AppException($"Error de argumentos: {ex.Message}", ex);
+                throw new AppException($"Error de argumentos: {ex.Message}", ex);
             }
         }
 
@@ -48,14 +49,14 @@ namespace Backend.Repositories
         {
             var entity = await _dbSet.FindAsync(id);
             if (entity == null)
-                throw new Backend.Exceptions.NotFoundException($"Entidad de tipo {typeof(T).Name} con ID {id} no encontrada.");
+                throw new NotFoundException($"Entidad de tipo {typeof(T).Name} con ID {id} no encontrada.");
 
             var eliminadoProp = typeof(T).GetProperty("Eliminado");
             if (eliminadoProp != null && eliminadoProp.PropertyType == typeof(bool?))
             {
                 var eliminadoValue = eliminadoProp.GetValue(entity) as bool?;
                 if (eliminadoValue == true)
-                    throw new Backend.Exceptions.NotFoundException($"Entidad de tipo {typeof(T).Name} con ID {id} no encontrada (eliminada lógicamente).");
+                    throw new NotFoundException($"Entidad de tipo {typeof(T).Name} con ID {id} no encontrada (eliminada lógicamente).");
             }
             return entity;
         }
@@ -63,7 +64,7 @@ namespace Backend.Repositories
         public virtual async Task<T> AddAsync(T entity)
         {
             if (entity == null)
-                throw new Backend.Exceptions.ValidationException("La entidad no puede ser nula.");
+                throw new ValidationException("La entidad no puede ser nula.");
             await _dbSet.AddAsync(entity);
             await _context.SaveChangesAsync();
             return entity;
@@ -72,7 +73,7 @@ namespace Backend.Repositories
         public virtual async Task<T> UpdateAsync(T entity)
         {
             if (entity == null)
-                throw new Backend.Exceptions.ValidationException("La entidad no puede ser nula.");
+                throw new ValidationException("La entidad no puede ser nula.");
             // Detach any existing entity with the same key to avoid tracking conflicts
             var idProperty = GetIdProperty(entity);
             if (idProperty != null)
@@ -92,8 +93,10 @@ namespace Backend.Repositories
         public virtual async Task<bool> DeleteAsync(int id)
         {
             if (id <= 0)
-                throw new Backend.Exceptions.ValidationException("El ID debe ser mayor a cero.");
+                throw new ValidationException("El ID debe ser mayor a cero.");
             var entity = await GetByIdAsync(id);
+            if (entity == null)
+                throw new NotFoundException($"Entidad de tipo {typeof(T).Name} con ID {id} no encontrada.");
             // Si la entidad tiene la propiedad Eliminado, hacer borrado lógico
             var eliminadoProp = typeof(T).GetProperty("Eliminado");
             var fechaEliminacionProp = typeof(T).GetProperty("FechaEliminacion");
@@ -117,7 +120,7 @@ namespace Backend.Repositories
         private PropertyInfo? GetIdProperty(T entity)
         {
             var type = typeof(T);
-            
+
             // Buscar propiedades que contengan "Id" en el nombre
             var idProperties = type.GetProperties()
                 .Where(p => p.Name.ToLower().Contains("id") && p.PropertyType == typeof(int))

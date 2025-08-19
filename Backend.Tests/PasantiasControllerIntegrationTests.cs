@@ -1,16 +1,13 @@
-using Xunit;
+using AutoMapper;
 using Backend.Contexts;
+using Backend.Controllers;
+using Backend.DTOs;
+using Backend.Exceptions;
+using Backend.Models;
 using Backend.Repositories;
 using Backend.Services;
-using Backend.Controllers;
-using Backend.Models;
-using Backend.DTOs;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using AutoMapper;
-using System.Collections.Generic;
-using System.Linq;
-using Backend.Exceptions;
+using Xunit;
 
 namespace Backend.Tests
 {
@@ -21,6 +18,7 @@ namespace Backend.Tests
         private readonly RepositorioPasantias _repoPasantias;
         private readonly RepositorioConvenios _repoConvenios;
         private readonly RepositorioEstudiantes _repoEstudiantes;
+        private readonly RepositorioPagos _repoPagos;
         private readonly ServicioPasantias _servicioPasantias;
         private readonly PasantiasController _controller;
 
@@ -31,7 +29,8 @@ namespace Backend.Tests
             _repoPasantias = new RepositorioPasantias(_dbContext);
             _repoConvenios = new RepositorioConvenios(_dbContext);
             _repoEstudiantes = new RepositorioEstudiantes(_dbContext);
-            _servicioPasantias = new ServicioPasantias(_repoPasantias, _repoEstudiantes, _repoConvenios, _mapper);
+            _repoPagos = new RepositorioPagos(_dbContext);
+            _servicioPasantias = new ServicioPasantias(_repoPasantias, _repoEstudiantes, _repoConvenios, _repoPagos, _mapper);
             _controller = new PasantiasController(_servicioPasantias);
         }
 
@@ -142,7 +141,19 @@ namespace Backend.Tests
             _dbContext.Estudiantes.AddRange(estudiante1);
             _dbContext.Convenios.AddRange(convenio1);
             // Arrange
-            var createDto = new PasantiaCreateDto { IdEstudiante = 1, IdConvenio = 1 };
+            var createDto = new PasantiaCreateDto
+            {
+                IdEstudiante = 1,
+                IdConvenio = 1,
+                FechaInicio = DateOnly.FromDateTime(DateTime.Now),
+                FechaFin = DateOnly.FromDateTime(DateTime.Now.AddMonths(6)),
+                TutorEmpresa = "Empresa Tutor",
+                TutorFacultad = "Facultad Tutor",
+                DniTutorFacultad = "12345678",
+                AsignacionMensual = 10000,
+                ObraSocial = "Obra Social Ejemplo",
+                Art = "ART Ejemplo"
+            };
 
             // Act
             var result = await _controller.Create(createDto);
@@ -169,7 +180,20 @@ namespace Backend.Tests
             _dbContext.Pasantias.Add(pasantia);
             _dbContext.SaveChanges();
 
-            var updateDto = new PasantiaDto { IdPasantia = 1, IdEstudiante = 2, IdConvenio = 2 };
+            var updateDto = new PasantiaDto
+            {
+                IdPasantia = 1,
+                IdEstudiante = 2,
+                IdConvenio = 2,
+                FechaInicio = DateOnly.FromDateTime(DateTime.Now),
+                FechaFin = DateOnly.FromDateTime(DateTime.Now.AddMonths(6)),
+                TutorEmpresa = "Empresa Tutor Actualizado",
+                TutorFacultad = "Facultad Tutor Actualizado",
+                DniTutorFacultad = "87654321",
+                AsignacionMensual = 12000,
+                ObraSocial = "Obra Social Actualizada",
+                Art = "ART Actualizada"
+            };
 
             // Act
             var result = await _controller.Update(updateDto);

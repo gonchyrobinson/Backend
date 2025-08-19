@@ -1,5 +1,6 @@
 using AutoMapper;
 using Backend.DTOs;
+using Backend.Exceptions;
 using Backend.Interfaces;
 using Backend.Models;
 
@@ -10,6 +11,7 @@ namespace Backend.Services
         private readonly IRepositorioConvenios _repoConvenios;
         private readonly IRepositorioEmpresas _repoEmpresas;
         private readonly IRepositorioPasantias _repoPasantias;
+        private readonly ConvenioValidationService _validationService;
 
         public ServicioConvenios(IRepositorioConvenios repoConvenios, IRepositorioEmpresas repoEmpresas, IRepositorioPasantias repoPasantias, IMapper mapper)
             : base(repoConvenios, mapper)
@@ -17,6 +19,7 @@ namespace Backend.Services
             _repoConvenios = repoConvenios;
             _repoEmpresas = repoEmpresas;
             _repoPasantias = repoPasantias;
+            _validationService = new ConvenioValidationService(_repoConvenios, _repoPasantias);
         }
 
         protected override int GetIdFromDto(ConvenioDto dto)
@@ -28,16 +31,7 @@ namespace Backend.Services
 
         public override async Task<bool> DeleteAsync(int id)
         {
-            // Verificar si existe alguna pasantía asociada al convenio
-            var convenio = await _repoConvenios.GetByIdAsync(id);
-            if (convenio == null)
-                throw new Backend.Exceptions.NotFoundException($"Convenio con ID {id} no encontrado");
-
-            var pasantias = await _repoPasantias.GetByConvenioIdAsync(id);
-            if (pasantias.Any())
-            {
-                throw new Backend.Exceptions.ValidationException($"No se puede eliminar el convenio porque tiene pasantías asociadas.", "Convenio");
-            }
+            await _validationService.ValidateDeleteAsync(id);
             return await base.DeleteAsync(id);
         }
         public async Task<IEnumerable<ConvenioEmpresaDto>> ListarConveniosConEmpresaAsync(ConvenioEmpresaFiltroDto filtro)
@@ -51,7 +45,7 @@ namespace Backend.Services
             // Validar existencia de la empresa
             var empresa = await _repoEmpresas.GetByIdAsync(dto.EmpresaId);
             if (empresa == null)
-                throw new Backend.Exceptions.NotFoundException($"Empresa con ID {dto.EmpresaId} no encontrada");
+                throw new NotFoundException($"Empresa con ID {dto.EmpresaId} no encontrada");
             return await _repoConvenios.AsignarEmpresaAsync(dto);
         }
 
@@ -68,7 +62,7 @@ namespace Backend.Services
                 var empresa = await _repoEmpresas.GetByIdAsync(dto.IdEmpresa.Value);
                 if (empresa == null)
                 {
-                    throw new Backend.Exceptions.NotFoundException($"Empresa con ID {dto.IdEmpresa.Value} no encontrada");
+                    throw new NotFoundException($"Empresa con ID {dto.IdEmpresa.Value} no encontrada");
                 }
             }
             // Actualizar convenio

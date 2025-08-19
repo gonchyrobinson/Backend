@@ -1,15 +1,12 @@
-using Xunit;
-using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 using Backend.Contexts;
+using Backend.Controllers;
+using Backend.DTOs;
+using Backend.Models;
 using Backend.Repositories;
 using Backend.Services;
-using Backend.Controllers;
-using Backend.Models;
-using Backend.DTOs;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Linq;
-using AutoMapper;
+using Xunit;
 
 namespace Backend.Tests
 {
@@ -36,17 +33,16 @@ namespace Backend.Tests
         public async Task BuscarAvanzado_ReturnsOkWithExpectedData()
         {
             // Arrange
-            var empresa = new Empresa {
+            var empresa = new Empresa
+            {
                 IdEmpresa = 1,
                 Nombre = "Acme Corp",
-                Vigencia = "Activa",
                 FechaInicio = DateOnly.FromDateTime(System.DateTime.Today),
                 FechaFin = DateOnly.FromDateTime(System.DateTime.Today.AddYears(1)),
                 TipoContrato = "Temporal",
                 Encargado = "Juan Perez",
                 Celular = "123456789",
                 CorreoElectronico = "acme@empresa.com",
-                Sudocu = DateOnly.FromDateTime(System.DateTime.Today),
                 Eliminado = false,
                 FechaEliminacion = null
             };

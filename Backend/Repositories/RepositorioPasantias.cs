@@ -1,9 +1,8 @@
+using Backend.Contexts;
 using Backend.DTOs;
-using Microsoft.EntityFrameworkCore;
 using Backend.Interfaces;
 using Backend.Models;
-using Backend.Contexts;
-using Backend.Exceptions;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Repositories
 {
@@ -17,6 +16,7 @@ namespace Backend.Repositories
         public async Task<IEnumerable<PasantiaDetalleDto>> GetAllDetalleAsync()
         {
             var query = _dbSet
+                .AsNoTracking()
                 .Include(p => p.IdEstudianteNavigation)
                 .Include(p => p.IdConvenioNavigation)
                 .Select(p => new PasantiaDetalleDto
@@ -31,11 +31,13 @@ namespace Backend.Repositories
                         Art = p.Art,
                         TutorEmpresa = p.TutorEmpresa,
                         TutorFacultad = p.TutorFacultad,
-                        Expediente = p.Expediente,
+                        DniTutorFacultad = p.DniTutorFacultad,
                         FechaInicio = p.FechaInicio,
                         FechaFin = p.FechaFin,
                         TipoAcuerdo = p.TipoAcuerdo,
                         Observaciones = p.Observaciones,
+                        Sudocu = p.Sudocu,
+                        FrecuenciaPago = p.FrecuenciaPago,
                     },
                     Estudiante = p.IdEstudianteNavigation != null ? new StudentDto
                     {
@@ -56,12 +58,18 @@ namespace Backend.Repositories
 
         public async Task<IEnumerable<Pasantia>> GetByConvenioIdAsync(int convenioId)
         {
-            return await _dbSet.Where(p => p.IdConvenio == convenioId).ToListAsync();
+            return await _dbSet
+                .AsNoTracking()
+                .Where(p => p.IdConvenio == convenioId)
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<Pasantia>> GetByEstudianteIdAsync(int estudianteId)
         {
-            return await _dbSet.Where(p => p.IdEstudiante == estudianteId).ToListAsync();
+            return await _dbSet
+                .AsNoTracking()
+                .Where(p => p.IdEstudiante == estudianteId)
+                .ToListAsync();
         }
         public async Task AgregarPagoAsync(Pago pago)
         {

@@ -1,16 +1,13 @@
-using Xunit;
+using AutoMapper;
 using Backend.Contexts;
+using Backend.Controllers;
+using Backend.DTOs;
+using Backend.Exceptions;
+using Backend.Models;
 using Backend.Repositories;
 using Backend.Services;
-using Backend.Controllers;
-using Backend.Models;
-using Backend.DTOs;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using AutoMapper;
-using System.Collections.Generic;
-using System.Linq;
-using Backend.Exceptions;
+using Xunit;
 
 namespace Backend.Tests
 {
@@ -134,26 +131,27 @@ namespace Backend.Tests
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
-            var pagoDto = Assert.IsType<PagosDto>(okResult.Value);
-            Assert.Equal(1, pagoDto.IdPasantia);
-            Assert.Equal(1000, pagoDto.Monto);
+            var pagosDto = Assert.IsAssignableFrom<List<PagosDto>>(okResult.Value);
+            Assert.Single(pagosDto);
+            Assert.Equal(1, pagosDto[0].IdPasantia);
+            Assert.Equal(1000, pagosDto[0].Monto);
         }
 
         [Fact]
-        public async Task GetByPasantiaId_ReturnsNotFoundException()
+        public async Task GetByPasantiaId_ReturnsEmptyList_WhenNoPagos()
         {
             // Arrange
             var pasantia = new Pasantia { IdPasantia = 2 };
             _dbContext.Pasantias.Add(pasantia);
             _dbContext.SaveChanges();
 
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<NotFoundException>(async () =>
-            {
-                await _controller.GetByPasantiaId(2);
-            });
+            // Act
+            var result = await _controller.GetByPasantiaId(2);
 
-            Assert.Equal("No se encontró un pago para la pasantía con ID 2", exception.Message);
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var pagosDto = Assert.IsAssignableFrom<List<PagosDto>>(okResult.Value);
+            Assert.Empty(pagosDto);
         }
 
         [Fact]
@@ -173,6 +171,82 @@ namespace Backend.Tests
             var pagoDto = Assert.IsType<PagosDto>(okResult.Value);
             Assert.True(pagoDto.Pagado);
             Assert.NotNull(pagoDto.FechaPago);
+        }
+
+        [Fact]
+        public async Task GetPagosPorVencer_ReturnsPagosDueWithinSpecifiedDays()
+        {
+            // Arrange
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            var pago1 = new Pago { IdPago = 1, Monto = 1000, FechaVencimiento = today.AddDays(5), Pagado = false };
+            var pago2 = new Pago { IdPago = 2, Monto = 2000, FechaVencimiento = today.AddDays(15), Pagado = false };
+            var pago3 = new Pago { IdPago = 3, Monto = 3000, FechaVencimiento = today.AddDays(25), Pagado = false };
+            var pago4 = new Pago { IdPago = 4, Monto = 4000, FechaVencimiento = today.AddDays(35), Pagado = false };
+            
+            _dbContext.Pagos.AddRange(pago1, pago2, pago3, pago4);
+            _dbContext.SaveChanges();
+
+            // Act - Buscar pagos que vencen en los próximos 25 días (para incluir el Pago 3)
+            var result = await _controller.GetPagosPorVencer(25);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var pagosDto = Assert.IsAssignableFrom<IEnumerable<PagosDto>>(okResult.Value);
+            var pagosList = pagosDto.ToList();
+            
+            // Debería retornar solo los pagos 1, 2 y 3 (que vencen en 5, 15 y 25 días)
+            Assert.Equal(3, pagosList.Count);
+            Assert.Contains(pagosList, p => p.IdPago == 1);
+            Assert.Contains(pagosList, p => p.IdPago == 2);
+            Assert.Contains(pagosList, p => p.IdPago == 3);
+            Assert.DoesNotContain(pagosList, p => p.IdPago == 4); // Este vence en 35 días
+        }
+
+        [Fact]
+        public async Task GetPagosPorVencer_ReturnsEmptyList_WhenNoPagosDueWithinDays()
+        {
+            // Arrange
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            var pago1 = new Pago { IdPago = 1, Monto = 1000, FechaVencimiento = today.AddDays(25), Pagado = false };
+            var pago2 = new Pago { IdPago = 2, Monto = 2000, FechaVencimiento = today.AddDays(30), Pagado = false };
+            
+            _dbContext.Pagos.AddRange(pago1, pago2);
+            _dbContext.SaveChanges();
+
+            // Act - Buscar pagos que vencen en los próximos 10 días
+            var result = await _controller.GetPagosPorVencer(10);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var pagosDto = Assert.IsAssignableFrom<IEnumerable<PagosDto>>(okResult.Value);
+            Assert.Empty(pagosDto);
+        }
+
+        [Fact]
+        public async Task GetPagosPorVencer_ReturnsOnlyUnpaidPagos()
+        {
+            // Arrange
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            var pago1 = new Pago { IdPago = 1, Monto = 1000, FechaVencimiento = today.AddDays(5), Pagado = false };
+            var pago2 = new Pago { IdPago = 2, Monto = 2000, FechaVencimiento = today.AddDays(10), Pagado = true }; // Ya pagado
+            var pago3 = new Pago { IdPago = 3, Monto = 3000, FechaVencimiento = today.AddDays(15), Pagado = false };
+            
+            _dbContext.Pagos.AddRange(pago1, pago2, pago3);
+            _dbContext.SaveChanges();
+
+            // Act - Buscar pagos que vencen en los próximos 20 días
+            var result = await _controller.GetPagosPorVencer(20);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var pagosDto = Assert.IsAssignableFrom<IEnumerable<PagosDto>>(okResult.Value);
+            var pagosList = pagosDto.ToList();
+            
+            // Debería retornar solo los pagos no pagados (1 y 3)
+            Assert.Equal(2, pagosList.Count);
+            Assert.Contains(pagosList, p => p.IdPago == 1);
+            Assert.DoesNotContain(pagosList, p => p.IdPago == 2); // Ya pagado
+            Assert.Contains(pagosList, p => p.IdPago == 3);
         }
     }
 }

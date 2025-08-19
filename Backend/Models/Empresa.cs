@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Backend.Models;
+﻿namespace Backend.Models;
 
 public partial class Empresa
 {
     public int IdEmpresa { get; set; }
 
     public string? Nombre { get; set; }
-
-    public string? Vigencia { get; set; }
 
     public DateOnly? FechaInicio { get; set; }
 
@@ -23,7 +18,7 @@ public partial class Empresa
 
     public string? CorreoElectronico { get; set; }
 
-    public DateOnly? Sudocu { get; set; }
+    public string? Sudocu { get; set; }
 
     public bool? Eliminado { get; set; }
 

@@ -2,9 +2,7 @@ namespace Backend.Constants
 {
     public static class AppConstants
     {
-        public const string ApiBasePath = "/api";
+        // Mantenemos solo la constante que se utiliza
         public const string CorsPolicyName = "AllowReactApp";
-        public const string JwtIssuer = "BackendAPI";
-        public const string JwtAudience = "ReactApp";
     }
 }

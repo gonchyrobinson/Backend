@@ -1,8 +1,7 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Backend.DTOs;
 using Backend.Services;
-using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;
 
@@ -29,7 +28,7 @@ public class AuthController : ControllerBase
         try
         {
             var response = await _authService.RegisterAsync(request);
-            
+
             if (response == null)
             {
                 return BadRequest(new { message = "Error al registrar usuario" });
@@ -58,7 +57,7 @@ public class AuthController : ControllerBase
         try
         {
             var response = await _authService.LoginAsync(request);
-            
+
             if (response == null)
             {
                 return Unauthorized(new { message = "Credenciales inválidas" });
@@ -90,7 +89,7 @@ public class AuthController : ControllerBase
             }
 
             var userInfo = await _authService.GetUserInfoAsync(userId);
-            
+
             if (userInfo == null)
             {
                 return Unauthorized(new { message = "Usuario no encontrado" });
@@ -103,4 +102,4 @@ public class AuthController : ControllerBase
             return StatusCode(500, new { message = "Error interno del servidor", error = ex.Message });
         }
     }
-} 
+}

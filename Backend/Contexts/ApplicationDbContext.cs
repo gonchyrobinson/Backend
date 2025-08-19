@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Backend.Models;
+﻿using Backend.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Contexts;
@@ -85,9 +83,6 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.DomicilioLegal)
                 .HasMaxLength(255)
                 .HasColumnName("domicilio_legal");
-            entity.Property(e => e.Expediente)
-                .HasMaxLength(255)
-                .HasColumnName("expediente");
             entity.Property(e => e.FechaCaducidad).HasColumnName("fecha_caducidad");
             entity.Property(e => e.FechaFirma).HasColumnName("fecha_firma");
             entity.Property(e => e.IdEmpresa).HasColumnName("id_empresa");
@@ -98,6 +93,15 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.RepresentanteFacultad)
                 .HasMaxLength(255)
                 .HasColumnName("representante_facultad");
+            entity.Property(e => e.DomicilioAlternativo)
+                .HasMaxLength(255)
+                .HasColumnName("domicilio_alternativo");
+            entity.Property(e => e.Caracter)
+                .HasMaxLength(255)
+                .HasColumnName("caracter");
+            entity.Property(e => e.Sudocu)
+                    .HasMaxLength(255)
+                    .HasColumnName("sudocu");
 
             entity.HasOne(d => d.IdEmpresaNavigation).WithMany(p => p.Convenios)
                 .HasForeignKey(d => d.IdEmpresa)
@@ -131,13 +135,12 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.Nombre)
                 .HasMaxLength(255)
                 .HasColumnName("nombre");
-            entity.Property(e => e.Sudocu).HasColumnName("sudocu");
+            entity.Property(e => e.Sudocu)
+                .HasMaxLength(255)
+                .HasColumnName("sudocu");
             entity.Property(e => e.TipoContrato)
-                .HasColumnType("enum('temporal','indefinido','otro')")
+                .HasMaxLength(255)
                 .HasColumnName("tipo_contrato");
-            entity.Property(e => e.Vigencia)
-                .HasColumnType("enum('vigente','no_vigente')")
-                .HasColumnName("vigencia");
         });
 
         modelBuilder.Entity<Estudiante>(entity =>
@@ -189,6 +192,7 @@ public partial class ApplicationDbContext : DbContext
 
             entity.Property(e => e.IdPago).HasColumnName("id_pago");
             entity.Property(e => e.FechaPago).HasColumnName("fecha_pago");
+            entity.Property(e => e.FechaVencimiento).HasColumnName("fecha_vencimiento");
             entity.Property(e => e.IdPasantia).HasColumnName("id_pasantia");
             entity.Property(e => e.Monto)
                 .HasPrecision(10, 2)
@@ -219,9 +223,6 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.AsignacionMensual)
                 .HasPrecision(10, 2)
                 .HasColumnName("asignacion_mensual");
-            entity.Property(e => e.Expediente)
-                .HasMaxLength(100)
-                .HasColumnName("expediente");
             entity.Property(e => e.FechaFin).HasColumnName("fecha_fin");
             entity.Property(e => e.FechaInicio).HasColumnName("fecha_inicio");
             entity.Property(e => e.IdConvenio).HasColumnName("id_convenio");
@@ -241,7 +242,14 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.TutorFacultad)
                 .HasMaxLength(100)
                 .HasColumnName("tutor_facultad");
-
+            entity.Property(e => e.DniTutorFacultad)
+                .HasMaxLength(100)
+                .HasColumnName("dni_tutor_facultad");
+            entity.Property(e => e.Sudocu)
+                .HasMaxLength(255)
+                .HasColumnName("sudocu");
+            entity.Property(e => e.HorasSemanales)
+                .HasColumnName("horas_semanales");
             entity.HasOne(d => d.IdConvenioNavigation).WithMany(p => p.Pasantia)
                 .HasForeignKey(d => d.IdConvenio)
                 .HasConstraintName("PASANTIAS_ibfk_2");

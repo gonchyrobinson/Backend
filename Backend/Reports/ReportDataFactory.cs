@@ -1,3 +1,4 @@
+using Backend.Helpers;
 using Backend.Models;
 
 namespace Backend.Reports
@@ -27,8 +28,8 @@ namespace Backend.Reports
             string? SafeDate(object? value)
             {
                 if (value == null || value is System.DBNull) return null;
-                if (value is DateOnly date) return date.ToString("yyyy-MM-dd");
-                if (DateOnly.TryParse(value.ToString(), out var result)) return result.ToString("yyyy-MM-dd");
+                if (value is DateOnly date) return date.ToString(DateFormats.DefaultDateFormat);
+                if (DateOnly.TryParse(value.ToString(), out var result)) return result.ToString(DateFormats.DefaultDateFormat);
                 return null;
             }
 
@@ -40,15 +41,16 @@ namespace Backend.Reports
                 ConvenioRepresentanteFacultad = SafeString(convenio?.RepresentanteFacultad),
                 ConvenioDNIRepresentanteFacultad = SafeString(convenio?.DocRepresentanteFacultad),
                 ConvenioDomicilioLegal = SafeString(convenio?.DomicilioLegal),
-                ConvenioExpediente = SafeString(convenio?.Expediente),
+                ConvenioExpediente = convenio != null ? $"TRA-FACET-{convenio.IdConvenio:D3}" : null,
 
                 // Pasantía
                 AsignacionMensual = SafeDecimal(pasantia?.AsignacionMensual),
                 ObraSocial = SafeString(pasantia?.ObraSocial),
                 Art = SafeString(pasantia?.Art),
                 TutorEmpresa = SafeString(pasantia?.TutorEmpresa),
+                Tramite = pasantia != null ? $"TRA-FACET-{pasantia.IdPasantia:D3}" : null,
                 TutorFacultad = SafeString(pasantia?.TutorFacultad),
-                Expediente = SafeString(pasantia?.Expediente),
+                DniTutorFacultad = SafeString(pasantia?.DniTutorFacultad),
                 MontoPago = SafeDecimal(pasantia?.MontoPago),
                 Observaciones = SafeString(pasantia?.Observaciones),
                 FechaInicio = SafeDate(pasantia?.FechaInicio),

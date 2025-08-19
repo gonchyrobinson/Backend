@@ -1,7 +1,7 @@
-using Microsoft.AspNetCore.Mvc;
 using Backend.Controllers;
 using Backend.DTOs;
 using Backend.Services;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
 
@@ -129,4 +129,4 @@ public class AuthControllerTests
         // Assert
         Assert.IsType<BadRequestObjectResult>(result);
     }
-} 
+}

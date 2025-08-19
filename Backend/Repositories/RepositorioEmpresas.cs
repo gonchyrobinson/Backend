@@ -1,7 +1,8 @@
-using Backend.DTOs;
 using Backend.Contexts;
-using Backend.Models;
+using Backend.DTOs;
 using Backend.Interfaces;
+using Backend.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Repositories
 {
@@ -13,31 +14,43 @@ namespace Backend.Repositories
 
         public async Task<IEnumerable<Empresa>> BuscarAvanzadoAsync(EmpresaBusquedaAvanzadaDto filtro)
         {
-            var empresas = await GetAllAsync();
+            var empresas = await _dbSet
+                .AsNoTracking()
+                .ToListAsync();
 
             bool IsStringValid(string? s) => !string.IsNullOrWhiteSpace(s) && s != "string";
             bool IsDateValid(DateOnly? d) => d.HasValue && d.Value != DateOnly.MinValue && d.Value != DateOnly.FromDateTime(DateTime.Today);
 
             if (IsStringValid(filtro.Nombre))
-                empresas = empresas.Where(e => !string.IsNullOrEmpty(e.Nombre) && e.Nombre.ToLower().Contains(filtro.Nombre!.ToLower()));
+                empresas = empresas.Where(e => !string.IsNullOrEmpty(e.Nombre) && e.Nombre.ToLower().Contains(filtro.Nombre!.ToLower())).ToList();
 
-            if (IsStringValid(filtro.Vigencia))
-                empresas = empresas.Where(e => !string.IsNullOrEmpty(e.Vigencia) && e.Vigencia.ToLower() == filtro.Vigencia!.ToLower());
+            // Vigencia: true = empresas vigentes (FechaFin > hoy o nula), false = no vigentes (FechaFin < hoy)
+            if (filtro.Vigencia != null)
+            {
+                if (filtro.Vigencia == true)
+                {
+                    empresas = empresas.Where(e => !e.FechaFin.HasValue || e.FechaFin > DateOnly.FromDateTime(DateTime.Today)).ToList();
+                }
+                else
+                {
+                    empresas = empresas.Where(e => e.FechaFin.HasValue && e.FechaFin < DateOnly.FromDateTime(DateTime.Today)).ToList();
+                }
+            }
 
             if (IsStringValid(filtro.TipoContrato))
-                empresas = empresas.Where(e => !string.IsNullOrEmpty(e.TipoContrato) && e.TipoContrato.ToLower() == filtro.TipoContrato!.ToLower());
+                empresas = empresas.Where(e => !string.IsNullOrEmpty(e.TipoContrato) && e.TipoContrato.ToLower() == filtro.TipoContrato!.ToLower()).ToList();
 
             if (IsDateValid(filtro.FechaInicioDesde))
-                empresas = empresas.Where(e => e.FechaInicio >= filtro.FechaInicioDesde);
+                empresas = empresas.Where(e => e.FechaInicio >= filtro.FechaInicioDesde).ToList();
 
             if (IsDateValid(filtro.FechaInicioHasta))
-                empresas = empresas.Where(e => e.FechaInicio <= filtro.FechaInicioHasta);
+                empresas = empresas.Where(e => e.FechaInicio <= filtro.FechaInicioHasta).ToList();
 
             if (IsDateValid(filtro.FechaFinDesde))
-                empresas = empresas.Where(e => e.FechaFin >= filtro.FechaFinDesde);
+                empresas = empresas.Where(e => e.FechaFin >= filtro.FechaFinDesde).ToList();
 
             if (IsDateValid(filtro.FechaFinHasta))
-                empresas = empresas.Where(e => e.FechaFin <= filtro.FechaFinHasta);
+                empresas = empresas.Where(e => e.FechaFin <= filtro.FechaFinHasta).ToList();
 
             return empresas;
         }

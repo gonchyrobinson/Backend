@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Backend.Models;
+﻿namespace Backend.Models;
 
 public partial class Convenio
 {
@@ -14,8 +11,8 @@ public partial class Convenio
     public int? NroAcuerdoMarco { get; set; }
 
     public string? DomicilioLegal { get; set; }
+    public string? DomicilioAlternativo { get; set; }
 
-    public string? Expediente { get; set; }
 
     public string? DocRepresentanteEmpresa { get; set; }
 
@@ -30,4 +27,6 @@ public partial class Convenio
     public virtual Empresa? IdEmpresaNavigation { get; set; }
 
     public virtual ICollection<Pasantia> Pasantia { get; set; } = new List<Pasantia>();
+    public string? Caracter { get; set; }
+    public string? Sudocu { get; set; }
 }

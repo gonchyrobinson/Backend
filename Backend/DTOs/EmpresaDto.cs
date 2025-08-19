@@ -6,8 +6,6 @@ namespace Backend.DTOs
     {
         public int IdEmpresa { get; set; }
         public string? Nombre { get; set; }
-
-        [RegularExpression("^(vigente|no_vigente)?$", ErrorMessage = "Vigencia debe ser 'vigente', 'no_vigente' o null.")]
         public string? Vigencia { get; set; }
 
         [DataType(DataType.Date, ErrorMessage = "FechaInicio debe ser una fecha válida.")]
@@ -17,7 +15,6 @@ namespace Backend.DTOs
         public DateOnly? FechaFin { get; set; }
 
         [Required]
-        [RegularExpression("^(temporal|indefinido|otro)$", ErrorMessage = "TipoContrato debe ser 'temporal', 'indefinido' u 'otro'.")]
         public string? TipoContrato { get; set; }
 
         public string? Encargado { get; set; }
@@ -28,8 +25,7 @@ namespace Backend.DTOs
         [EmailAddress(ErrorMessage = "CorreoElectronico debe tener formato de correo electrónico válido.")]
         public string? CorreoElectronico { get; set; }
 
-        [DataType(DataType.Date, ErrorMessage = "Sudocu debe ser una fecha válida.")]
-        public DateOnly? Sudocu { get; set; }
+        public string? Sudocu { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -40,7 +36,7 @@ namespace Backend.DTOs
         }
     }
 
-    public class EmpresaCreateDto: IValidatableObject
+    public class EmpresaCreateDto : IValidatableObject
     {
         public string? Nombre { get; set; }
 
@@ -54,7 +50,6 @@ namespace Backend.DTOs
         public DateOnly? FechaFin { get; set; }
 
         [Required]
-        [RegularExpression("^(temporal|indefinido|otro)$", ErrorMessage = "TipoContrato debe ser 'temporal', 'indefinido' u 'otro'.")]
         public string? TipoContrato { get; set; }
 
         public string? Encargado { get; set; }
@@ -65,8 +60,7 @@ namespace Backend.DTOs
         [EmailAddress(ErrorMessage = "CorreoElectronico debe tener formato de correo electrónico válido.")]
         public string? CorreoElectronico { get; set; }
 
-        [DataType(DataType.Date, ErrorMessage = "Sudocu debe ser una fecha válida.")]
-        public DateOnly? Sudocu { get; set; }
+        public string? Sudocu { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -80,10 +74,8 @@ namespace Backend.DTOs
     {
         public string? Nombre { get; set; }
 
-        [RegularExpression("^(vigente|no_vigente)?$", ErrorMessage = "Vigencia debe ser 'vigente', 'no_vigente' o null.")]
-        public string? Vigencia { get; set; }
+        public bool? Vigencia { get; set; }
 
-        [RegularExpression("^(temporal|indefinido|otro)?$", ErrorMessage = "TipoContrato debe ser 'temporal', 'indefinido', 'otro' o null.")]
         public string? TipoContrato { get; set; }
 
         [DataType(DataType.Date, ErrorMessage = "FechaInicioDesde debe ser una fecha válida.")]

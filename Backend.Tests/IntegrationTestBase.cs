@@ -1,7 +1,7 @@
-using Microsoft.EntityFrameworkCore;
-using Backend.Contexts;
 using AutoMapper;
+using Backend.Contexts;
 using Backend.Mappings;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Tests
 {
@@ -17,7 +17,8 @@ namespace Backend.Tests
 
         protected IMapper GetMapper()
         {
-            var config = new MapperConfiguration(cfg => {
+            var config = new MapperConfiguration(cfg =>
+            {
                 cfg.AddProfile<MappingProfile>();
             });
             return config.CreateMapper();

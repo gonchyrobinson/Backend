@@ -15,16 +15,20 @@ namespace Backend.Mappings
             // Mapeo para Estudiante
             CreateMap<Estudiante, StudentDto>().ReverseMap();
             CreateMap<StudentCreateDto, Estudiante>();
-            CreateMap<StudentUpdateDto, Estudiante>();
 
             // Mapeo para Empresa
-            CreateMap<Empresa, EmpresaDto>().ReverseMap()
+            CreateMap<Empresa, EmpresaDto>()
+                .ForMember(dest => dest.Vigencia, opt => opt.MapFrom(src => src.FechaFin.HasValue && src.FechaFin.Value < DateOnly.FromDateTime(DateTime.Today) ? "no_vigente" : "vigente"))
+                .ReverseMap()
                 .ForMember(dest => dest.Eliminado, opt => opt.MapFrom(src => false))
                 .ForMember(dest => dest.FechaEliminacion, opt => opt.MapFrom(src => (DateTime?)null));
             CreateMap<EmpresaCreateDto, Empresa>();
 
             // Mapeo para Pasantía
-            CreateMap<Pasantia, PasantiaDto>().ReverseMap();
+            CreateMap<Pasantia, PasantiaDto>()
+                .ForMember(dest => dest.Tramite, opt => opt.MapFrom(src => $"TRA-FACET-{src.IdPasantia:D3}"))
+                .ForMember(dest => dest.HorasSemanales, opt => opt.MapFrom(src => src.HorasSemanales))
+                .ReverseMap();
             CreateMap<PasantiaCreateDto, Pasantia>()
                 .ForMember(dest => dest.IdEstudiante, opt => opt.MapFrom(src => src.IdEstudiante))
                 .ForMember(dest => dest.IdConvenio, opt => opt.MapFrom(src => src.IdConvenio))
@@ -32,14 +36,16 @@ namespace Backend.Mappings
                 .ForMember(dest => dest.ObraSocial, opt => opt.MapFrom(src => src.ObraSocial))
                 .ForMember(dest => dest.Art, opt => opt.MapFrom(src => src.Art))
                 .ForMember(dest => dest.TutorEmpresa, opt => opt.MapFrom(src => src.TutorEmpresa))
+                .ForMember(dest => dest.DniTutorFacultad, opt => opt.MapFrom(src => src.DniTutorFacultad))
                 .ForMember(dest => dest.TutorFacultad, opt => opt.MapFrom(src => src.TutorFacultad))
-                .ForMember(dest => dest.Expediente, opt => opt.MapFrom(src => src.Expediente))
                 .ForMember(dest => dest.FechaInicio, opt => opt.MapFrom(src => src.FechaInicio))
                 .ForMember(dest => dest.FechaFin, opt => opt.MapFrom(src => src.FechaFin))
                 .ForMember(dest => dest.TipoAcuerdo, opt => opt.MapFrom(src => src.TipoAcuerdo))
                 .ForMember(dest => dest.Observaciones, opt => opt.MapFrom(src => src.Observaciones))
                 .ForMember(dest => dest.FrecuenciaPago, opt => opt.MapFrom(src => src.FrecuenciaPago))
-                .ForMember(dest => dest.MontoPago, opt => opt.MapFrom(src => src.MontoPago));
+                .ForMember(dest => dest.MontoPago, opt => opt.MapFrom(src => src.MontoPago))
+                .ForMember(dest => dest.Sudocu, opt => opt.MapFrom(src => src.Sudocu))
+                .ForMember(dest => dest.HorasSemanales, opt => opt.MapFrom(src => src.HorasSemanales));
 
             // Mapeo para Auditoría
             CreateMap<Auditoria, AuditoriaDto>()

@@ -1,9 +1,6 @@
 using Backend.DTOs;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Backend.Controllers
 {

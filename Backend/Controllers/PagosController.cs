@@ -3,8 +3,6 @@ using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Backend.Controllers
 {
@@ -24,14 +22,22 @@ namespace Backend.Controllers
             return dto.IdPago;
         }
 
-        // Métodos específicos para pagos pueden agregarse aquí
+
+        // Endpoint: pagos por vencer
+        [HttpGet("por-vencer")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<PagosDto>>> GetPagosPorVencer([FromQuery] int dias)
+        {
+            var pagos = await _pagosService.GetPagosPorVencerEnDiasAsync(dias);
+            return Ok(pagos);
+        }
 
         [HttpGet("by-pasantia/{idPasantia}")]
         [Authorize]
-        public async Task<ActionResult<PagosDto?>> GetByPasantiaId(int idPasantia)
+        public async Task<ActionResult<IEnumerable<PagosDto>>> GetByPasantiaId(int idPasantia)
         {
-            var pagoDto = await _pagosService.GetByPasantiaIdAsync(idPasantia);
-            return Ok(pagoDto);
+            var pagosDto = await _pagosService.GetByPasantiaIdAsync(idPasantia);
+            return Ok(pagosDto);
         }
 
         [HttpPost("marcar-pagado")]

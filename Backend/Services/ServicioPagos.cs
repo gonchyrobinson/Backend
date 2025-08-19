@@ -2,43 +2,30 @@ using AutoMapper;
 using Backend.DTOs;
 using Backend.Interfaces;
 using Backend.Models;
-using Backend.Exceptions;
 namespace Backend.Services
 {
     public class ServicioPagos : BaseService<Pago, PagosDto, CreatePagosDto>
     {
         private readonly IRepositorioPagos _repoPagos;
-
-        // Inyección del repositorio de pasantías para validación
         private readonly IRepository<Pasantia> _repoPasantias;
+        private readonly PagoValidationService _validationService;
 
         public ServicioPagos(IRepositorioPagos repoPagos, IRepository<Pasantia> repoPasantias, IMapper mapper)
             : base(repoPagos, mapper)
         {
             _repoPagos = repoPagos;
             _repoPasantias = repoPasantias;
+            _validationService = new PagoValidationService(_repoPasantias);
         }
         public override async Task<PagosDto> CreateAsync(CreatePagosDto dto)
         {
-            // Validar que IdPasantia no sea null
-            if (dto.IdPasantia != null)
-            {
-                var pasantia = await _repoPasantias.GetByIdAsync(dto.IdPasantia.Value);
-                if (pasantia == null)
-                    throw new Exceptions.ValidationException($"No existe una pasantía con ID {dto.IdPasantia}");
-            }
+            await _validationService.ValidateCreateAsync(dto);
             return await base.CreateAsync(dto);
         }
 
         public override async Task<PagosDto> UpdateAsync(PagosDto dto)
         {
-            // Validar que IdPasantia no sea null
-            if (dto.IdPasantia != null)
-            {
-                var pasantia = await _repoPasantias.GetByIdAsync(dto.IdPasantia.Value);
-                if (pasantia == null)
-                    throw new Exceptions.ValidationException($"No existe una pasantía con ID {dto.IdPasantia}");
-            }
+            await _validationService.ValidateUpdateAsync(dto);
             return await base.UpdateAsync(dto);
         }
 
@@ -47,12 +34,18 @@ namespace Backend.Services
             return dto.IdPago;
         }
 
-        // Métodos específicos para pagos pueden agregarse aquí
 
-        public async Task<PagosDto> GetByPasantiaIdAsync(int idPasantia)
+        // Pagos por vencer en X días desde hoy
+        public async Task<IEnumerable<PagosDto>> GetPagosPorVencerEnDiasAsync(int dias)
         {
-            var pago = await _repoPagos.GetByPasantiaIdAsync(idPasantia);
-            return _mapper.Map<PagosDto>(pago);
+            var pagos = await _repoPagos.GetPagosPorVencerEnDiasAsync(dias);
+            return _mapper.Map<IEnumerable<PagosDto>>(pagos);
+        }
+
+        public async Task<IEnumerable<PagosDto>> GetByPasantiaIdAsync(int idPasantia)
+        {
+            var pagos = await _repoPagos.GetByPasantiaIdAsync(idPasantia);
+            return _mapper.Map<IEnumerable<PagosDto>>(pagos);
         }
 
         public async Task<PagosDto> MarcarComoPagadoAsync(MarcarPagoDto dto)

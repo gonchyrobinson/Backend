@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace Backend.Controllers
 {
@@ -15,10 +14,10 @@ namespace Backend.Controllers
     {
         protected readonly TService _reportService;
 
-    /// <summary>
-    /// Nombre sugerido por defecto para el archivo PDF. Debe ser implementado en cada controlador concreto.
-    /// </summary>
-    protected abstract string FileName { get; }
+        /// <summary>
+        /// Nombre sugerido por defecto para el archivo PDF. Debe ser implementado en cada controlador concreto.
+        /// </summary>
+        protected abstract string FileName { get; }
 
         protected BaseReportController(TService reportService)
         {
