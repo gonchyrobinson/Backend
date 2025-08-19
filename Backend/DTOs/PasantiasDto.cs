@@ -21,6 +21,7 @@ namespace Backend.DTOs
         public string? Sudocu { get; set; }
         public string? AreaTrabajo { get; set; }
         public string? Estado { get; set; }
+        public int? HorasSemanales { get; set; }
     }
 
     public class PasantiaCreateDto
@@ -42,6 +43,7 @@ namespace Backend.DTOs
         public string? AreaTrabajo { get; set; }
         public string? Estado { get; set; }
         public decimal MontoPago { get; set; }
+        public int? HorasSemanales { get; set; }
     }
 
     public class PasantiaDetalleDto

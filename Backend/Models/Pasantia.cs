@@ -38,6 +38,7 @@ public partial class Pasantia
 
     public decimal? MontoPago { get; set; }
     public string? Sudocu { get; set; }
+    public int? HorasSemanales { get; set; }
 
     public virtual Convenio? IdConvenioNavigation { get; set; }
 

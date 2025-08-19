@@ -248,6 +248,8 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.Sudocu)
                 .HasMaxLength(255)
                 .HasColumnName("sudocu");
+            entity.Property(e => e.HorasSemanales)
+                .HasColumnName("horas_semanales");
             entity.HasOne(d => d.IdConvenioNavigation).WithMany(p => p.Pasantia)
                 .HasForeignKey(d => d.IdConvenio)
                 .HasConstraintName("PASANTIAS_ibfk_2");
