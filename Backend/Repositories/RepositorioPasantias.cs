@@ -12,6 +12,32 @@ namespace Backend.Repositories
         {
         }
 
+        public override async Task<bool> DeleteAsync(int id)
+
+        {
+
+            // Buscar la pasantía
+
+            var pasantia = await _dbSet.FindAsync(id);
+
+            if (pasantia == null)
+
+                return false;
+
+            // Eliminar pagos asociados
+
+            var pagos = _context.Pagos.Where(p => p.IdPasantia == id);
+
+            _context.Pagos.RemoveRange(pagos);
+
+            await _context.SaveChangesAsync();
+
+            // Llamar al método base para eliminar la pasantía (lógico o físico)
+
+            return await base.DeleteAsync(id);
+
+        }
+
         // Métodos específicos para pasantías pueden agregarse aquí
         public async Task<IEnumerable<PasantiaDetalleDto>> GetAllDetalleAsync()
         {
@@ -19,8 +45,8 @@ namespace Backend.Repositories
                 .AsNoTracking()
                 .Include(p => p.IdEstudianteNavigation)
                 .Include(p => p.IdConvenioNavigation)
-                .Where(p => p.IdEstudianteNavigation == null || 
-                          (p.IdEstudianteNavigation.Eliminado == null || p.IdEstudianteNavigation.Eliminado == false))
+                .Where(p => p.IdEstudianteNavigation == null ||
+                          (p.IdEstudianteNavigation.Eliminado == null || p.IdEstudianteNavigation.Eliminado == false) && (p.IdConvenioNavigation.FechaCaducidad == null || p.IdConvenioNavigation.FechaCaducidad > DateOnly.FromDateTime(DateTime.Now)))
                 .Select(p => new PasantiaDetalleDto
                 {
                     Pasantia = new PasantiaDto
@@ -63,9 +89,9 @@ namespace Backend.Repositories
             return await _dbSet
                 .AsNoTracking()
                 .Include(p => p.IdEstudianteNavigation)
-                .Where(p => p.IdConvenio == convenioId && 
-                          (p.IdEstudianteNavigation == null || 
-                           p.IdEstudianteNavigation.Eliminado == null || 
+                .Where(p => p.IdConvenio == convenioId &&
+                          (p.IdEstudianteNavigation == null ||
+                           p.IdEstudianteNavigation.Eliminado == null ||
                            p.IdEstudianteNavigation.Eliminado == false))
                 .ToListAsync();
         }
@@ -75,17 +101,16 @@ namespace Backend.Repositories
             return await _dbSet
                 .AsNoTracking()
                 .Include(p => p.IdEstudianteNavigation)
-                .Where(p => p.IdEstudiante == estudianteId && 
-                          (p.IdEstudianteNavigation == null || 
-                           p.IdEstudianteNavigation.Eliminado == null || 
+                .Where(p => p.IdEstudiante == estudianteId &&
+                          (p.IdEstudianteNavigation == null ||
+                           p.IdEstudianteNavigation.Eliminado == null ||
                            p.IdEstudianteNavigation.Eliminado == false))
                 .ToListAsync();
         }
         public async Task AgregarPagoAsync(Pago pago)
         {
-            var context = (ApplicationDbContext)_context;
-            context.Pagos.Add(pago);
-            await context.SaveChangesAsync();
+            _context.Pagos.Add(pago);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<string>> GetSugerenciasTramitesAsync()
@@ -107,7 +132,7 @@ namespace Backend.Repositories
                 .AsNoTracking()
                 .Include(p => p.IdEstudianteNavigation)
                 .Include(p => p.IdConvenioNavigation)
-                .Where(p => p.IdEstudianteNavigation == null || 
+                .Where(p => p.IdEstudianteNavigation == null ||
                           (p.IdEstudianteNavigation.Eliminado == null || p.IdEstudianteNavigation.Eliminado == false))
                 .ToListAsync();
 
@@ -181,7 +206,7 @@ namespace Backend.Repositories
             return await _dbSet
                 .AsNoTracking()
                 .Include(p => p.IdEstudianteNavigation)
-                .Where(p => p.IdEstudianteNavigation == null || 
+                .Where(p => p.IdEstudianteNavigation == null ||
                           (p.IdEstudianteNavigation.Eliminado == null || p.IdEstudianteNavigation.Eliminado == false))
                 .ToListAsync();
         }
@@ -191,9 +216,9 @@ namespace Backend.Repositories
             return await _dbSet
                 .AsNoTracking()
                 .Include(p => p.IdEstudianteNavigation)
-                .Where(p => p.IdPasantia == id && 
-                          (p.IdEstudianteNavigation == null || 
-                           p.IdEstudianteNavigation.Eliminado == null || 
+                .Where(p => p.IdPasantia == id &&
+                          (p.IdEstudianteNavigation == null ||
+                           p.IdEstudianteNavigation.Eliminado == null ||
                            p.IdEstudianteNavigation.Eliminado == false))
                 .FirstOrDefaultAsync();
         }

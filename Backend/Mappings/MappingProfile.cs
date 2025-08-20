@@ -45,7 +45,6 @@ namespace Backend.Mappings
                 .ForMember(dest => dest.TipoAcuerdo, opt => opt.MapFrom(src => src.TipoAcuerdo))
                 .ForMember(dest => dest.Observaciones, opt => opt.MapFrom(src => src.Observaciones))
                 .ForMember(dest => dest.FrecuenciaPago, opt => opt.MapFrom(src => src.FrecuenciaPago))
-                .ForMember(dest => dest.MontoPago, opt => opt.MapFrom(src => src.MontoPago))
                 .ForMember(dest => dest.Sudocu, opt => opt.MapFrom(src => src.Sudocu))
                 .ForMember(dest => dest.HorasSemanales, opt => opt.MapFrom(src => src.HorasSemanales));
 

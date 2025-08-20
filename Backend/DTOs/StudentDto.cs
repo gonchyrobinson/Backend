@@ -16,7 +16,6 @@ namespace Backend.DTOs
         public string? Nombre { get; set; }
         public string? Documento { get; set; }
         public string? Domicilio { get; set; }
-        public string? Libreta { get; set; }
         public string? Carrera { get; set; }
         public string? AreaTrabajo { get; set; }
         public string? Email { get; set; }
@@ -85,7 +84,6 @@ namespace Backend.DTOs
         public string? Nombre { get; set; }
         public string? Documento { get; set; }
         public string? Domicilio { get; set; }
-        public string? Libreta { get; set; }
         public string? Carrera { get; set; }
         public string? AreaTrabajo { get; set; }
         public string? Email { get; set; }
