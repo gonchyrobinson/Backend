@@ -59,5 +59,21 @@ namespace Backend.Repositories
                 .OrderBy(apellido => apellido)
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<object>> GetDocumentosUnicos()
+        {
+            return await _dbSet
+                .AsNoTracking()
+                .Where(e => (e.Eliminado == null || e.Eliminado == false) && 
+                           !string.IsNullOrEmpty(e.Documento))
+                .GroupBy(e => e.Documento)
+                .Select(g => new 
+                {
+                    value = g.First().IdEstudiante,
+                    label = g.Key
+                })
+                .OrderBy(x => x.label)
+                .ToListAsync();
+        }
     }
 }

@@ -41,6 +41,14 @@ namespace Backend.Controllers
             return Ok(result);
         }
 
+        [HttpGet("documentos-dropdown")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<object>>> GetDocumentosDropdown()
+        {
+            var result = await _studentService.GetDocumentosUnicos();
+            return Ok(result);
+        }
+
         protected override int GetIdFromDto(StudentDto dto)
         {
             return dto.IdEstudiante;

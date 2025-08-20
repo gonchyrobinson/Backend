@@ -35,6 +35,11 @@ namespace Backend.Services
             return await _repoEstudiantes.GetSugerenciasApellidosAsync();
         }
 
+        public async Task<IEnumerable<object>> GetDocumentosUnicos()
+        {
+            return await _repoEstudiantes.GetDocumentosUnicos();
+        }
+
         public override async Task<bool> DeleteAsync(int id)
         {
             await _validationService.ValidateDeleteAsync(id);

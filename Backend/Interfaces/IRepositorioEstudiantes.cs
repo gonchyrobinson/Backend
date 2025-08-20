@@ -7,5 +7,6 @@ namespace Backend.Interfaces
         Task<IEnumerable<Estudiante>> BuscarAvanzadoAsync(StudentBusquedaAvanzadaDto filtro);
         Task<IEnumerable<string>> GetSugerenciasNombresAsync();
         Task<IEnumerable<string>> GetSugerenciasApellidosAsync();
+        Task<IEnumerable<object>> GetDocumentosUnicos();
     }
 }
