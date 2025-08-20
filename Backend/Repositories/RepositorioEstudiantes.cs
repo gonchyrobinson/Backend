@@ -20,20 +20,17 @@ namespace Backend.Repositories
 
             bool IsStringValid(string? s) => !string.IsNullOrWhiteSpace(s) && s != "string";
 
-            if (IsStringValid(filtro.Nombre))
-                estudiantes = estudiantes.Where(e => !string.IsNullOrEmpty(e.Nombre) && e.Nombre.ToLower().Contains(filtro.Nombre!.ToLower())).ToList();
-
-            if (IsStringValid(filtro.Apellido))
-                estudiantes = estudiantes.Where(e => !string.IsNullOrEmpty(e.Apellido) && e.Apellido.ToLower().Contains(filtro.Apellido!.ToLower())).ToList();
-
             if (IsStringValid(filtro.Documento))
                 estudiantes = estudiantes.Where(e => !string.IsNullOrEmpty(e.Documento) && e.Documento.ToLower().Contains(filtro.Documento!.ToLower())).ToList();
 
             if (IsStringValid(filtro.Carrera))
                 estudiantes = estudiantes.Where(e => !string.IsNullOrEmpty(e.Carrera) && e.Carrera.ToLower().Contains(filtro.Carrera!.ToLower())).ToList();
 
-            if (IsStringValid(filtro.AreaTrabajo))
-                estudiantes = estudiantes.Where(e => !string.IsNullOrEmpty(e.AreaTrabajo) && e.AreaTrabajo.ToLower().Contains(filtro.AreaTrabajo!.ToLower())).ToList();
+            // Agrupar por Documento y devolver solo un estudiante por documento
+            estudiantes = estudiantes
+                .GroupBy(e => e.Documento)
+                .Select(g => g.First())
+                .ToList();
 
             return estudiantes;
         }
