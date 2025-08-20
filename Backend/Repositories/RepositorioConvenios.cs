@@ -12,6 +12,16 @@ namespace Backend.Repositories
         public RepositorioConvenios(ApplicationDbContext context) : base(context)
         {
         }
+        public override async Task<IEnumerable<Convenio>> GetAllAsync()
+        {
+            var hoy = DateOnly.FromDateTime(DateTime.Now);
+            return await _dbSet
+                .AsNoTracking()
+                .Where(c => !c.FechaCaducidad.HasValue || c.FechaCaducidad > hoy)
+                .OrderBy(c => c.FechaCaducidad == null)
+                .ThenBy(c => c.FechaCaducidad)
+                .ToListAsync();
+        }
 
         // Listar convenios junto a empresa (nombre)
         public async Task<IEnumerable<ConvenioEmpresaDto>> ListarConveniosConEmpresa(ConvenioEmpresaFiltroDto filtro)
@@ -31,7 +41,7 @@ namespace Backend.Repositories
                     if (filtro.FechaCaducidadHasta.HasValue)
                         query = query.Where(c => c.FechaCaducidad <= filtro.FechaCaducidadHasta);
                     if (!string.IsNullOrWhiteSpace(filtro.NombreEmpresa))
-                        query = query.Where(c => c.IdEmpresaNavigation != null && 
+                        query = query.Where(c => c.IdEmpresaNavigation != null &&
                                                 (c.IdEmpresaNavigation.Eliminado == null || c.IdEmpresaNavigation.Eliminado == false) &&
                                                 c.IdEmpresaNavigation.Nombre != null && c.IdEmpresaNavigation.Nombre.Contains(filtro.NombreEmpresa));
                     if (!string.IsNullOrWhiteSpace(filtro.DocRepresentanteFacultad))
@@ -49,7 +59,7 @@ namespace Backend.Repositories
 
                 var convenios = query
                     .AsNoTracking()
-                    .Where(c => c.IdEmpresaNavigation == null || 
+                    .Where(c => c.IdEmpresaNavigation == null ||
                               (c.IdEmpresaNavigation.Eliminado == null || c.IdEmpresaNavigation.Eliminado == false))
                     .Select(c => new ConvenioEmpresaDto
                     {
