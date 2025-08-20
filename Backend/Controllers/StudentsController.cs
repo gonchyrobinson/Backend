@@ -25,6 +25,22 @@ namespace Backend.Controllers
             return Ok(result);
         }
 
+        [HttpGet("sugerencias-nombres")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<string>>> GetSugerenciasNombres()
+        {
+            var result = await _studentService.GetSugerenciasNombresAsync();
+            return Ok(result);
+        }
+
+        [HttpGet("sugerencias-apellidos")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<string>>> GetSugerenciasApellidos()
+        {
+            var result = await _studentService.GetSugerenciasApellidosAsync();
+            return Ok(result);
+        }
+
         protected override int GetIdFromDto(StudentDto dto)
         {
             return dto.IdEstudiante;

@@ -86,7 +86,11 @@ namespace Backend.Repositories
         {
             return await _dbSet
                 .AsNoTracking()
-                .Where(p => p.IdEstudiante == estudianteId)
+                .Include(p => p.IdEstudianteNavigation)
+                .Where(p => p.IdEstudiante == estudianteId && 
+                          (p.IdEstudianteNavigation == null || 
+                           p.IdEstudianteNavigation.Eliminado == null || 
+                           p.IdEstudianteNavigation.Eliminado == false))
                 .ToListAsync();
         }
         public async Task AgregarPagoAsync(Pago pago)

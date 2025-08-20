@@ -13,5 +13,8 @@ namespace Backend.Interfaces
 
         // Caducar convenio
         Task<bool> CaducarConvenioAsync(int convenioId, DateOnly? fechaCaducidad);
+        
+        // Método para obtener sugerencias de convenios para dropdown
+        Task<IEnumerable<object>> GetSugerenciasDropdownAsync();
     }
 }

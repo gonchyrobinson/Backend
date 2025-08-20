@@ -77,5 +77,16 @@ namespace Backend.Services
             await _validationService.ValidateDeleteAsync(id, _repoPagos, _repoPasantias);
             return await base.DeleteAsync(id);
         }
+
+        public async Task<IEnumerable<string>> GetSugerenciasTramitesAsync()
+        {
+            return await _repoPasantias.GetSugerenciasTramitesAsync();
+        }
+
+        public async Task<IEnumerable<PasantiaDto>> BuscarAvanzadoAsync(PasantiaBusquedaAvanzadaDto filtro)
+        {
+            var entities = await _repoPasantias.BuscarAvanzadoAsync(filtro);
+            return _mapper.Map<IEnumerable<PasantiaDto>>(entities);
+        }
     }
 }
