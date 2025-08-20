@@ -28,7 +28,9 @@ namespace Backend.Mappings
             CreateMap<Pasantia, PasantiaDto>()
                 .ForMember(dest => dest.Tramite, opt => opt.MapFrom(src => $"TRA-FACET-{src.IdPasantia:D3}"))
                 .ForMember(dest => dest.HorasSemanales, opt => opt.MapFrom(src => src.HorasSemanales))
-                .ReverseMap();
+                .ForMember(dest => dest.AreaTrabajo, opt => opt.MapFrom(src => src.IdEstudianteNavigation != null ? src.IdEstudianteNavigation.AreaTrabajo : null))
+                .ReverseMap()
+                .ForMember(dest => dest.IdEstudianteNavigation, opt => opt.Ignore());
             CreateMap<PasantiaCreateDto, Pasantia>()
                 .ForMember(dest => dest.IdEstudiante, opt => opt.MapFrom(src => src.IdEstudiante))
                 .ForMember(dest => dest.IdConvenio, opt => opt.MapFrom(src => src.IdConvenio))
