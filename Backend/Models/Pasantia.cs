@@ -34,9 +34,6 @@ public partial class Pasantia
 
     [Column("frecuencia_pago")]
     public string? FrecuenciaPago { get; set; }
-    [Column("monto_pago")]
-
-    public decimal? MontoPago { get; set; }
     public string? Sudocu { get; set; }
     public int? HorasSemanales { get; set; }
 

@@ -16,7 +16,6 @@ namespace Backend.DTOs
         public DateOnly? FechaFin { get; set; }
         public string? TipoAcuerdo { get; set; }
         public string? FrecuenciaPago { get; set; }
-        public decimal MontoPago { get; set; }
         public string? Observaciones { get; set; }
         public string? Sudocu { get; set; }
         public string? AreaTrabajo { get; set; }
@@ -42,7 +41,6 @@ namespace Backend.DTOs
         public string? Sudocu { get; set; }
         public string? AreaTrabajo { get; set; }
         public string? Estado { get; set; }
-        public decimal MontoPago { get; set; }
         public int? HorasSemanales { get; set; }
     }
 
