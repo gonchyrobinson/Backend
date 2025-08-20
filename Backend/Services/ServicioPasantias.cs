@@ -29,6 +29,21 @@ namespace Backend.Services
             return dto.IdPasantia;
         }
 
+        // Sobrescribir métodos base para incluir navegaciones
+        public override async Task<IEnumerable<PasantiaDto>> GetAllAsync()
+        {
+            var entities = await _repoPasantias.GetAllWithStudentNavigationAsync();
+            return _mapper.Map<IEnumerable<PasantiaDto>>(entities);
+        }
+
+        public override async Task<PasantiaDto> GetByIdAsync(int id)
+        {
+            var entity = await _repoPasantias.GetByIdWithStudentNavigationAsync(id);
+            if (entity == null)
+                throw new NotFoundException($"Pasantia con ID {id} no encontrada");
+            return _mapper.Map<PasantiaDto>(entity);
+        }
+
         // Métodos específicos para pasantías pueden agregarse aquí
         public async Task<IEnumerable<PasantiaDetalleDto>> GetAllDetalleAsync()
         {

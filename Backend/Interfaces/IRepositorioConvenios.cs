@@ -16,5 +16,8 @@ namespace Backend.Interfaces
         
         // Método para obtener sugerencias de convenios para dropdown
         Task<IEnumerable<object>> GetSugerenciasDropdownAsync();
+
+        // Método para obtener empresas con último convenio vigente (para dropdown de pasantías)
+        Task<IEnumerable<EmpresaConvenioDropdownDto>> GetEmpresasConUltimoConvenioVigenteAsync();
     }
 }

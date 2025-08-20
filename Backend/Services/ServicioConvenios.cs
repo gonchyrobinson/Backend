@@ -73,5 +73,10 @@ namespace Backend.Services
         {
             return await _repoConvenios.GetSugerenciasDropdownAsync();
         }
+
+        public async Task<IEnumerable<EmpresaConvenioDropdownDto>> GetEmpresasConUltimoConvenioVigenteAsync()
+        {
+            return await _repoConvenios.GetEmpresasConUltimoConvenioVigenteAsync();
+        }
     }
 }

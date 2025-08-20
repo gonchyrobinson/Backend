@@ -91,4 +91,15 @@ namespace Backend.DTOs
         public string? Caracter { get; set; }
         public string? Sudocu { get; set; }
     }
+
+    // DTO para empresas con último convenio vigente (para dropdown de pasantías)
+    public class EmpresaConvenioDropdownDto
+    {
+        public int IdConvenio { get; set; }
+        public int IdEmpresa { get; set; }
+        public string NombreEmpresa { get; set; } = string.Empty;
+        public DateOnly FechaInicio { get; set; }
+        public string Label => NombreEmpresa;
+        public int Value => IdConvenio;
+    }
 }

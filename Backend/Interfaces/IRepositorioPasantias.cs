@@ -19,5 +19,9 @@ namespace Backend.Interfaces
 
         // Método para búsqueda avanzada de pasantías
         Task<IEnumerable<Pasantia>> BuscarAvanzadoAsync(PasantiaBusquedaAvanzadaDto filtro);
+
+        // Métodos para obtener pasantías con navegación de estudiante (para mapeo de AreaTrabajo)
+        Task<IEnumerable<Pasantia>> GetAllWithStudentNavigationAsync();
+        Task<Pasantia?> GetByIdWithStudentNavigationAsync(int id);
     }
 }
