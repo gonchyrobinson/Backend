@@ -71,5 +71,13 @@ namespace Backend.Controllers
             var result = await _conveniosService.GetSugerenciasDropdownAsync();
             return Ok(result);
         }
+
+        [HttpGet("empresas-convenio-vigente")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<EmpresaConvenioDropdownDto>>> GetEmpresasConUltimoConvenioVigente()
+        {
+            var result = await _conveniosService.GetEmpresasConUltimoConvenioVigenteAsync();
+            return Ok(result);
+        }
     }
 }

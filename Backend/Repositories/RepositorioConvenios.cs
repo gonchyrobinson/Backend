@@ -128,5 +128,35 @@ namespace Backend.Repositories
                 .OrderBy(x => x.value)
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<EmpresaConvenioDropdownDto>> GetEmpresasConUltimoConvenioVigenteAsync()
+        {
+            var fechaActual = DateOnly.FromDateTime(DateTime.Now);
+            
+            // Obtener empresas con al menos un convenio vigente
+            var empresasConConvenioVigente = await _dbSet
+                .AsNoTracking()
+                .Where(c => c.IdEmpresa.HasValue && 
+                           c.IdEmpresaNavigation != null &&
+                           (c.IdEmpresaNavigation.Eliminado == null || c.IdEmpresaNavigation.Eliminado == false) &&
+                           (!c.FechaCaducidad.HasValue || c.FechaCaducidad > fechaActual))
+                .GroupBy(c => new { 
+                    c.IdEmpresa, 
+                    NombreEmpresa = c.IdEmpresaNavigation!.Nombre 
+                })
+                .Select(g => new EmpresaConvenioDropdownDto
+                {
+                    IdEmpresa = g.Key.IdEmpresa!.Value,
+                    NombreEmpresa = g.Key.NombreEmpresa ?? "Empresa sin nombre",
+                    IdConvenio = g.OrderByDescending(c => c.FechaFirma ?? DateOnly.MinValue)
+                                  .First().IdConvenio,
+                    FechaInicio = g.OrderByDescending(c => c.FechaFirma ?? DateOnly.MinValue)
+                                   .First().FechaFirma ?? DateOnly.MinValue
+                })
+                .OrderBy(x => x.NombreEmpresa)
+                .ToListAsync();
+
+            return empresasConConvenioVigente;
+        }
     }
 }
