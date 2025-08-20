@@ -22,7 +22,6 @@ namespace Backend.Reports
         public string? TutorFacultad { get; set; }
         public string? DniTutorFacultad { get; set; }
         public string? Tramite { get; set; }
-        public string? MontoPago { get; set; }
         public string? Observaciones { get; set; }
         public string? FechaInicio { get; set; }
         public string? FechaFin { get; set; }
@@ -37,7 +36,6 @@ namespace Backend.Reports
         public string? EstudianteCarrera { get; set; }
         public string? EstudianteEmail { get; set; }
         public string? EstudianteAreaDeTrabajo { get; set; }
-        public string? EstudianteLibretaUniversitaria { get; set; }
         public string? EmpresaEncargado { get; set; }
         public string? EmpresaCelular { get; set; }
         public string? EmpresaCorreoElectronico { get; set; }

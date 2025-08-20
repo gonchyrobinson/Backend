@@ -47,9 +47,6 @@ namespace Backend.Services
             if (pasantia == null)
                 throw new NotFoundException($"Pasantía con ID {idPasantia} no encontrada");
             
-            var pagos = await repoPagos.GetByPasantiaIdAsync(idPasantia);
-            if (pagos?.Any() == true)
-                throw new ValidationException("No se puede eliminar la pasantía porque tiene pagos asociados.", "Pasantia");
         }
 
         /// <summary>
@@ -85,12 +82,12 @@ namespace Backend.Services
         public List<Pago> GenerarPagosAutomaticos(PasantiaCreateDto dto, int idPasantia)
         {
             var pagos = new List<Pago>();
-            if (!dto.FechaInicio.HasValue || !dto.FechaFin.HasValue || string.IsNullOrEmpty(dto.FrecuenciaPago) || dto.MontoPago <= 0)
+            if (!dto.FechaInicio.HasValue || !dto.FechaFin.HasValue || string.IsNullOrEmpty(dto.FrecuenciaPago) || dto.AsignacionMensual <= 0)
                 return pagos;
 
             var fechaActual = dto.FechaInicio.Value;
             var fechaFin = dto.FechaFin.Value;
-            var monto = dto.MontoPago * 0.05m;
+            var monto = dto.AsignacionMensual * 0.05m;
 
             while (fechaActual < fechaFin)
             {
