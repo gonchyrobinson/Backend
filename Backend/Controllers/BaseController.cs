@@ -1,4 +1,4 @@
-using Backend.Interfaces;
+using Backend.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,14 +6,15 @@ namespace Backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public abstract class BaseController<TEntity, TDto, TCreateDto> : ControllerBase
+    public abstract class BaseController<TEntity, TDto, TUpdateDto, TCreateDto> : ControllerBase
         where TEntity : class
         where TDto : class
+        where TUpdateDto : class
         where TCreateDto : class
     {
-        protected readonly IService<TEntity, TDto, TCreateDto> _service;
+        protected readonly IService<TEntity, TDto, TUpdateDto, TCreateDto> _service;
 
-        protected BaseController(IService<TEntity, TDto, TCreateDto> service)
+        protected BaseController(IService<TEntity, TDto, TUpdateDto, TCreateDto> service)
         {
             _service = service;
         }
@@ -44,7 +45,7 @@ namespace Backend.Controllers
 
         [HttpPut]
         [Authorize]
-        public virtual async Task<ActionResult<TDto>> Update(TDto dto)
+        public virtual async Task<ActionResult<TDto>> Update(TUpdateDto dto)
         {
             var result = await _service.UpdateAsync(dto);
             return Ok(result);

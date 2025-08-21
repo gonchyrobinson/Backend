@@ -1,5 +1,5 @@
-using Backend.DTOs;
-using Backend.Services;
+using Backend.DTOs.AuditoriaDtos;
+using Backend.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers
@@ -8,9 +8,9 @@ namespace Backend.Controllers
     [Route("api/[controller]")]
     public class AuditoriaController : ControllerBase
     {
-        private readonly ServicioAuditoria _servicio;
+        private readonly IServicioAuditoria _servicio;
 
-        public AuditoriaController(ServicioAuditoria servicio)
+        public AuditoriaController(IServicioAuditoria servicio)
         {
             _servicio = servicio;
         }

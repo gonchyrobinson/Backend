@@ -1,6 +1,7 @@
 using Backend.DTOs;
 using Backend.Exceptions;
-using Backend.Interfaces;
+using Backend.Interfaces.Repositories;
+using Backend.DTOs.ConvenioDtos;
 
 namespace Backend.Services
 {

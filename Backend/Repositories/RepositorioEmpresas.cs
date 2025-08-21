@@ -1,6 +1,6 @@
 using Backend.Contexts;
-using Backend.DTOs;
-using Backend.Interfaces;
+using Backend.DTOs.EmpresaDtos;
+using Backend.Interfaces.Repositories;
 using Backend.Models;
 using Microsoft.EntityFrameworkCore;
 

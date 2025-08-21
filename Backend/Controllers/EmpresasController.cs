@@ -1,16 +1,16 @@
-using Backend.DTOs;
+using Backend.DTOs.EmpresaDtos;
+using Backend.Interfaces.Services;
 using Backend.Models;
-using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers
 {
-    public class EmpresasController : BaseController<Empresa, EmpresaDto, EmpresaCreateDto>
+    public class EmpresasController : BaseController<Empresa, EmpresaDto, EmpresaUpdateDto, EmpresaCreateDto>
     {
-        private readonly ServicioEmpresas _empresasService;
+        private readonly IServicioEmpresas _empresasService;
 
-        public EmpresasController(ServicioEmpresas service) : base(service)
+        public EmpresasController(IServicioEmpresas service) : base(service)
         {
             _empresasService = service;
         }

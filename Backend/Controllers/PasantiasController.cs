@@ -1,6 +1,6 @@
-using Backend.DTOs;
+using Backend.DTOs.PasantiaDtos;
+using Backend.Interfaces.Services;
 using Backend.Models;
-using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,11 +8,11 @@ namespace Backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class PasantiasController : BaseController<Pasantia, PasantiaDto, PasantiaCreateDto>
+    public class PasantiasController : BaseController<Pasantia, PasantiaDto, PasantiaUpdateDto, PasantiaCreateDto>
     {
-        private readonly ServicioPasantias _pasantiasService;
+        private readonly IServicioPasantias _pasantiasService;
 
-        public PasantiasController(ServicioPasantias service) : base(service)
+        public PasantiasController(IServicioPasantias service) : base(service)
         {
             _pasantiasService = service;
         }

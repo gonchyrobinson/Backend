@@ -1,5 +1,5 @@
 using Backend.Controllers;
-using Backend.DTOs;
+using Backend.DTOs.AuthDtos;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Moq;

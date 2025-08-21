@@ -1,5 +1,5 @@
 using Backend.Exceptions;
-using Backend.Interfaces;
+using Backend.Interfaces.Repositories;
 
 namespace Backend.Services
 {

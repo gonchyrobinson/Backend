@@ -1,13 +1,15 @@
 using AutoMapper;
 using Backend.Exceptions;
-using Backend.Interfaces;
+using Backend.Interfaces.Repositories;
+using Backend.Interfaces.Services;
 using System.Reflection;
 
 namespace Backend.Services
 {
-    public abstract class BaseService<TEntity, TDto, TCreateDto> : IService<TEntity, TDto, TCreateDto>
+    public abstract class BaseService<TEntity, TDto, TUpdateDto, TCreateDto> : IService<TEntity, TDto, TUpdateDto, TCreateDto>
         where TEntity : class
         where TDto : class
+        where TUpdateDto : class
         where TCreateDto : class
     {
         protected readonly IRepository<TEntity> _repository;
@@ -40,11 +42,11 @@ namespace Backend.Services
             return _mapper.Map<TDto>(result);
         }
 
-        public virtual async Task<TDto> UpdateAsync(TDto dto)
+        public virtual async Task<TDto> UpdateAsync(TUpdateDto dto)
         {
             if (dto == null)
                 throw new Exceptions.AppException("El objeto recibido no puede ser nulo.");
-            var id = GetIdFromDto(dto);
+            var id = GetIdFromUpdateDto(dto);
             var existingEntity = await _repository.GetByIdAsync(id);
             if (existingEntity == null)
                 throw new NotFoundException($"Entidad con ID {id} no encontrada");
@@ -65,7 +67,7 @@ namespace Backend.Services
             return await _repository.DeleteAsync(id);
         }
 
-        protected abstract int GetIdFromDto(TDto dto);
+        protected abstract int GetIdFromUpdateDto(TUpdateDto dto);
 
         private PropertyInfo? GetIdProperty(TEntity entity)
         {

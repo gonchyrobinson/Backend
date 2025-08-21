@@ -1,19 +1,24 @@
 using AutoMapper;
-using Backend.DTOs;
-using Backend.Interfaces;
+using Backend.DTOs.AuditoriaDtos;
+using Backend.Interfaces.Repositories;
+using Backend.Interfaces.Services;
 using Backend.Models;
 
 namespace Backend.Services
 {
-    public class ServicioAuditoria
+    public class ServicioAuditoria : BaseService<Auditoria, AuditoriaDto, AuditoriaUpdateDto, AuditoriaDto>, IServicioAuditoria
     {
         private readonly IRepositorioAuditoria _repo;
-        private readonly IMapper _mapper;
 
         public ServicioAuditoria(IRepositorioAuditoria repo, IMapper mapper)
+            : base(repo, mapper)
         {
             _repo = repo;
-            _mapper = mapper;
+        }
+
+        protected override int GetIdFromUpdateDto(AuditoriaUpdateDto dto)
+        {
+            return dto.IdAuditoria;
         }
 
         public async Task<IEnumerable<AuditoriaDto>> BuscarAsync(AuditoriaBuscarDto filtro)

@@ -1,7 +1,8 @@
 using Backend.Constants;
 using Backend.Contexts;
 using Backend.Helpers;
-using Backend.Interfaces;
+using Backend.Interfaces.Repositories;
+using Backend.Interfaces.Services;
 using Backend.Mappings;
 using Backend.Middleware;
 using Backend.Reports;
@@ -144,14 +145,14 @@ builder.Services.AddScoped<PasantiaValidationService>();
 builder.Services.AddScoped<PagoValidationService>();
 
 // Servicios principales
-builder.Services.AddScoped<ServicioPasantias>();
-builder.Services.AddScoped<ServicioEmpresas>();
-builder.Services.AddScoped<ServicioEstudiantes>();
-builder.Services.AddScoped<ServicioPagos>();
-builder.Services.AddScoped<ServicioConvenios>();
+builder.Services.AddScoped<IServicioPasantias, ServicioPasantias>();
+builder.Services.AddScoped<IServicioEmpresas, ServicioEmpresas>();
+builder.Services.AddScoped<IServicioEstudiantes, ServicioEstudiantes>();
+builder.Services.AddScoped<IServicioPagos, ServicioPagos>();
+builder.Services.AddScoped<IServicioConvenios, ServicioConvenios>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
-builder.Services.AddScoped<ServicioAuditoria>();
+builder.Services.AddScoped<IServicioAuditoria, ServicioAuditoria>();
 
 // Reporte Contrato Pasantía Estudiante
 builder.Services.AddScoped<IReporteDataAggregator<int, ReportData>, ReportAggregator>();

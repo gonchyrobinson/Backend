@@ -1,12 +1,13 @@
 using AutoMapper;
-using Backend.DTOs;
+using Backend.DTOs.ConvenioDtos;
 using Backend.Exceptions;
-using Backend.Interfaces;
+using Backend.Interfaces.Repositories;
+using Backend.Interfaces.Services;
 using Backend.Models;
 
 namespace Backend.Services
 {
-    public class ServicioConvenios : BaseService<Convenio, ConvenioDto, ConvenioCreateDto>
+    public class ServicioConvenios : BaseService<Convenio, ConvenioDto, ConvenioUpdateDto, ConvenioCreateDto>, IServicioConvenios
     {
         private readonly IRepositorioConvenios _repoConvenios;
         private readonly IRepositorioEmpresas _repoEmpresas;
@@ -22,7 +23,7 @@ namespace Backend.Services
             _validationService = new ConvenioValidationService(_repoConvenios, _repoPasantias);
         }
 
-        protected override int GetIdFromDto(ConvenioDto dto)
+        protected override int GetIdFromUpdateDto(ConvenioUpdateDto dto)
         {
             return dto.IdConvenio;
         }
@@ -54,7 +55,7 @@ namespace Backend.Services
             return await _repoConvenios.CaducarConvenioAsync(convenioId, fechaCaducidad);
         }
 
-        public override async Task<ConvenioDto> UpdateAsync(ConvenioDto dto)
+        public override async Task<ConvenioDto> UpdateAsync(ConvenioUpdateDto dto)
         {
             // Validar existencia de empresa si se especifica IdEmpresa
             if (dto.IdEmpresa.HasValue)

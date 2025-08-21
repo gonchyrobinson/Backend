@@ -1,7 +1,7 @@
 using AutoMapper;
 using Backend.Contexts;
 using Backend.Controllers;
-using Backend.DTOs;
+using Backend.DTOs.EmpresaDtos;
 using Backend.Models;
 using Backend.Repositories;
 using Backend.Services;
@@ -135,7 +135,7 @@ namespace Backend.Tests
             _dbContext.Empresas.Add(empresa);
             _dbContext.SaveChanges();
 
-            var updateDto = new EmpresaDto { IdEmpresa = 1, Nombre = "Empresa Actualizada" };
+            var updateDto = new EmpresaUpdateDto { IdEmpresa = 1, Nombre = "Empresa Actualizada" };
 
             // Act
             var result = await _controller.Update(updateDto);

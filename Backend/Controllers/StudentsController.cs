@@ -1,6 +1,6 @@
-using Backend.DTOs;
+using Backend.DTOs.StudentDtos;
+using Backend.Interfaces.Services;
 using Backend.Models;
-using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,11 +8,11 @@ namespace Backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class StudentsController : BaseController<Estudiante, StudentDto, StudentCreateDto>
+    public class StudentsController : BaseController<Estudiante, StudentDto, StudentUpdateDto, StudentCreateDto>
     {
-        private readonly ServicioEstudiantes _studentService;
+        private readonly IServicioEstudiantes _studentService;
 
-        public StudentsController(ServicioEstudiantes service) : base(service)
+        public StudentsController(IServicioEstudiantes service) : base(service)
         {
             _studentService = service;
         }

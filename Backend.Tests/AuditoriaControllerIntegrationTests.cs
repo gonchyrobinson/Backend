@@ -1,7 +1,7 @@
 using AutoMapper;
 using Backend.Contexts;
 using Backend.Controllers;
-using Backend.DTOs;
+using Backend.DTOs.AuditoriaDtos;
 using Backend.Exceptions;
 using Backend.Models;
 using Backend.Repositories;
