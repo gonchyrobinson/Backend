@@ -1,11 +1,12 @@
 using AutoMapper;
-using Backend.DTOs;
-using Backend.Interfaces;
+using Backend.DTOs.StudentDtos;
+using Backend.Interfaces.Repositories;
+using Backend.Interfaces.Services;
 using Backend.Models;
 
 namespace Backend.Services
 {
-    public class ServicioEstudiantes : BaseService<Estudiante, StudentDto, StudentCreateDto>
+    public class ServicioEstudiantes : BaseService<Estudiante, StudentDto, StudentUpdateDto, StudentCreateDto>, IServicioEstudiantes
     {
         private readonly IRepositorioEstudiantes _repoEstudiantes;
         private readonly EstudianteValidationService _validationService;
@@ -46,7 +47,7 @@ namespace Backend.Services
             return await base.DeleteAsync(id);
         }
 
-        protected override int GetIdFromDto(StudentDto dto)
+        protected override int GetIdFromUpdateDto(StudentUpdateDto dto)
         {
             return dto.IdEstudiante;
         }

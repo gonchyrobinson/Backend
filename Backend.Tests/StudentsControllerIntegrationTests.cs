@@ -1,7 +1,7 @@
 using AutoMapper;
 using Backend.Contexts;
 using Backend.Controllers;
-using Backend.DTOs;
+using Backend.DTOs.StudentDtos;
 using Backend.Models;
 using Backend.Repositories;
 using Backend.Services;
@@ -126,7 +126,7 @@ namespace Backend.Tests
             _dbContext.Estudiantes.Add(student);
             _dbContext.SaveChanges();
 
-            var updateDto = new StudentDto { IdEstudiante = 1, Nombre = "Juan Updated", Apellido = "Perez Updated" };
+            var updateDto = new StudentUpdateDto { IdEstudiante = 1, Nombre = "Juan Updated", Apellido = "Perez Updated" };
 
             // Act
             var result = await _controller.Update(updateDto);

@@ -1,6 +1,8 @@
 using Backend.Contexts;
-using Backend.DTOs;
-using Backend.Interfaces;
+using Backend.DTOs.PasantiaDtos;
+using Backend.DTOs.StudentDtos;
+using Backend.DTOs.ConvenioDtos;
+using Backend.Interfaces.Repositories;
 using Backend.Models;
 using Microsoft.EntityFrameworkCore;
 

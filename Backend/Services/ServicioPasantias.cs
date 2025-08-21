@@ -1,12 +1,13 @@
 using AutoMapper;
-using Backend.DTOs;
+using Backend.DTOs.PasantiaDtos;
 using Backend.Exceptions;
-using Backend.Interfaces;
+using Backend.Interfaces.Repositories;
+using Backend.Interfaces.Services;
 using Backend.Models;
 
 namespace Backend.Services
 {
-    public class ServicioPasantias : BaseService<Pasantia, PasantiaDto, PasantiaCreateDto>
+    public class ServicioPasantias : BaseService<Pasantia, PasantiaDto, PasantiaUpdateDto, PasantiaCreateDto>, IServicioPasantias
     {
         private readonly IRepositorioPasantias _repoPasantias;
         private readonly IRepositorioEstudiantes _repoEstudiantes;
@@ -24,7 +25,7 @@ namespace Backend.Services
             _validationService = new PasantiaValidationService();
         }
 
-        protected override int GetIdFromDto(PasantiaDto dto)
+        protected override int GetIdFromUpdateDto(PasantiaUpdateDto dto)
         {
             return dto.IdPasantia;
         }
@@ -50,7 +51,6 @@ namespace Backend.Services
             return await _repoPasantias.GetAllDetalleAsync();
         }
 
-
         public async Task<IEnumerable<PasantiaDto>> GetByConvenioIdAsync(int convenioId)
         {
             var entities = await _repoPasantias.GetByConvenioIdAsync(convenioId);
@@ -66,6 +66,7 @@ namespace Backend.Services
                 throw new NotFoundException($"No se encontraron pasantias para el estudiante con ID {estudianteId}");
             return _mapper.Map<IEnumerable<PasantiaDto>>(entities);
         }
+
         public override async Task<PasantiaDto> CreateAsync(PasantiaCreateDto dto)
         {
             _validationService.ValidateCreate(dto);
@@ -80,9 +81,11 @@ namespace Backend.Services
             return pasantiaDto;
         }
 
-        public override async Task<PasantiaDto> UpdateAsync(PasantiaDto dto)
+        public override async Task<PasantiaDto> UpdateAsync(PasantiaUpdateDto dto)
         {
-            _validationService.ValidateUpdate(dto);
+            // Convertir el UpdateDto a PasantiaDto para validación (temporal)
+            var pasantiaDto = _mapper.Map<PasantiaDto>(dto);
+            _validationService.ValidateUpdate(pasantiaDto);
             await _validationService.ValidateForeignKeysAsync(dto.IdEstudiante, dto.IdConvenio, _repoEstudiantes, _repoConvenios);
             return await base.UpdateAsync(dto);
         }

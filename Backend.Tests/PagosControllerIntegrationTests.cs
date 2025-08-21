@@ -1,7 +1,7 @@
 using AutoMapper;
 using Backend.Contexts;
 using Backend.Controllers;
-using Backend.DTOs;
+using Backend.DTOs.PagosDtos;
 using Backend.Exceptions;
 using Backend.Models;
 using Backend.Repositories;
@@ -89,7 +89,7 @@ namespace Backend.Tests
             _dbContext.Pagos.Add(pago);
             _dbContext.SaveChanges();
 
-            var updateDto = new PagosDto { IdPago = 1, Monto = 2000 };
+            var updateDto = new PagosUpdateDto { IdPago = 1, Monto = 2000 };
 
             // Act
             var result = await _controller.Update(updateDto);

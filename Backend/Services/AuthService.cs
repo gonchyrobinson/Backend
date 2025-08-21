@@ -1,7 +1,10 @@
-using Backend.DTOs;
+using Backend.DTOs.AuthDtos;
 using Backend.Helpers;
-using Backend.Interfaces;
+using Backend.Interfaces.Repositories;
+using Backend.DTOs.AuditoriaDtos;
+
 using Backend.Models;
+using Backend.Interfaces.Services;
 
 namespace Backend.Services;
 
@@ -17,9 +20,9 @@ public class AuthService : IAuthService
 {
     private readonly IAuthRepository _authRepository;
     private readonly IJwtService _jwtService;
-    private readonly ServicioAuditoria _servicioAuditoria;
+    private readonly IServicioAuditoria _servicioAuditoria;
 
-    public AuthService(IAuthRepository authRepository, IJwtService jwtService, ServicioAuditoria servicioAuditoria)
+    public AuthService(IAuthRepository authRepository, IJwtService jwtService, IServicioAuditoria servicioAuditoria)
     {
         _authRepository = authRepository;
         _jwtService = jwtService;

@@ -1,6 +1,6 @@
-using Backend.DTOs;
+using Backend.DTOs.PagosDtos;
+using Backend.Interfaces.Services;
 using Backend.Models;
-using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,11 +8,11 @@ namespace Backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class PagosController : BaseController<Pago, PagosDto, CreatePagosDto>
+    public class PagosController : BaseController<Pago, PagosDto, PagosUpdateDto, CreatePagosDto>
     {
-        private readonly ServicioPagos _pagosService;
+        private readonly IServicioPagos _pagosService;
 
-        public PagosController(ServicioPagos pagosService) : base(pagosService)
+        public PagosController(IServicioPagos pagosService) : base(pagosService)
         {
             _pagosService = pagosService;
         }

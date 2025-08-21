@@ -1,10 +1,11 @@
 using AutoMapper;
-using Backend.DTOs;
-using Backend.Interfaces;
+using Backend.DTOs.PagosDtos;
+using Backend.Interfaces.Repositories;
+using Backend.Interfaces.Services;
 using Backend.Models;
 namespace Backend.Services
 {
-    public class ServicioPagos : BaseService<Pago, PagosDto, CreatePagosDto>
+    public class ServicioPagos : BaseService<Pago, PagosDto, PagosUpdateDto, CreatePagosDto>, IServicioPagos
     {
         private readonly IRepositorioPagos _repoPagos;
         private readonly IRepository<Pasantia> _repoPasantias;
@@ -17,19 +18,22 @@ namespace Backend.Services
             _repoPasantias = repoPasantias;
             _validationService = new PagoValidationService(_repoPasantias);
         }
+
         public override async Task<PagosDto> CreateAsync(CreatePagosDto dto)
         {
             await _validationService.ValidateCreateAsync(dto);
             return await base.CreateAsync(dto);
         }
 
-        public override async Task<PagosDto> UpdateAsync(PagosDto dto)
+        public override async Task<PagosDto> UpdateAsync(PagosUpdateDto dto)
         {
-            await _validationService.ValidateUpdateAsync(dto);
+            // Convertir UpdateDto a PagosDto para validación
+            var pagosDto = _mapper.Map<PagosDto>(dto);
+            await _validationService.ValidateUpdateAsync(pagosDto);
             return await base.UpdateAsync(dto);
         }
 
-        protected override int GetIdFromDto(PagosDto dto)
+        protected override int GetIdFromUpdateDto(PagosUpdateDto dto)
         {
             return dto.IdPago;
         }

@@ -1,11 +1,12 @@
 using AutoMapper;
-using Backend.DTOs;
-using Backend.Interfaces;
+using Backend.DTOs.EmpresaDtos;
+using Backend.Interfaces.Repositories;
+using Backend.Interfaces.Services;
 using Backend.Models;
 
 namespace Backend.Services
 {
-    public class ServicioEmpresas : BaseService<Empresa, EmpresaDto, EmpresaCreateDto>
+    public class ServicioEmpresas : BaseService<Empresa, EmpresaDto, EmpresaUpdateDto, EmpresaCreateDto>, IServicioEmpresas
     {
         private readonly IRepositorioEmpresas _repoEmpresas;
         private readonly IRepositorioConvenios _repoConvenios;
@@ -19,10 +20,11 @@ namespace Backend.Services
             _validationService = new EmpresaValidationService(_repoConvenios);
         }
 
-        protected override int GetIdFromDto(EmpresaDto dto)
+        protected override int GetIdFromUpdateDto(EmpresaUpdateDto dto)
         {
             return dto.IdEmpresa;
         }
+
         public async Task<IEnumerable<EmpresaDto>> BuscarAvanzadoAsync(EmpresaBusquedaAvanzadaDto filtro)
         {
             var empresas = await _repoEmpresas.BuscarAvanzadoAsync(filtro);
@@ -33,6 +35,7 @@ namespace Backend.Services
         {
             return await _repoEmpresas.GetSugerenciasNombresAsync();
         }
+
         public override async Task<bool> DeleteAsync(int id)
         {
             await _validationService.ValidateDeleteAsync(id);

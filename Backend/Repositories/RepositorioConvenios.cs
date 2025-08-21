@@ -1,7 +1,7 @@
 using Backend.Contexts;
-using Backend.DTOs;
+using Backend.DTOs.ConvenioDtos;
 using Backend.Exceptions;
-using Backend.Interfaces;
+using Backend.Interfaces.Repositories;
 using Backend.Models;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,7 +1,11 @@
 using AutoMapper;
-using Backend.DTOs;
+using Backend.DTOs.AuditoriaDtos;
+using Backend.DTOs.ConvenioDtos;
+using Backend.DTOs.PasantiaDtos;
+using Backend.DTOs.StudentDtos;
+using Backend.DTOs.EmpresaDtos;
+using Backend.DTOs.PagosDtos;
 using Backend.Models;
-
 namespace Backend.Mappings
 {
     public class MappingProfile : Profile
@@ -9,28 +13,42 @@ namespace Backend.Mappings
         public MappingProfile()
         {
             // Mapeo para Convenio
-            CreateMap<Convenio, ConvenioDto>().ReverseMap();
+            CreateMap<Convenio, ConvenioUpdateDto>().ReverseMap();
+            CreateMap<Convenio, ConvenioDto>().ReverseMap(); // Para operaciones GET/CREATE
             CreateMap<ConvenioCreateDto, Convenio>();
 
             // Mapeo para Estudiante
-            CreateMap<Estudiante, StudentDto>().ReverseMap();
+            CreateMap<Estudiante, StudentUpdateDto>().ReverseMap();
+            CreateMap<Estudiante, StudentDto>().ReverseMap(); // Para operaciones GET/CREATE
             CreateMap<StudentCreateDto, Estudiante>();
 
             // Mapeo para Empresa
+            CreateMap<Empresa, EmpresaUpdateDto>()
+                .ForMember(dest => dest.Vigencia, opt => opt.MapFrom(src => src.FechaFin.HasValue && src.FechaFin.Value < DateOnly.FromDateTime(DateTime.Today) ? "no_vigente" : "vigente"));
+            CreateMap<EmpresaUpdateDto, Empresa>()
+                .ForMember(dest => dest.Eliminado, opt => opt.MapFrom(src => false))
+                .ForMember(dest => dest.FechaEliminacion, opt => opt.MapFrom(src => (DateTime?)null));
+            
             CreateMap<Empresa, EmpresaDto>()
                 .ForMember(dest => dest.Vigencia, opt => opt.MapFrom(src => src.FechaFin.HasValue && src.FechaFin.Value < DateOnly.FromDateTime(DateTime.Today) ? "no_vigente" : "vigente"))
                 .ReverseMap()
                 .ForMember(dest => dest.Eliminado, opt => opt.MapFrom(src => false))
-                .ForMember(dest => dest.FechaEliminacion, opt => opt.MapFrom(src => (DateTime?)null));
+                .ForMember(dest => dest.FechaEliminacion, opt => opt.MapFrom(src => (DateTime?)null)); // Para operaciones GET/CREATE
             CreateMap<EmpresaCreateDto, Empresa>();
 
             // Mapeo para Pasantía
+            CreateMap<Pasantia, PasantiaUpdateDto>()
+                .ForMember(dest => dest.HorasSemanales, opt => opt.MapFrom(src => src.HorasSemanales));
+            CreateMap<PasantiaUpdateDto, Pasantia>()
+                .ForMember(dest => dest.IdEstudianteNavigation, opt => opt.Ignore());
+            CreateMap<PasantiaUpdateDto, PasantiaDto>();
+            
             CreateMap<Pasantia, PasantiaDto>()
                 .ForMember(dest => dest.Tramite, opt => opt.MapFrom(src => $"TRA-FACET-{src.IdPasantia:D3}"))
                 .ForMember(dest => dest.HorasSemanales, opt => opt.MapFrom(src => src.HorasSemanales))
                 .ForMember(dest => dest.AreaTrabajo, opt => opt.MapFrom(src => src.IdEstudianteNavigation != null ? src.IdEstudianteNavigation.AreaTrabajo : null))
                 .ReverseMap()
-                .ForMember(dest => dest.IdEstudianteNavigation, opt => opt.Ignore());
+                .ForMember(dest => dest.IdEstudianteNavigation, opt => opt.Ignore()); // Compatibilidad
             CreateMap<PasantiaCreateDto, Pasantia>()
                 .ForMember(dest => dest.IdEstudiante, opt => opt.MapFrom(src => src.IdEstudiante))
                 .ForMember(dest => dest.IdConvenio, opt => opt.MapFrom(src => src.IdConvenio))
@@ -49,14 +67,21 @@ namespace Backend.Mappings
                 .ForMember(dest => dest.HorasSemanales, opt => opt.MapFrom(src => src.HorasSemanales));
 
             // Mapeo para Auditoría
+            CreateMap<Auditoria, AuditoriaUpdateDto>();
+            CreateMap<AuditoriaUpdateDto, Auditoria>()
+                .ForMember(dest => dest.IdUsuarioNavigation, opt => opt.Ignore());
+            
             CreateMap<Auditoria, AuditoriaDto>()
                 .ForMember(dest => dest.UsuarioNombre, opt => opt.MapFrom(src => src.IdUsuarioNavigation != null ? src.IdUsuarioNavigation.NombreUsuario : null))
                 .ReverseMap()
-                .ForMember(dest => dest.IdUsuarioNavigation, opt => opt.Ignore());
+                .ForMember(dest => dest.IdUsuarioNavigation, opt => opt.Ignore()); // Para operaciones GET/CREATE
             CreateMap<AuditoriaBuscarDto, Auditoria>();
+            
             // Mapeo para Pago
-            CreateMap<Pago, PagosDto>().ReverseMap();
+            CreateMap<Pago, PagosUpdateDto>().ReverseMap();
+            CreateMap<Pago, PagosDto>().ReverseMap(); // Para operaciones GET/CREATE
             CreateMap<CreatePagosDto, Pago>();
+            CreateMap<PagosUpdateDto, PagosDto>();
         }
     }
 }

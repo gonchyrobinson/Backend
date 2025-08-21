@@ -1,7 +1,7 @@
 using AutoMapper;
 using Backend.Contexts;
 using Backend.Controllers;
-using Backend.DTOs;
+using Backend.DTOs.ConvenioDtos;
 using Backend.Models;
 using Backend.Repositories;
 using Backend.Services;
@@ -61,7 +61,7 @@ namespace Backend.Tests
             _dbContext.Convenios.Add(convenio);
             _dbContext.SaveChanges();
 
-            var updateDto = new ConvenioDto { IdConvenio = 10, DomicilioAlternativo = "Mi casa" };
+            var updateDto = new ConvenioUpdateDto { IdConvenio = 10, DomicilioAlternativo = "Mi casa" };
 
             // Act
             var result = await _controller.Update(updateDto);

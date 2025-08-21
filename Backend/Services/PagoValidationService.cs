@@ -1,6 +1,6 @@
-using Backend.DTOs;
+using Backend.DTOs.PagosDtos;
 using Backend.Exceptions;
-using Backend.Interfaces;
+using Backend.Interfaces.Repositories;
 using Backend.Models;
 
 namespace Backend.Services

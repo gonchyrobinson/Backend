@@ -1,7 +1,7 @@
 
 using Backend.Contexts;
 using Backend.Exceptions;
-using Backend.Interfaces;
+using Backend.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 

@@ -1,4 +1,4 @@
-using Backend.DTOs;
+using Backend.DTOs.AuthDtos;
 using Backend.Models;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;

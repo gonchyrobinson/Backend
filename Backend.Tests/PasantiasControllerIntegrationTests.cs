@@ -1,7 +1,7 @@
 using AutoMapper;
 using Backend.Contexts;
 using Backend.Controllers;
-using Backend.DTOs;
+using Backend.DTOs.PasantiaDtos;
 using Backend.Exceptions;
 using Backend.Models;
 using Backend.Repositories;
@@ -180,7 +180,7 @@ namespace Backend.Tests
             _dbContext.Pasantias.Add(pasantia);
             _dbContext.SaveChanges();
 
-            var updateDto = new PasantiaDto
+            var updateDto = new PasantiaUpdateDto
             {
                 IdPasantia = 1,
                 IdEstudiante = 2,

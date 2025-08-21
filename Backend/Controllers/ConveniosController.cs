@@ -1,6 +1,6 @@
-using Backend.DTOs;
+using Backend.DTOs.ConvenioDtos;
+using Backend.Interfaces.Services;
 using Backend.Models;
-using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,11 +8,11 @@ namespace Backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ConveniosController : BaseController<Convenio, ConvenioDto, ConvenioCreateDto>
+    public class ConveniosController : BaseController<Convenio, ConvenioDto, ConvenioUpdateDto, ConvenioCreateDto>
     {
-        private readonly ServicioConvenios _conveniosService;
+        private readonly IServicioConvenios _conveniosService;
 
-        public ConveniosController(ServicioConvenios service) : base(service)
+        public ConveniosController(IServicioConvenios service) : base(service)
         {
             _conveniosService = service;
         }
