@@ -3,7 +3,7 @@ namespace Backend.DTOs.ConvenioDtos
     public class ConvenioEmpresaDto
     {
         public int IdConvenio { get; set; }
-        public string Expediente => $"EXP-FACET-ID_{IdConvenio:D3}";
+        public string Expediente => $"EXP-FACET-{IdConvenio:D3}";
         public DateOnly? FechaFirma { get; set; }
         public DateOnly? FechaCaducidad { get; set; }
         public int? IdEmpresa { get; set; }

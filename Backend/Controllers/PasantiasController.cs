@@ -63,5 +63,14 @@ namespace Backend.Controllers
             var result = await _pasantiasService.BuscarAvanzadoAsync(filtro);
             return Ok(result);
         }
+
+        // Endpoint: pasantías por vencer
+        [HttpGet("por-vencer")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<PasantiaDto>>> GetPasantiasPorVencer([FromQuery] int dias)
+        {
+            var pasantias = await _pasantiasService.GetPasantiasPorVencerEnDiasAsync(dias);
+            return Ok(pasantias);
+        }
     }
 }

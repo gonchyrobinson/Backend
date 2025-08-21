@@ -19,5 +19,8 @@ namespace Backend.Interfaces.Repositories
 
         // Método para obtener empresas con último convenio vigente (para dropdown de pasantías)
         Task<IEnumerable<EmpresaConvenioDropdownDto>> GetEmpresasConUltimoConvenioVigenteAsync();
+
+        // Método para obtener convenios por vencer en días
+        Task<IEnumerable<ConvenioEmpresaDto>> GetConveniosPorVencerEnDiasAsync(int dias);
     }
 }

@@ -168,5 +168,37 @@ namespace Backend.Repositories
 
             return empresasConConvenioVigente;
         }
+
+        // Convenios por vencer en X días desde hoy
+        public async Task<IEnumerable<ConvenioEmpresaDto>> GetConveniosPorVencerEnDiasAsync(int dias)
+        {
+            var fechaLimite = DateOnly.FromDateTime(DateTime.Today.AddDays(dias));
+            var fechaActual = DateOnly.FromDateTime(DateTime.Today);
+            
+            var convenios = await _dbSet
+                .AsNoTracking()
+                .Include(c => c.IdEmpresaNavigation)
+                .Where(c => c.FechaCaducidad != null && 
+                           c.FechaCaducidad >= fechaActual && 
+                           c.FechaCaducidad <= fechaLimite)
+                .OrderBy(c => c.FechaCaducidad)
+                .Select(c => new ConvenioEmpresaDto
+                {
+                    IdConvenio = c.IdConvenio,
+                    FechaFirma = c.FechaFirma,
+                    FechaCaducidad = c.FechaCaducidad,
+                    IdEmpresa = c.IdEmpresa,
+                    NombreEmpresa = c.IdEmpresaNavigation != null ? c.IdEmpresaNavigation.Nombre : null,
+                    RepresentanteEmpresa = c.RepresentanteEmpresa,
+                    DomicilioLegal = c.DomicilioLegal,
+                    DomicilioAlternativo = c.DomicilioAlternativo,
+                    DocRepresentanteFacultad = c.DocRepresentanteFacultad,
+                    Caracter = c.Caracter,
+                    Sudocu = c.Sudocu
+                })
+                .ToListAsync();
+
+            return convenios;
+        }
     }
 }
