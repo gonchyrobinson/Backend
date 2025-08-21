@@ -23,5 +23,8 @@ namespace Backend.Interfaces.Repositories
         // Métodos para obtener pasantías con navegación de estudiante (para mapeo de AreaTrabajo)
         Task<IEnumerable<Pasantia>> GetAllWithStudentNavigationAsync();
         Task<Pasantia?> GetByIdWithStudentNavigationAsync(int id);
+
+        // Método para obtener pasantías por vencer en días
+        Task<IEnumerable<Pasantia>> GetPasantiasPorVencerEnDiasAsync(int dias);
     }
 }

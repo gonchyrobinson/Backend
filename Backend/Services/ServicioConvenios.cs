@@ -79,5 +79,13 @@ namespace Backend.Services
         {
             return await _repoConvenios.GetEmpresasConUltimoConvenioVigenteAsync();
         }
+
+        // Convenios por vencer en X días desde hoy
+        public async Task<IEnumerable<ConvenioEmpresaDto>> GetConveniosPorVencerEnDiasAsync(int dias)
+        {
+            // Usar el repositorio que ya tiene la lógica para obtener convenios con empresa
+            var convenios = await _repoConvenios.GetConveniosPorVencerEnDiasAsync(dias);
+            return convenios;
+        }
     }
 }

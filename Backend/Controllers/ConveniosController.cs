@@ -79,5 +79,14 @@ namespace Backend.Controllers
             var result = await _conveniosService.GetEmpresasConUltimoConvenioVigenteAsync();
             return Ok(result);
         }
+
+        // Endpoint: convenios por vencer
+        [HttpGet("por-vencer")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<ConvenioEmpresaDto>>> GetConveniosPorVencer([FromQuery] int dias)
+        {
+            var convenios = await _conveniosService.GetConveniosPorVencerEnDiasAsync(dias);
+            return Ok(convenios);
+        }
     }
 }

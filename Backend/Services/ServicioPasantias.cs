@@ -90,6 +90,13 @@ namespace Backend.Services
             return await base.UpdateAsync(dto);
         }
 
+        // Pasantías por vencer en X días desde hoy
+        public async Task<IEnumerable<PasantiaDto>> GetPasantiasPorVencerEnDiasAsync(int dias)
+        {
+            var pasantias = await _repoPasantias.GetPasantiasPorVencerEnDiasAsync(dias);
+            return _mapper.Map<IEnumerable<PasantiaDto>>(pasantias);
+        }
+
         public override async Task<bool> DeleteAsync(int id)
         {
             await _validationService.ValidateDeleteAsync(id, _repoPagos, _repoPasantias);

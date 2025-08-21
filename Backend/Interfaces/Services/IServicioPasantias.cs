@@ -11,5 +11,6 @@ namespace Backend.Interfaces.Services
         Task<IEnumerable<PasantiaDto>> GetByEstudianteIdAsync(int estudianteId);
         Task<IEnumerable<string>> GetSugerenciasTramitesAsync();
         Task<IEnumerable<PasantiaDto>> BuscarAvanzadoAsync(PasantiaBusquedaAvanzadaDto filtro);
+        Task<IEnumerable<PasantiaDto>> GetPasantiasPorVencerEnDiasAsync(int dias);
     }
 }

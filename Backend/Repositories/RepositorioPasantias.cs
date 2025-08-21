@@ -224,5 +224,28 @@ namespace Backend.Repositories
                            p.IdEstudianteNavigation.Eliminado == false))
                 .FirstOrDefaultAsync();
         }
+
+        public async Task<IEnumerable<Pasantia>> GetPasantiasPorVencerAsync(DateOnly fecha)
+        {
+            return await _dbSet
+                .AsNoTracking()
+                .Where(p => p.FechaFin != null && p.FechaFin >= fecha)
+                .ToListAsync();
+        }
+
+        // Pasantías por vencer en X días desde hoy
+        public async Task<IEnumerable<Pasantia>> GetPasantiasPorVencerEnDiasAsync(int dias)
+        {
+            var fechaLimite = DateOnly.FromDateTime(DateTime.Today.AddDays(dias));
+            var fechaActual = DateOnly.FromDateTime(DateTime.Today);
+            
+            return await _dbSet
+                .AsNoTracking()
+                .Where(p => p.FechaFin != null && 
+                           p.FechaFin >= fechaActual && 
+                           p.FechaFin <= fechaLimite)
+                .OrderBy(p => p.FechaFin)
+                .ToListAsync();
+        }
     }
 }
