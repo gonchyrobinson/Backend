@@ -46,16 +46,8 @@ namespace Backend.DTOValidations
                 yield return CreateValidationResult("El domicilio no puede exceder 255 caracteres.", nameof(domicilio));
         }
 
-        public static IEnumerable<ValidationResult> ValidateStudentSearch(
-            string? nombre, string? apellido, string? documento, string? carrera)
+        public static IEnumerable<ValidationResult> ValidateStudentSearch(string? documento, string? carrera)
         {
-            // Para búsquedas, solo validar formato si se proporcionan
-            if (nombre != null && IsNullOrWhiteSpace(nombre))
-                yield return CreateValidationResult("El nombre no puede ser vacío si se provee.", nameof(nombre));
-
-            if (apellido != null && IsNullOrWhiteSpace(apellido))
-                yield return CreateValidationResult("El apellido no puede ser vacío si se provee.", nameof(apellido));
-
             if (!string.IsNullOrEmpty(documento) && !CommonValidations.EsDniValido(documento))
                 yield return CreateValidationResult("El documento debe ser un DNI válido.", nameof(documento));
 
