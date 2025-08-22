@@ -26,6 +26,9 @@ namespace Backend.Repositories
             if (IsStringValid(filtro.Carrera))
                 estudiantes = estudiantes.Where(e => !string.IsNullOrEmpty(e.Carrera) && e.Carrera.ToLower().Contains(filtro.Carrera!.ToLower())).ToList();
 
+            if (IsStringValid(filtro.Apellido))
+                estudiantes = estudiantes.Where(e => !string.IsNullOrEmpty(e.Apellido) && e.Apellido.ToLower().Contains(filtro.Apellido!.ToLower())).ToList();
+
             // Agrupar por Documento y devolver solo un estudiante por documento
             estudiantes = estudiantes
                 .GroupBy(e => e.Documento)
