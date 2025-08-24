@@ -46,6 +46,7 @@ namespace Backend.DTOValidations
                 yield return CreateValidationResult("El domicilio no puede exceder 255 caracteres.", nameof(domicilio));
         }
 
+
         public static IEnumerable<ValidationResult> ValidateStudentSearch(
             string? documento, string? carrera)
         {
