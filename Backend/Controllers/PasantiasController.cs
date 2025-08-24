@@ -56,6 +56,22 @@ namespace Backend.Controllers
             return Ok(result);
         }
 
+        [HttpGet("sugerencias-dropdown")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<object>>> GetSugerenciasDropdown()
+        {
+            var result = await _pasantiasService.GetSugerenciasDropdownAsync();
+            return Ok(result);
+        }
+
+        [HttpGet("sugerencias-numeros-tramite")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<string>>> GetSugerenciasNumerosTramite()
+        {
+            var result = await _pasantiasService.GetSugerenciasNumerosTramiteAsync();
+            return Ok(result);
+        }
+
         [HttpPost("buscar-avanzado")]
         [Authorize]
         public async Task<ActionResult<IEnumerable<PasantiaDto>>> BuscarAvanzado([FromBody] PasantiaBusquedaAvanzadaDto filtro)

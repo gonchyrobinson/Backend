@@ -100,28 +100,19 @@ namespace Backend.DTOValidations
         }
 
         public static IEnumerable<ValidationResult> ValidatePasantiaBusqueda(
-            string? tramite, string? obraSocial, string? art, string? tutorEmpresa,
-            string? tutorFacultad, string? tipoAcuerdo, DateOnly? fechaInicioDesde,
-            DateOnly? fechaInicioHasta, DateOnly? fechaFinDesde, DateOnly? fechaFinHasta,
-            int? idEstudiante, int? idConvenio, string? estado)
+            string? numeroTramite, string? tipo, string? estudiante, string? empresa,
+            bool? vigente, string? carrera)
         {
-            // Validar rangos de fechas
-            if (fechaInicioDesde.HasValue && fechaInicioHasta.HasValue && fechaInicioDesde.Value > fechaInicioHasta.Value)
-                yield return CreateValidationResult("FechaInicioDesde debe ser menor o igual a FechaInicioHasta.", nameof(fechaInicioDesde));
-
-            if (fechaFinDesde.HasValue && fechaFinHasta.HasValue && fechaFinDesde.Value > fechaFinHasta.Value)
-                yield return CreateValidationResult("FechaFinDesde debe ser menor o igual a FechaFinHasta.", nameof(fechaFinDesde));
-
             // Validar tipo de acuerdo si se proporciona
-            if (!string.IsNullOrEmpty(tipoAcuerdo) && !CommonValidations.EsTipoAcuerdoValido(tipoAcuerdo))
-                yield return CreateValidationResult("El tipo de acuerdo debe ser válido.", nameof(tipoAcuerdo));
+            if (!string.IsNullOrEmpty(tipo) && !CommonValidations.EsTipoAcuerdoValido(tipo))
+                yield return CreateValidationResult("El tipo de acuerdo debe ser válido.", nameof(tipo));
 
-            // Validar IDs si se proporcionan
-            if (idEstudiante.HasValue && idEstudiante <= 0)
-                yield return CreateValidationResult("El ID del estudiante debe ser positivo.", nameof(idEstudiante));
+            // Validar carrera si se proporciona
+            if (!CommonValidations.EsCarreraValida(carrera))
+                yield return CreateValidationResult("La carrera debe ser una de las opciones válidas.", nameof(carrera));
 
-            if (idConvenio.HasValue && idConvenio <= 0)
-                yield return CreateValidationResult("El ID del convenio debe ser positivo.", nameof(idConvenio));
+            // No se requieren validaciones específicas para los otros campos de búsqueda
+            // Los campos son opcionales y se validan en el repositorio
         }
     }
 }

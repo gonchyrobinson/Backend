@@ -10,6 +10,8 @@ namespace Backend.Interfaces.Services
         Task<IEnumerable<PasantiaDto>> GetByConvenioIdAsync(int convenioId);
         Task<IEnumerable<PasantiaDto>> GetByEstudianteIdAsync(int estudianteId);
         Task<IEnumerable<string>> GetSugerenciasTramitesAsync();
+        Task<IEnumerable<string>> GetSugerenciasNumerosTramiteAsync();
+        Task<IEnumerable<object>> GetSugerenciasDropdownAsync();
         Task<IEnumerable<PasantiaDto>> BuscarAvanzadoAsync(PasantiaBusquedaAvanzadaDto filtro);
         Task<IEnumerable<PasantiaDto>> GetPasantiasPorVencerEnDiasAsync(int dias);
     }

@@ -47,5 +47,36 @@ namespace Backend.Controllers
             var pagoDto = await _pagosService.MarcarComoPagadoAsync(dto);
             return Ok(pagoDto);
         }
+
+        [HttpPost("buscar-avanzado")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<PagosDto>>> BuscarAvanzado([FromBody] PagosBusquedaAvanzadaDto filtro)
+        {
+            try
+            {
+                var pagos = await _pagosService.BuscarAvanzadoAsync(filtro);
+                return Ok(pagos);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("sugerencias-empresas")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<object>>> GetSugerenciasEmpresas()
+        {
+            var result = await _pagosService.GetSugerenciasEmpresasAsync();
+            return Ok(result);
+        }
+
+        [HttpGet("sugerencias-estudiantes")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<object>>> GetSugerenciasEstudiantes()
+        {
+            var result = await _pagosService.GetSugerenciasEstudiantesAsync();
+            return Ok(result);
+        }
     }
 }

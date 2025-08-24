@@ -96,8 +96,7 @@ namespace Backend.Tests
             {
                 IdConvenio = 1,
                 IdEmpresa = 1,
-                FechaFirma = System.DateOnly.FromDateTime(System.DateTime.Today.AddDays(-10)),
-                FechaCaducidad = System.DateOnly.FromDateTime(System.DateTime.Today.AddDays(10))
+                NroAcuerdoMarco = 123
             };
 
             _dbContext.Empresas.Add(empresa);
@@ -107,10 +106,7 @@ namespace Backend.Tests
             var filtro = new ConvenioEmpresaFiltroDto
             {
                 NombreEmpresa = "Empresa Test",
-                FechaFirmaDesde = System.DateOnly.FromDateTime(System.DateTime.Today.AddDays(-15)),
-                FechaFirmaHasta = System.DateOnly.FromDateTime(System.DateTime.Today.AddDays(-5)),
-                FechaCaducidadDesde = System.DateOnly.FromDateTime(System.DateTime.Today.AddDays(5)),
-                FechaCaducidadHasta = System.DateOnly.FromDateTime(System.DateTime.Today.AddDays(15))
+                NumeroAcuerdoMarco = "123"
             };
 
             // Act

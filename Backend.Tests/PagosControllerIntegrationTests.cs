@@ -248,5 +248,172 @@ namespace Backend.Tests
             Assert.DoesNotContain(pagosList, p => p.IdPago == 2); // Ya pagado
             Assert.Contains(pagosList, p => p.IdPago == 3);
         }
+
+        [Fact]
+        public async Task BuscarAvanzado_ReturnsOkWithExpectedData()
+        {
+            // Arrange
+            var empresa = new Empresa { IdEmpresa = 1, Nombre = "Empresa Test" };
+            var estudiante = new Estudiante { IdEstudiante = 1, Documento = "12345678" };
+            var convenio = new Convenio { IdConvenio = 1, IdEmpresa = 1 };
+            var pasantia = new Pasantia { IdPasantia = 1, IdConvenio = 1, IdEstudiante = 1 };
+            var pago = new Pago { IdPago = 1, IdPasantia = 1, FechaVencimiento = DateOnly.FromDateTime(DateTime.Today.AddDays(30)), Pagado = false };
+
+            _dbContext.Empresas.Add(empresa);
+            _dbContext.Estudiantes.Add(estudiante);
+            _dbContext.Convenios.Add(convenio);
+            _dbContext.Pasantias.Add(pasantia);
+            _dbContext.Pagos.Add(pago);
+            _dbContext.SaveChanges();
+
+            var filtro = new PagosBusquedaAvanzadaDto
+            {
+                IdEmpresa = 1,
+                Estudiante = "12345678",
+                EstadoPago = false,
+                FechaVencimiento = DateTime.Today.AddDays(30).ToString("yyyy-MM-dd")
+            };
+
+            // Act
+            var result = await _controller.BuscarAvanzado(filtro);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var pagos = Assert.IsAssignableFrom<IEnumerable<PagosDto>>(okResult.Value);
+            var pagosList = pagos.ToList();
+            Assert.Single(pagosList);
+            Assert.Equal(1, pagosList.First().IdPago);
+        }
+
+        [Fact]
+        public async Task BuscarAvanzado_ReturnsEmptyList_WhenNoMatches()
+        {
+            // Arrange
+            var empresa = new Empresa { IdEmpresa = 1, Nombre = "Empresa Test" };
+            var estudiante = new Estudiante { IdEstudiante = 1, Documento = "12345678" };
+            var convenio = new Convenio { IdConvenio = 1, IdEmpresa = 1 };
+            var pasantia = new Pasantia { IdPasantia = 1, IdConvenio = 1, IdEstudiante = 1 };
+            var pago = new Pago { IdPago = 1, IdPasantia = 1, FechaVencimiento = DateOnly.FromDateTime(DateTime.Today.AddDays(30)), Pagado = false };
+
+            _dbContext.Empresas.Add(empresa);
+            _dbContext.Estudiantes.Add(estudiante);
+            _dbContext.Convenios.Add(convenio);
+            _dbContext.Pasantias.Add(pasantia);
+            _dbContext.Pagos.Add(pago);
+            _dbContext.SaveChanges();
+
+            var filtro = new PagosBusquedaAvanzadaDto
+            {
+                IdEmpresa = 999, // Empresa que no existe
+                Estudiante = "99999999", // Estudiante que no existe
+                EstadoPago = true, // Estado diferente
+                FechaVencimiento = DateTime.Today.AddDays(999).ToString("yyyy-MM-dd") // Fecha que no existe
+            };
+
+            // Act
+            var result = await _controller.BuscarAvanzado(filtro);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var pagos = Assert.IsAssignableFrom<IEnumerable<PagosDto>>(okResult.Value);
+            Assert.Empty(pagos);
+        }
+
+        [Fact]
+        public async Task BuscarAvanzado_ReturnsAllPagos_WhenNoFilters()
+        {
+            // Arrange
+            var empresa = new Empresa { IdEmpresa = 1, Nombre = "Empresa Test" };
+            var estudiante = new Estudiante { IdEstudiante = 1, Documento = "12345678" };
+            var convenio = new Convenio { IdConvenio = 1, IdEmpresa = 1 };
+            var pasantia = new Pasantia { IdPasantia = 1, IdConvenio = 1, IdEstudiante = 1 };
+            var pago1 = new Pago { IdPago = 1, IdPasantia = 1, FechaVencimiento = DateOnly.FromDateTime(DateTime.Today.AddDays(30)), Pagado = false };
+            var pago2 = new Pago { IdPago = 2, IdPasantia = 1, FechaVencimiento = DateOnly.FromDateTime(DateTime.Today.AddDays(60)), Pagado = true };
+
+            _dbContext.Empresas.Add(empresa);
+            _dbContext.Estudiantes.Add(estudiante);
+            _dbContext.Convenios.Add(convenio);
+            _dbContext.Pasantias.Add(pasantia);
+            _dbContext.Pagos.AddRange(pago1, pago2);
+            _dbContext.SaveChanges();
+
+            var filtro = new PagosBusquedaAvanzadaDto(); // Sin filtros
+
+            // Act
+            var result = await _controller.BuscarAvanzado(filtro);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var pagos = Assert.IsAssignableFrom<IEnumerable<PagosDto>>(okResult.Value);
+            var pagosList = pagos.ToList();
+            Assert.Equal(2, pagosList.Count);
+        }
+
+        [Fact]
+        public async Task GetSugerenciasEmpresas_ReturnsOkWithExpectedData()
+        {
+            // Arrange
+            var empresa = new Empresa { IdEmpresa = 1, Nombre = "Empresa Test" };
+            var convenio = new Convenio { IdConvenio = 1, IdEmpresa = 1 };
+            var pasantia = new Pasantia { IdPasantia = 1, IdConvenio = 1 };
+            var pago = new Pago { IdPago = 1, IdPasantia = 1 };
+
+            _dbContext.Empresas.Add(empresa);
+            _dbContext.Convenios.Add(convenio);
+            _dbContext.Pasantias.Add(pasantia);
+            _dbContext.Pagos.Add(pago);
+            _dbContext.SaveChanges();
+
+            // Act
+            var result = await _controller.GetSugerenciasEmpresas();
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var empresas = Assert.IsAssignableFrom<IEnumerable<object>>(okResult.Value);
+            var empresasList = empresas.ToList();
+            Assert.Single(empresasList);
+        }
+
+        [Fact]
+        public async Task GetSugerenciasEstudiantes_ReturnsOkWithExpectedData()
+        {
+            // Arrange
+            var estudiante = new Estudiante { IdEstudiante = 1, Documento = "12345678" };
+            var pasantia = new Pasantia { IdPasantia = 1, IdEstudiante = 1 };
+            var pago = new Pago { IdPago = 1, IdPasantia = 1 };
+
+            _dbContext.Estudiantes.Add(estudiante);
+            _dbContext.Pasantias.Add(pasantia);
+            _dbContext.Pagos.Add(pago);
+            _dbContext.SaveChanges();
+
+            // Act
+            var result = await _controller.GetSugerenciasEstudiantes();
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var estudiantes = Assert.IsAssignableFrom<IEnumerable<object>>(okResult.Value);
+            var estudiantesList = estudiantes.ToList();
+            Assert.Single(estudiantesList);
+        }
+
+        [Fact]
+        public async Task BuscarAvanzado_ReturnsOk_WhenInvalidDateFormat()
+        {
+            // Arrange
+            var filtro = new PagosBusquedaAvanzadaDto
+            {
+                FechaVencimiento = "invalid-date-format"
+            };
+
+            // Act
+            var result = await _controller.BuscarAvanzado(filtro);
+
+            // Assert
+            // El método maneja la fecha inválida de forma segura y retorna Ok con lista vacía
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var pagos = Assert.IsAssignableFrom<IEnumerable<PagosDto>>(okResult.Value);
+            Assert.Empty(pagos);
+        }
     }
 }

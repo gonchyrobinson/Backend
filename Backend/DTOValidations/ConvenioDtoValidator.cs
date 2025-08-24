@@ -64,24 +64,11 @@ namespace Backend.DTOValidations
         }
 
         public static IEnumerable<ValidationResult> ValidateConvenioEmpresaFiltro(
-            DateOnly? fechaFirmaDesde, DateOnly? fechaFirmaHasta,
-            DateOnly? fechaCaducidadDesde, DateOnly? fechaCaducidadHasta,
-            string? nombreEmpresa, string? docRepresentanteFacultad, string? carrera)
+            string? nombreEmpresa, string? numeroAcuerdoMarco, bool? vigencia)
         {
-            // Validar rangos de fechas
-            if (fechaFirmaDesde.HasValue && fechaFirmaHasta.HasValue && fechaFirmaDesde.Value > fechaFirmaHasta.Value)
-                yield return CreateValidationResult("FechaFirmaDesde debe ser menor o igual a FechaFirmaHasta.", nameof(fechaFirmaDesde));
-
-            if (fechaCaducidadDesde.HasValue && fechaCaducidadHasta.HasValue && fechaCaducidadDesde.Value > fechaCaducidadHasta.Value)
-                yield return CreateValidationResult("FechaCaducidadDesde debe ser menor o igual a FechaCaducidadHasta.", nameof(fechaCaducidadDesde));
-
-            // Validar DNI si se proporciona
-            if (!string.IsNullOrEmpty(docRepresentanteFacultad) && !CommonValidations.EsDniValido(docRepresentanteFacultad))
-                yield return CreateValidationResult("El documento del representante de facultad debe ser un DNI válido.", nameof(docRepresentanteFacultad));
-
-            // Validar carrera si se proporciona
-            if (!CommonValidations.EsCarreraValida(carrera))
-                yield return CreateValidationResult("La carrera debe ser una de las opciones válidas.", nameof(carrera));
+            // No se requieren validaciones específicas para estos campos de búsqueda
+            // Los campos son opcionales y se validan en el repositorio
+            yield break;
         }
 
         public static IEnumerable<ValidationResult> ValidateAsignarEmpresa(

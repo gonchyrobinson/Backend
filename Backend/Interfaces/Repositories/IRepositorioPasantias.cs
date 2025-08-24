@@ -17,6 +17,12 @@ namespace Backend.Interfaces.Repositories
         // Método para obtener sugerencias de trámites para dropdown
         Task<IEnumerable<string>> GetSugerenciasTramitesAsync();
 
+        // Método para obtener sugerencias de números de trámite
+        Task<IEnumerable<string>> GetSugerenciasNumerosTramiteAsync();
+
+        // Método para obtener sugerencias generales para dropdown
+        Task<IEnumerable<object>> GetSugerenciasDropdownAsync();
+
         // Método para búsqueda avanzada de pasantías
         Task<IEnumerable<Pasantia>> BuscarAvanzadoAsync(PasantiaBusquedaAvanzadaDto filtro);
 

@@ -20,7 +20,6 @@ namespace Backend.Repositories
                 .ToListAsync();
 
             bool IsStringValid(string? s) => !string.IsNullOrWhiteSpace(s) && s != "string";
-            bool IsDateValid(DateOnly? d) => d.HasValue && d.Value != DateOnly.MinValue && d.Value != DateOnly.FromDateTime(DateTime.Today);
 
             if (IsStringValid(filtro.Nombre))
                 empresas = empresas.Where(e => !string.IsNullOrEmpty(e.Nombre) && e.Nombre.ToLower().Contains(filtro.Nombre!.ToLower())).ToList();
@@ -40,18 +39,6 @@ namespace Backend.Repositories
 
             if (IsStringValid(filtro.TipoContrato))
                 empresas = empresas.Where(e => !string.IsNullOrEmpty(e.TipoContrato) && e.TipoContrato.ToLower() == filtro.TipoContrato!.ToLower()).ToList();
-
-            if (IsDateValid(filtro.FechaInicioDesde))
-                empresas = empresas.Where(e => e.FechaInicio >= filtro.FechaInicioDesde).ToList();
-
-            if (IsDateValid(filtro.FechaInicioHasta))
-                empresas = empresas.Where(e => e.FechaInicio <= filtro.FechaInicioHasta).ToList();
-
-            if (IsDateValid(filtro.FechaFinDesde))
-                empresas = empresas.Where(e => e.FechaFin >= filtro.FechaFinDesde).ToList();
-
-            if (IsDateValid(filtro.FechaFinHasta))
-                empresas = empresas.Where(e => e.FechaFin <= filtro.FechaFinHasta).ToList();
 
             return empresas;
         }
