@@ -34,7 +34,7 @@ jobs:
           $artifactIds = gh api repos/${{ github.repository }}/actions/artifacts --jq ".artifacts[] | select(.expired == false) | .id"
           foreach ($id in $artifactIds -split "`n") { gh api -X DELETE repos/${{ github.repository }}/actions/artifacts/$id }
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
     
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -71,4 +71,5 @@ jobs:
           package: .
 
           
+
 
