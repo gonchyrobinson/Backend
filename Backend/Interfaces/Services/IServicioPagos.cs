@@ -8,5 +8,8 @@ namespace Backend.Interfaces.Services
         Task<IEnumerable<PagosDto>> GetPagosPorVencerEnDiasAsync(int dias);
         Task<IEnumerable<PagosDto>> GetByPasantiaIdAsync(int idPasantia);
         Task<PagosDto> MarcarComoPagadoAsync(MarcarPagoDto dto);
+        Task<IEnumerable<PagosDto>> BuscarAvanzadoAsync(PagosBusquedaAvanzadaDto filtro);
+        Task<IEnumerable<object>> GetSugerenciasEmpresasAsync();
+        Task<IEnumerable<object>> GetSugerenciasEstudiantesAsync();
     }
 }

@@ -57,5 +57,21 @@ namespace Backend.Services
             var pago = await _repoPagos.MarcarComoPagadoAsync(dto.IdPago, dto.FechaPago);
             return _mapper.Map<PagosDto>(pago);
         }
+
+        public async Task<IEnumerable<PagosDto>> BuscarAvanzadoAsync(PagosBusquedaAvanzadaDto filtro)
+        {
+            var pagos = await _repoPagos.BuscarAvanzadoAsync(filtro);
+            return _mapper.Map<IEnumerable<PagosDto>>(pagos);
+        }
+
+        public async Task<IEnumerable<object>> GetSugerenciasEmpresasAsync()
+        {
+            return await _repoPagos.GetSugerenciasEmpresasAsync();
+        }
+
+        public async Task<IEnumerable<object>> GetSugerenciasEstudiantesAsync()
+        {
+            return await _repoPagos.GetSugerenciasEstudiantesAsync();
+        }
     }
 }

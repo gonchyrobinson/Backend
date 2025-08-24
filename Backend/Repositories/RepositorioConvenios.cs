@@ -32,28 +32,28 @@ namespace Backend.Repositories
 
                 if (filtro != null)
                 {
-                    if (filtro.FechaFirmaDesde.HasValue)
-                        query = query.Where(c => c.FechaFirma >= filtro.FechaFirmaDesde);
-                    if (filtro.FechaFirmaHasta.HasValue)
-                        query = query.Where(c => c.FechaFirma <= filtro.FechaFirmaHasta);
-                    if (filtro.FechaCaducidadDesde.HasValue)
-                        query = query.Where(c => c.FechaCaducidad >= filtro.FechaCaducidadDesde);
-                    if (filtro.FechaCaducidadHasta.HasValue)
-                        query = query.Where(c => c.FechaCaducidad <= filtro.FechaCaducidadHasta);
                     if (!string.IsNullOrWhiteSpace(filtro.NombreEmpresa))
                         query = query.Where(c => c.IdEmpresaNavigation != null &&
                                                 (c.IdEmpresaNavigation.Eliminado == null || c.IdEmpresaNavigation.Eliminado == false) &&
                                                 c.IdEmpresaNavigation.Nombre != null && c.IdEmpresaNavigation.Nombre.Contains(filtro.NombreEmpresa));
-                    if (!string.IsNullOrWhiteSpace(filtro.DocRepresentanteFacultad))
-                        query = query.Where(c => c.DocRepresentanteFacultad != null && c.DocRepresentanteFacultad.Contains(filtro.DocRepresentanteFacultad));
-                    if (!string.IsNullOrWhiteSpace(filtro.Carrera))
+                    
+                    if (!string.IsNullOrWhiteSpace(filtro.NumeroAcuerdoMarco))
+                        query = query.Where(c => c.NroAcuerdoMarco != null && c.NroAcuerdoMarco.ToString().Contains(filtro.NumeroAcuerdoMarco));
+                    
+                    // Vigencia: true = convenios vigentes (FechaCaducidad > hoy o nula), false = no vigentes (FechaCaducidad < hoy)
+                    if (filtro.Vigencia != null)
                     {
-                        query = query.Where(c => c.Pasantia.Any(p =>
-                            p.IdEstudianteNavigation != null &&
-                            (p.IdEstudianteNavigation.Eliminado == null || p.IdEstudianteNavigation.Eliminado == false) &&
-                            !string.IsNullOrEmpty(p.IdEstudianteNavigation.Carrera) &&
-                            p.IdEstudianteNavigation.Carrera == filtro.Carrera
-                        ));
+                        var hoy = DateOnly.FromDateTime(DateTime.Now);
+                        if (filtro.Vigencia.Value)
+                        {
+                            // Convenios vigentes: FechaCaducidad > hoy o nula
+                            query = query.Where(c => !c.FechaCaducidad.HasValue || c.FechaCaducidad > hoy);
+                        }
+                        else
+                        {
+                            // Convenios no vigentes: FechaCaducidad < hoy
+                            query = query.Where(c => c.FechaCaducidad.HasValue && c.FechaCaducidad <= hoy);
+                        }
                     }
                 }
 
@@ -64,12 +64,12 @@ namespace Backend.Repositories
                     .Select(c => new ConvenioEmpresaDto
                     {
                         IdConvenio = c.IdConvenio,
-                        //Expediente = c.Expediente,
                         FechaFirma = c.FechaFirma,
                         FechaCaducidad = c.FechaCaducidad,
                         IdEmpresa = c.IdEmpresa,
                         NombreEmpresa = c.IdEmpresaNavigation != null ? c.IdEmpresaNavigation.Nombre : null,
                         RepresentanteEmpresa = c.RepresentanteEmpresa,
+                        NroAcuerdoMarco = c.NroAcuerdoMarco,
                         DomicilioLegal = c.DomicilioLegal,
                         DomicilioAlternativo = c.DomicilioAlternativo,
                         DocRepresentanteFacultad = c.DocRepresentanteFacultad,
@@ -139,6 +139,17 @@ namespace Backend.Repositories
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<string>> GetSugerenciasAcuerdosMarcoAsync()
+        {
+            return await _dbSet
+                .AsNoTracking()
+                .Where(c => c.NroAcuerdoMarco.HasValue)
+                .Select(c => c.NroAcuerdoMarco!.Value.ToString())
+                .Distinct()
+                .OrderBy(numero => numero)
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<EmpresaConvenioDropdownDto>> GetEmpresasConUltimoConvenioVigenteAsync()
         {
             var fechaActual = DateOnly.FromDateTime(DateTime.Now);
@@ -190,6 +201,7 @@ namespace Backend.Repositories
                     IdEmpresa = c.IdEmpresa,
                     NombreEmpresa = c.IdEmpresaNavigation != null ? c.IdEmpresaNavigation.Nombre : null,
                     RepresentanteEmpresa = c.RepresentanteEmpresa,
+                    NroAcuerdoMarco = c.NroAcuerdoMarco,
                     DomicilioLegal = c.DomicilioLegal,
                     DomicilioAlternativo = c.DomicilioAlternativo,
                     DocRepresentanteFacultad = c.DocRepresentanteFacultad,

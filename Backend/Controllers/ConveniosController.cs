@@ -72,6 +72,14 @@ namespace Backend.Controllers
             return Ok(result);
         }
 
+        [HttpGet("sugerencias-acuerdos-marco")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<string>>> GetSugerenciasAcuerdosMarco()
+        {
+            var result = await _conveniosService.GetSugerenciasAcuerdosMarcoAsync();
+            return Ok(result);
+        }
+
         [HttpGet("empresas-convenio-vigente")]
         [Authorize]
         public async Task<ActionResult<IEnumerable<EmpresaConvenioDropdownDto>>> GetEmpresasConUltimoConvenioVigente()

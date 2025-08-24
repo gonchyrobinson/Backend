@@ -42,7 +42,7 @@ namespace Backend.DTOValidations
 
         public static readonly HashSet<string> TiposContratoValidos = new HashSet<string>
         {
-            "Convenio Marco", "Convenio Específico", "Acuerdo", "Otro"
+            "PPS", "Pasantia", "otro"
         };
 
         public static readonly HashSet<string> EstadosValidos = new HashSet<string>

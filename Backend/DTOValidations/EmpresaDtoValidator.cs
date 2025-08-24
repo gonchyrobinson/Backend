@@ -45,17 +45,8 @@ namespace Backend.DTOValidations
         }
 
         public static IEnumerable<ValidationResult> ValidateEmpresaBusqueda(
-            string? nombre, bool? vigencia, string? tipoContrato,
-            DateOnly? fechaInicioDesde, DateOnly? fechaInicioHasta,
-            DateOnly? fechaFinDesde, DateOnly? fechaFinHasta)
+            string? nombre, bool? vigencia, string? tipoContrato)
         {
-            // Validar rangos de fechas
-            if (fechaInicioDesde.HasValue && fechaInicioHasta.HasValue && fechaInicioDesde.Value > fechaInicioHasta.Value)
-                yield return CreateValidationResult("FechaInicioDesde debe ser menor o igual a FechaInicioHasta.", nameof(fechaInicioDesde));
-
-            if (fechaFinDesde.HasValue && fechaFinHasta.HasValue && fechaFinDesde.Value > fechaFinHasta.Value)
-                yield return CreateValidationResult("FechaFinDesde debe ser menor o igual a FechaFinHasta.", nameof(fechaFinDesde));
-
             // Validar tipo de contrato si se proporciona
             if (!string.IsNullOrEmpty(tipoContrato) && !CommonValidations.EsTipoContratoValido(tipoContrato))
                 yield return CreateValidationResult("El tipo de contrato debe ser válido.", nameof(tipoContrato));

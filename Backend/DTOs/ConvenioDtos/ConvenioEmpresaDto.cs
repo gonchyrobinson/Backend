@@ -9,6 +9,7 @@ namespace Backend.DTOs.ConvenioDtos
         public int? IdEmpresa { get; set; }
         public string? NombreEmpresa { get; set; }
         public string? RepresentanteEmpresa { get; set; }
+        public int? NroAcuerdoMarco { get; set; }
         public string? DomicilioLegal { get; set; }
         public string? DomicilioAlternativo { get; set; }
         public string? DocRepresentanteFacultad { get; set; }

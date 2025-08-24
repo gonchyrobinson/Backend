@@ -66,7 +66,7 @@ namespace Backend.Repositories
                 .GroupBy(e => e.Documento)
                 .Select(g => new 
                 {
-                    value = g.First().IdEstudiante,
+                    value = g.Key, // Usar el documento como valor
                     label = g.Key
                 })
                 .OrderBy(x => x.label)
