@@ -12,6 +12,27 @@ namespace Backend.Repositories
         {
         }
 
+        public override async Task<IEnumerable<Empresa>> GetAllAsync()
+        {
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            
+            // Primero obtenemos todas las empresas no eliminadas
+            var empresas = await _dbSet
+                .AsNoTracking()
+                .Where(e => e.Eliminado == null || e.Eliminado == false)
+                .Where(e => !string.IsNullOrEmpty(e.Nombre)) // Filtrar nombres no nulos/vacíos
+                .ToListAsync();
+
+            // Luego filtramos en memoria las que tienen al menos una letra
+            return empresas
+                .Where(e => e.Nombre!.Any(char.IsLetter))
+                .OrderBy(e => 
+                    // Primero las vigentes (FechaFin nula o > hoy)
+                    (!e.FechaFin.HasValue || e.FechaFin > today) ? 0 : 1)
+                .ThenBy(e => e.Nombre!.Trim()) // Ordenar por nombre alfabético sin espacios al principio
+                .ToList();
+        }
+
         public async Task<IEnumerable<Empresa>> BuscarAvanzadoAsync(EmpresaBusquedaAvanzadaDto filtro)
         {
             var empresas = await _dbSet

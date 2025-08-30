@@ -86,6 +86,55 @@ namespace Backend.Repositories
             return await query.ToListAsync();
         }
 
+        public async Task<IEnumerable<PasantiaShowTableDto>> GetAllPasantiasShowTableAsync()
+        {
+            var hoy = DateOnly.FromDateTime(DateTime.Now);
+
+            var query = _dbSet
+                .AsNoTracking()
+                .Include(p => p.IdEstudianteNavigation)
+                .Include(p => p.IdConvenioNavigation)
+                .ThenInclude(c => c.IdEmpresaNavigation)
+                .Where(p => p.IdEstudianteNavigation == null ||
+                          (p.IdEstudianteNavigation.Eliminado == null || p.IdEstudianteNavigation.Eliminado == false))
+                .Select(p => new
+                {
+                    Tramite = $"TRA-FACET-{p.IdPasantia:D3}",
+                    Estudiante = p.IdEstudianteNavigation != null
+                        ? $"{p.IdEstudianteNavigation.Apellido}, {p.IdEstudianteNavigation.Nombre}"
+                        : "Sin estudiante",
+                    Empresa = p.IdConvenioNavigation != null && p.IdConvenioNavigation.IdEmpresaNavigation != null
+                        ? p.IdConvenioNavigation.IdEmpresaNavigation.Nombre ?? "Sin nombre"
+                        : "Sin empresa",
+                    TipoAcuerdo = p.TipoAcuerdo ?? "No especificado",
+                    Estado = (!p.FechaFin.HasValue || p.FechaFin > hoy) ? "Activa" : "Finalizada",
+                    FechaInicio = p.FechaInicio,
+                    FechaFin = p.FechaFin,
+                    // Campos auxiliares para ordenamiento
+                    EsActiva = (!p.FechaFin.HasValue || p.FechaFin > hoy),
+                    EstudianteOrden = p.IdEstudianteNavigation != null
+                        ? (p.IdEstudianteNavigation.Apellido ?? "").Trim() + ", " + (p.IdEstudianteNavigation.Nombre ?? "").Trim()
+                        : "Sin estudiante"
+                })
+                .OrderBy(p => p.EsActiva ? 0 : 1) // Primero las activas
+                .ThenBy(p => p.FechaInicio.HasValue ? 0 : 1) // Primero las que tienen fecha de inicio
+                .ThenByDescending(p => p.FechaInicio) // Fecha de inicio descendente (más reciente primero)
+                .ThenBy(p => p.EstudianteOrden); // Finalmente por estudiante alfabéticamente
+            
+            var result = await query.ToListAsync();
+            
+            return result.Select(p => new PasantiaShowTableDto
+            {
+                Tramite = p.Tramite,
+                Estudiante = p.Estudiante,
+                Empresa = p.Empresa,
+                TipoAcuerdo = p.TipoAcuerdo,
+                Estado = p.Estado,
+                FechaInicio = p.FechaInicio,
+                FechaFin = p.FechaFin
+            });
+        }
+
         public async Task<IEnumerable<Pasantia>> GetByConvenioIdAsync(int convenioId)
         {
             return await _dbSet

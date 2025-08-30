@@ -75,7 +75,11 @@ namespace Backend.Repositories
                         DocRepresentanteFacultad = c.DocRepresentanteFacultad,
                         Caracter = c.Caracter,
                         Sudocu = c.Sudocu
-                    });
+                    })
+                    .OrderBy(c => 
+                        // Primero los vigentes (FechaCaducidad nula o > hoy)
+                        (!c.FechaCaducidad.HasValue || c.FechaCaducidad > DateOnly.FromDateTime(DateTime.Now)) ? 0 : 1)
+                    .ThenBy(c => (c.NombreEmpresa ?? "").Trim()); // Luego por nombre de empresa alfabéticamente sin espacios
                 return await convenios.ToListAsync();
             }
             catch (Exception ex)

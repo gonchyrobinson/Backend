@@ -80,6 +80,15 @@ namespace Backend.Controllers
             return Ok(result);
         }
 
+        // Endpoint: datos para tabla de pasantías
+        [HttpGet("show-table")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<PasantiaShowTableDto>>> GetAllPasantiasShowTable()
+        {
+            var result = await _pasantiasService.GetAllPasantiasShowTableAsync();
+            return Ok(result);
+        }
+
         // Endpoint: pasantías por vencer
         [HttpGet("por-vencer")]
         [Authorize]
