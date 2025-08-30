@@ -13,6 +13,7 @@ namespace Backend.Interfaces.Services
         Task<IEnumerable<string>> GetSugerenciasNumerosTramiteAsync();
         Task<IEnumerable<object>> GetSugerenciasDropdownAsync();
         Task<IEnumerable<PasantiaDto>> BuscarAvanzadoAsync(PasantiaBusquedaAvanzadaDto filtro);
+        Task<IEnumerable<PasantiaShowTableDto>> GetAllPasantiasShowTableAsync();
         Task<IEnumerable<PasantiaDto>> GetPasantiasPorVencerEnDiasAsync(int dias);
     }
 }

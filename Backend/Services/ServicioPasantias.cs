@@ -97,6 +97,12 @@ namespace Backend.Services
             return _mapper.Map<IEnumerable<PasantiaDto>>(pasantias);
         }
 
+        // Obtener datos para mostrar en tabla
+        public async Task<IEnumerable<PasantiaShowTableDto>> GetAllPasantiasShowTableAsync()
+        {
+            return await _repoPasantias.GetAllPasantiasShowTableAsync();
+        }
+
         public override async Task<bool> DeleteAsync(int id)
         {
             await _validationService.ValidateDeleteAsync(id, _repoPagos, _repoPasantias);
