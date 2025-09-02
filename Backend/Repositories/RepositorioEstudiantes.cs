@@ -11,6 +11,23 @@ namespace Backend.Repositories
         {
         }
 
+        public override async Task<IEnumerable<Estudiante>> GetAllAsync()
+        {
+            // Primero obtenemos todos los estudiantes no eliminados
+            var estudiantes = await _dbSet
+                .AsNoTracking()
+                .Where(e => e.Eliminado == null || e.Eliminado == false)
+                .ToListAsync();
+
+            // Agrupar por documento y tomar el primero de cada grupo, luego ordenar alfabéticamente por nombre
+            return estudiantes
+                .GroupBy(e => e.Documento)
+                .Select(g => g.First())
+                .OrderBy(e => (e.Nombre ?? "").Trim()) // Ordenar por nombre alfabéticamente sin espacios al principio
+                .ThenBy(e => (e.Apellido ?? "").Trim()) // Luego por apellido si hay nombres iguales
+                .ToList();
+        }
+
         public async Task<IEnumerable<Estudiante>> BuscarAvanzadoAsync(StudentBusquedaAvanzadaDto filtro)
         {
             var estudiantes = await _dbSet
