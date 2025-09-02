@@ -70,8 +70,8 @@ namespace Backend.Tests
         public async Task GetAll_ReturnsOkWithListOfStudents()
         {
             // Arrange
-            var student1 = new Estudiante { IdEstudiante = 1, Nombre = "Juan", Apellido = "Perez" };
-            var student2 = new Estudiante { IdEstudiante = 2, Nombre = "Maria", Apellido = "Gomez" };
+            var student1 = new Estudiante { IdEstudiante = 1, Nombre = "Juan", Apellido = "Perez", Documento = "12345678" };
+            var student2 = new Estudiante { IdEstudiante = 2, Nombre = "Maria", Apellido = "Gomez", Documento = "87654321" };
             _dbContext.Estudiantes.AddRange(student1, student2);
             _dbContext.SaveChanges();
 

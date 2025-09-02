@@ -136,10 +136,19 @@ namespace Backend.Tests
         [Fact]
         public async Task Create_ReturnsCreatedWithPasantia()
         {
-            var estudiante1 = new Estudiante { IdEstudiante = 1, Nombre = "Juan", Documento = "12345678" };
+            var estudiante1 = new Estudiante {
+                IdEstudiante = 1,
+                Nombre = "Juan",
+                Apellido = "Perez",
+                Documento = "12345678",
+                Carrera = "Ing",
+                AreaTrabajo = "IT"
+            };
+            var estudiante2 = new Estudiante { IdEstudiante = 2, Nombre = "Maria", Documento = "87654321" };
             var convenio1 = new Convenio { IdConvenio = 1 };
-            _dbContext.Estudiantes.AddRange(estudiante1);
+            _dbContext.Estudiantes.AddRange(estudiante1, estudiante2);
             _dbContext.Convenios.AddRange(convenio1);
+            _dbContext.SaveChanges();
             // Arrange
             var createDto = new PasantiaCreateDto
             {
@@ -169,8 +178,8 @@ namespace Backend.Tests
         public async Task Update_ReturnsOkWithUpdatedPasantia()
         {
             // Arrange
-            var estudiante1 = new Estudiante { IdEstudiante = 1, Nombre = "Juan" };
-            var estudiante2 = new Estudiante { IdEstudiante = 2, Nombre = "Maria" };
+            var estudiante1 = new Estudiante { IdEstudiante = 1, Nombre = "Juan", Documento = "12345678" };
+            var estudiante2 = new Estudiante { IdEstudiante = 2, Nombre = "Maria", Documento = "87654321" };
             var convenio1 = new Convenio { IdConvenio = 1 };
             var convenio2 = new Convenio { IdConvenio = 2 };
             var pasantia = new Pasantia { IdPasantia = 1, IdEstudiante = 1, IdConvenio = 1 };
@@ -183,7 +192,7 @@ namespace Backend.Tests
             var updateDto = new PasantiaUpdateDto
             {
                 IdPasantia = 1,
-                IdEstudiante = 2,
+                DniEstudiante = "87654321",
                 IdConvenio = 2,
                 FechaInicio = DateOnly.FromDateTime(DateTime.Now),
                 FechaFin = DateOnly.FromDateTime(DateTime.Now.AddMonths(6)),
@@ -202,7 +211,6 @@ namespace Backend.Tests
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
             var updatedPasantia = Assert.IsType<PasantiaDto>(okResult.Value);
             Assert.Equal(1, updatedPasantia.IdPasantia);
-            Assert.Equal(2, updatedPasantia.IdEstudiante);
             Assert.Equal(2, updatedPasantia.IdConvenio);
         }
 
