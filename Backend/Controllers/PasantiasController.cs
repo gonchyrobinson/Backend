@@ -74,7 +74,7 @@ namespace Backend.Controllers
 
         [HttpPost("buscar-avanzado")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<PasantiaDto>>> BuscarAvanzado([FromBody] PasantiaBusquedaAvanzadaDto filtro)
+        public async Task<ActionResult<IEnumerable<PasantiaShowTableDto>>> BuscarAvanzado([FromBody] PasantiaBusquedaAvanzadaDto filtro)
         {
             var result = await _pasantiasService.BuscarAvanzadoAsync(filtro);
             return Ok(result);

@@ -124,10 +124,9 @@ namespace Backend.Services
             return await _repoPasantias.GetSugerenciasDropdownAsync();
         }
 
-        public async Task<IEnumerable<PasantiaDto>> BuscarAvanzadoAsync(PasantiaBusquedaAvanzadaDto filtro)
+        public async Task<IEnumerable<PasantiaShowTableDto>> BuscarAvanzadoAsync(PasantiaBusquedaAvanzadaDto filtro)
         {
-            var entities = await _repoPasantias.BuscarAvanzadoAsync(filtro);
-            return _mapper.Map<IEnumerable<PasantiaDto>>(entities);
+            return await _repoPasantias.BuscarAvanzadoAsync(filtro);
         }
     }
 }

@@ -24,7 +24,7 @@ namespace Backend.Interfaces.Repositories
         Task<IEnumerable<object>> GetSugerenciasDropdownAsync();
 
         // Método para búsqueda avanzada de pasantías
-        Task<IEnumerable<Pasantia>> BuscarAvanzadoAsync(PasantiaBusquedaAvanzadaDto filtro);
+        Task<IEnumerable<PasantiaShowTableDto>> BuscarAvanzadoAsync(PasantiaBusquedaAvanzadaDto filtro);
 
         // Método para obtener datos de tabla de pasantías
         Task<IEnumerable<PasantiaShowTableDto>> GetAllPasantiasShowTableAsync();

@@ -29,6 +29,7 @@ namespace Backend.Repositories
                 .OrderBy(e => 
                     // Primero las vigentes (FechaFin nula o > hoy)
                     (!e.FechaFin.HasValue || e.FechaFin > today) ? 0 : 1)
+                .ThenBy(e => e.Nombre!.Any(char.IsLetter) ? 0 : 1) // Primero las que tienen letras en el nombre
                 .ThenBy(e => e.Nombre!.Trim()) // Ordenar por nombre alfabético sin espacios al principio
                 .ToList();
         }
@@ -71,7 +72,7 @@ namespace Backend.Repositories
                 .Where(e => (e.Eliminado == null || e.Eliminado == false) && !string.IsNullOrEmpty(e.Nombre))
                 .Select(e => e.Nombre!)
                 .Distinct()
-                .OrderBy(nombre => nombre)
+                .OrderBy(nombre => nombre.Trim()) // Ordenar sin espacios al principio y final
                 .ToListAsync();
         }
     }
