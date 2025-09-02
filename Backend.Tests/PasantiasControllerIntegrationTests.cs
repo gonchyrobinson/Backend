@@ -136,14 +136,14 @@ namespace Backend.Tests
         [Fact]
         public async Task Create_ReturnsCreatedWithPasantia()
         {
-            var estudiante1 = new Estudiante { IdEstudiante = 1, Nombre = "Juan" };
+            var estudiante1 = new Estudiante { IdEstudiante = 1, Nombre = "Juan", Documento = "12345678" };
             var convenio1 = new Convenio { IdConvenio = 1 };
             _dbContext.Estudiantes.AddRange(estudiante1);
             _dbContext.Convenios.AddRange(convenio1);
             // Arrange
             var createDto = new PasantiaCreateDto
             {
-                IdEstudiante = 1,
+                DniEstudiante = "12345678", // Cambiar de IdEstudiante a DniEstudiante
                 IdConvenio = 1,
                 FechaInicio = DateOnly.FromDateTime(DateTime.Now),
                 FechaFin = DateOnly.FromDateTime(DateTime.Now.AddMonths(6)),

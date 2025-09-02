@@ -38,8 +38,10 @@ namespace Backend.Mappings
 
             // Mapeo para Pasantía
             CreateMap<Pasantia, PasantiaUpdateDto>()
-                .ForMember(dest => dest.HorasSemanales, opt => opt.MapFrom(src => src.HorasSemanales));
+                .ForMember(dest => dest.HorasSemanales, opt => opt.MapFrom(src => src.HorasSemanales))
+                .ForMember(dest => dest.DniEstudiante, opt => opt.MapFrom(src => src.IdEstudianteNavigation != null ? src.IdEstudianteNavigation.Documento : null));
             CreateMap<PasantiaUpdateDto, Pasantia>()
+                .ForMember(dest => dest.IdEstudiante, opt => opt.Ignore()) // Ignorar porque usamos DNI y lo asignamos manualmente
                 .ForMember(dest => dest.IdEstudianteNavigation, opt => opt.Ignore());
             CreateMap<PasantiaUpdateDto, PasantiaDto>();
             
@@ -50,7 +52,7 @@ namespace Backend.Mappings
                 .ReverseMap()
                 .ForMember(dest => dest.IdEstudianteNavigation, opt => opt.Ignore()); // Compatibilidad
             CreateMap<PasantiaCreateDto, Pasantia>()
-                .ForMember(dest => dest.IdEstudiante, opt => opt.MapFrom(src => src.IdEstudiante))
+                .ForMember(dest => dest.IdEstudiante, opt => opt.Ignore()) // Ignorar porque usamos DNI y lo asignamos manualmente
                 .ForMember(dest => dest.IdConvenio, opt => opt.MapFrom(src => src.IdConvenio))
                 .ForMember(dest => dest.AsignacionMensual, opt => opt.MapFrom(src => src.AsignacionMensual))
                 .ForMember(dest => dest.ObraSocial, opt => opt.MapFrom(src => src.ObraSocial))

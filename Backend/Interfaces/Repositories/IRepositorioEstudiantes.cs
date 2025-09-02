@@ -9,5 +9,6 @@ namespace Backend.Interfaces.Repositories
         Task<IEnumerable<string>> GetSugerenciasNombresAsync();
         Task<IEnumerable<string>> GetSugerenciasApellidosAsync();
         Task<IEnumerable<object>> GetDocumentosUnicos();
+        Task<Estudiante?> GetByDocumentoAsync(string documento);
     }
 }

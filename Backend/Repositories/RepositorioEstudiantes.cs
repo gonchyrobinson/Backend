@@ -89,5 +89,15 @@ namespace Backend.Repositories
                 .OrderBy(x => x.label)
                 .ToListAsync();
         }
+
+        public async Task<Estudiante?> GetByDocumentoAsync(string documento)
+        {
+            return await _dbSet
+                .AsNoTracking()
+                .Where(e => (e.Eliminado == null || e.Eliminado == false) && 
+                           !string.IsNullOrEmpty(e.Documento) && 
+                           e.Documento == documento)
+                .FirstOrDefaultAsync();
+        }
     }
 }

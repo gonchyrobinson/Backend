@@ -20,8 +20,8 @@ namespace Backend.Services
         /// </summary>
         public void ValidateCreate(PasantiaCreateDto dto)
         {
-            ValidateBasicFields(
-                dto.IdEstudiante, dto.IdConvenio, dto.FechaInicio, dto.FechaFin,
+            ValidateBasicFieldsWithDni(
+                dto.DniEstudiante, dto.IdConvenio, dto.FechaInicio, dto.FechaFin,
                 dto.TutorEmpresa, dto.TutorFacultad, dto.DniTutorFacultad,
                 dto.AsignacionMensual, dto.ObraSocial, dto.Art,
                 dto.TipoAcuerdo, dto.FrecuenciaPago, dto.HorasSemanales
@@ -41,6 +41,19 @@ namespace Backend.Services
             );
         }
 
+        /// <summary>
+        /// Valida los datos básicos para la actualización de una pasantía usando DNI
+        /// </summary>
+        public void ValidateUpdateWithDni(PasantiaUpdateDto dto, int? estudianteId)
+        {
+            ValidateBasicFields(
+                estudianteId, dto.IdConvenio, dto.FechaInicio, dto.FechaFin,
+                dto.TutorEmpresa, dto.TutorFacultad, dto.DniTutorFacultad,
+                dto.AsignacionMensual, dto.ObraSocial, dto.Art,
+                dto.TipoAcuerdo, dto.FrecuenciaPago, dto.HorasSemanales
+            );
+        }
+
         public async Task ValidateDeleteAsync(int idPasantia, IRepositorioPagos repoPagos, IRepositorioPasantias repoPasantias)
         {
             var pasantia = await repoPasantias.GetByIdAsync(idPasantia);
@@ -52,13 +65,13 @@ namespace Backend.Services
         /// <summary>
         /// Valida todas las reglas de la Ley 26427 para la creación de una pasantía
         /// </summary>
-        public async Task ValidateLegalRequirementsAsync(PasantiaCreateDto dto, IRepositorioPasantias repoPasantias, IRepositorioEstudiantes repoEstudiantes, IRepositorioConvenios repoConvenios)
+        public async Task ValidateLegalRequirementsAsync(PasantiaCreateDto dto, IRepositorioPasantias repoPasantias, IRepositorioEstudiantes repoEstudiantes, IRepositorioConvenios repoConvenios, int? idEstudiante = null)
         {
-            if (!dto.IdEstudiante.HasValue) return;
+            if (!idEstudiante.HasValue) return;
             
-            await ValidateMaxRenovacionesAsync(dto.IdEstudiante.Value, repoPasantias);
-            await ValidatePasantiasSimultaneasAsync(dto, repoPasantias);
-            await ValidateTotalPasantiaDurationAsync(dto.IdEstudiante.Value, repoPasantias);
+            await ValidateMaxRenovacionesAsync(idEstudiante.Value, repoPasantias);
+            await ValidatePasantiasSimultaneasAsync(dto, repoPasantias, idEstudiante.Value);
+            await ValidateTotalPasantiaDurationAsync(idEstudiante.Value, repoPasantias);
         }
 
         public async Task ValidateForeignKeysAsync(int? idEstudiante, int? idConvenio, IRepositorioEstudiantes repoEstudiantes, IRepositorioConvenios repoConvenios)
@@ -145,6 +158,38 @@ namespace Backend.Services
             }
         }
 
+        /// <summary>
+        /// Método para validar campos básicos cuando se usa DNI en lugar de ID de estudiante
+        /// </summary>
+        private void ValidateBasicFieldsWithDni(
+            string? dniEstudiante, int? idConvenio, DateOnly? fechaInicio, DateOnly? fechaFin,
+            string? tutorEmpresa, string? tutorFacultad, string? DniTutorFacultad,
+            decimal? asignacionMensual, string? obraSocial, string? art,
+            string? tipoAcuerdo, string? frecuenciaPago, int? horasSemanales)
+        {
+            ValidateRequiredFieldsWithDni(dniEstudiante, idConvenio, fechaInicio, fechaFin,
+                tutorEmpresa, tutorFacultad, DniTutorFacultad, asignacionMensual, obraSocial, art);
+
+            if (fechaInicio.HasValue && fechaFin.HasValue)
+            {
+                ValidateDateRangeLogic(fechaInicio.Value, fechaFin.Value, tipoAcuerdo);
+            }
+
+            ValidateTipoAcuerdo(tipoAcuerdo);
+            ValidateFrecuenciaPago(frecuenciaPago);
+            ValidateHorasSemanales(horasSemanales);
+
+            if (tipoAcuerdo == "Pasantia" && (!asignacionMensual.HasValue || asignacionMensual <= 0))
+            {
+                throw new ValidationException("Las pasantías deben ser remuneradas", "Pasantia");
+            }
+
+            if (tipoAcuerdo == "PPS" && asignacionMensual.HasValue && asignacionMensual > 0)
+            {
+                throw new ValidationException("Las PPS no pueden ser remuneradas", "Pasantia");
+            }
+        }
+
         private void ValidateRequiredFields(
             int? idEstudiante, int? idConvenio, DateOnly? fechaInicio, DateOnly? fechaFin,
             string? tutorEmpresa, string? tutorFacultad, string? DniTutorFacultad,
@@ -153,6 +198,28 @@ namespace Backend.Services
             var missingFields = new List<string>();
             
             if (!idEstudiante.HasValue || idEstudiante <= 0) missingFields.Add("Estudiante");
+            if (!idConvenio.HasValue || idConvenio <= 0) missingFields.Add("Convenio");
+            if (!fechaInicio.HasValue) missingFields.Add("Fecha de inicio");
+            if (!fechaFin.HasValue) missingFields.Add("Fecha de fin");
+            if (string.IsNullOrWhiteSpace(tutorEmpresa)) missingFields.Add("Tutor de empresa");
+            if (string.IsNullOrWhiteSpace(tutorFacultad)) missingFields.Add("Tutor de facultad");
+            if (string.IsNullOrWhiteSpace(DniTutorFacultad)) missingFields.Add("DNI del tutor de facultad");
+            if (!asignacionMensual.HasValue || asignacionMensual <= 0) missingFields.Add("Asignación mensual");
+            if (string.IsNullOrWhiteSpace(obraSocial)) missingFields.Add("Obra social");
+            if (string.IsNullOrWhiteSpace(art)) missingFields.Add("ART");
+                
+            if (missingFields.Count > 0)
+                throw new ValidationException($"Campos obligatorios faltantes: {string.Join(", ", missingFields)}", "Pasantia");
+        }
+
+        private void ValidateRequiredFieldsWithDni(
+            string? dniEstudiante, int? idConvenio, DateOnly? fechaInicio, DateOnly? fechaFin,
+            string? tutorEmpresa, string? tutorFacultad, string? DniTutorFacultad,
+            decimal? asignacionMensual, string? obraSocial, string? art)
+        {
+            var missingFields = new List<string>();
+            
+            if (string.IsNullOrWhiteSpace(dniEstudiante)) missingFields.Add("DNI del estudiante");
             if (!idConvenio.HasValue || idConvenio <= 0) missingFields.Add("Convenio");
             if (!fechaInicio.HasValue) missingFields.Add("Fecha de inicio");
             if (!fechaFin.HasValue) missingFields.Add("Fecha de fin");
@@ -244,12 +311,12 @@ namespace Backend.Services
                 throw new ValidationException($"El estudiante ya ha alcanzado el máximo de {MAX_RENOVACIONES} pasantías/renovaciones permitidas por la Ley 26427", "Pasantia");
         }
         
-        private async Task ValidatePasantiasSimultaneasAsync(PasantiaCreateDto dto, IRepositorioPasantias repoPasantias)
+        private async Task ValidatePasantiasSimultaneasAsync(PasantiaCreateDto dto, IRepositorioPasantias repoPasantias, int idEstudiante)
         {
-            if (!dto.IdEstudiante.HasValue || !dto.FechaInicio.HasValue || !dto.FechaFin.HasValue)
+            if (!dto.FechaInicio.HasValue || !dto.FechaFin.HasValue)
                 return;
                 
-            var pasantiasEstudiante = await repoPasantias.GetByEstudianteIdAsync(dto.IdEstudiante.Value);
+            var pasantiasEstudiante = await repoPasantias.GetByEstudianteIdAsync(idEstudiante);
             
             foreach (var pasantia in pasantiasEstudiante.Where(p => p.FechaInicio.HasValue && p.FechaFin.HasValue))
             {
