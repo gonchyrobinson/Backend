@@ -48,7 +48,7 @@ namespace Backend.Repositories
                 .Include(p => p.IdEstudianteNavigation)
                 .Include(p => p.IdConvenioNavigation)
                 .Where(p => p.IdEstudianteNavigation == null ||
-                          (p.IdEstudianteNavigation.Eliminado == null || p.IdEstudianteNavigation.Eliminado == false) && (p.IdConvenioNavigation.FechaCaducidad == null || p.IdConvenioNavigation.FechaCaducidad > DateOnly.FromDateTime(DateTime.Now)))
+                          (p.IdEstudianteNavigation.Eliminado == null || p.IdEstudianteNavigation.Eliminado == false) && (p.IdConvenioNavigation!.FechaCaducidad == null || p.IdConvenioNavigation.FechaCaducidad > DateOnly.FromDateTime(DateTime.Now)))
                 .Select(p => new PasantiaDetalleDto
                 {
                     Pasantia = new PasantiaDto
@@ -94,7 +94,7 @@ namespace Backend.Repositories
                 .AsNoTracking()
                 .Include(p => p.IdEstudianteNavigation)
                 .Include(p => p.IdConvenioNavigation)
-                .ThenInclude(c => c.IdEmpresaNavigation)
+                .ThenInclude(c => c!.IdEmpresaNavigation)
                 .Where(p => p.IdEstudianteNavigation == null ||
                           (p.IdEstudianteNavigation.Eliminado == null || p.IdEstudianteNavigation.Eliminado == false))
                 .Select(p => new
@@ -219,13 +219,15 @@ namespace Backend.Repositories
             });
         }
 
-        public async Task<IEnumerable<Pasantia>> BuscarAvanzadoAsync(PasantiaBusquedaAvanzadaDto filtro)
+        public async Task<IEnumerable<PasantiaShowTableDto>> BuscarAvanzadoAsync(PasantiaBusquedaAvanzadaDto filtro)
         {
+            var hoy = DateOnly.FromDateTime(DateTime.Now);
+            
             var pasantias = await _dbSet
                 .AsNoTracking()
                 .Include(p => p.IdEstudianteNavigation)
                 .Include(p => p.IdConvenioNavigation)
-                .ThenInclude(c => c.IdEmpresaNavigation)
+                .ThenInclude(c => c!.IdEmpresaNavigation)
                 .Where(p => p.IdEstudianteNavigation == null ||
                           (p.IdEstudianteNavigation.Eliminado == null || p.IdEstudianteNavigation.Eliminado == false))
                 .ToListAsync();
@@ -255,7 +257,7 @@ namespace Backend.Repositories
             // Filtro por tipo de acuerdo
             if (IsStringValid(filtro.Tipo))
             {
-                if (filtro.Tipo.Equals("otro", StringComparison.OrdinalIgnoreCase))
+                if (filtro.Tipo!.Equals("otro", StringComparison.OrdinalIgnoreCase))
                 {
                     // Para "otro", incluir todos los tipos que NO sean PPS ni Pasantia
                     pasantias = pasantias.Where(p => !string.IsNullOrEmpty(p.TipoAcuerdo) && 
@@ -274,19 +276,18 @@ namespace Backend.Repositories
             if (IsStringValid(filtro.Estudiante))
                 pasantias = pasantias.Where(p => p.IdEstudianteNavigation != null && 
                                                !string.IsNullOrEmpty(p.IdEstudianteNavigation.Documento) &&
-                                               p.IdEstudianteNavigation.Documento.Contains(filtro.Estudiante, StringComparison.OrdinalIgnoreCase)).ToList();
+                                               p.IdEstudianteNavigation.Documento.Contains(filtro.Estudiante!, StringComparison.OrdinalIgnoreCase)).ToList();
 
             // Filtro por empresa (nombre)
             if (IsStringValid(filtro.Empresa))
                 pasantias = pasantias.Where(p => p.IdConvenioNavigation != null && 
                                                p.IdConvenioNavigation.IdEmpresaNavigation != null &&
                                                !string.IsNullOrEmpty(p.IdConvenioNavigation.IdEmpresaNavigation.Nombre) &&
-                                               p.IdConvenioNavigation.IdEmpresaNavigation.Nombre.Contains(filtro.Empresa, StringComparison.OrdinalIgnoreCase)).ToList();
+                                               p.IdConvenioNavigation.IdEmpresaNavigation.Nombre.Contains(filtro.Empresa!, StringComparison.OrdinalIgnoreCase)).ToList();
 
             // Filtro por vigencia
             if (filtro.Vigente != null)
             {
-                var hoy = DateOnly.FromDateTime(DateTime.Now);
                 if (filtro.Vigente.Value)
                 {
                     // Pasantías vigentes: FechaFin > hoy o nula
@@ -305,7 +306,40 @@ namespace Backend.Repositories
                                                !string.IsNullOrEmpty(p.IdEstudianteNavigation.Carrera) &&
                                                p.IdEstudianteNavigation.Carrera.Equals(filtro.Carrera, StringComparison.OrdinalIgnoreCase)).ToList();
 
-            return pasantias;
+            // Convertir a DTOs con ordenamiento
+            return pasantias.Select(p => new
+            {
+                Tramite = $"TRA-FACET-{p.IdPasantia:D3}",
+                Estudiante = p.IdEstudianteNavigation != null
+                    ? $"{p.IdEstudianteNavigation.Apellido}, {p.IdEstudianteNavigation.Nombre}"
+                    : "Sin estudiante",
+                Empresa = p.IdConvenioNavigation != null && p.IdConvenioNavigation.IdEmpresaNavigation != null
+                    ? p.IdConvenioNavigation.IdEmpresaNavigation.Nombre ?? "Sin nombre"
+                    : "Sin empresa",
+                TipoAcuerdo = p.TipoAcuerdo ?? "No especificado",
+                Estado = (!p.FechaFin.HasValue || p.FechaFin > hoy) ? "Activa" : "Finalizada",
+                FechaInicio = p.FechaInicio,
+                FechaFin = p.FechaFin,
+                // Campos auxiliares para ordenamiento
+                EsActiva = (!p.FechaFin.HasValue || p.FechaFin > hoy),
+                EstudianteOrden = p.IdEstudianteNavigation != null
+                    ? (p.IdEstudianteNavigation.Apellido ?? "").Trim() + ", " + (p.IdEstudianteNavigation.Nombre ?? "").Trim()
+                    : "Sin estudiante"
+            })
+            .OrderBy(p => p.EsActiva ? 0 : 1) // Primero las activas
+            .ThenBy(p => p.FechaInicio.HasValue ? 0 : 1) // Primero las que tienen fecha de inicio
+            .ThenByDescending(p => p.FechaInicio) // Fecha de inicio descendente (más reciente primero)
+            .ThenBy(p => p.EstudianteOrden) // Finalmente por estudiante alfabéticamente
+            .Select(p => new PasantiaShowTableDto
+            {
+                Tramite = p.Tramite,
+                Estudiante = p.Estudiante,
+                Empresa = p.Empresa,
+                TipoAcuerdo = p.TipoAcuerdo,
+                Estado = p.Estado,
+                FechaInicio = p.FechaInicio,
+                FechaFin = p.FechaFin
+            });
         }
 
         public async Task<IEnumerable<Pasantia>> GetAllWithStudentNavigationAsync()
