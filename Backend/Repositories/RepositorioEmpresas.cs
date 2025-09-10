@@ -46,21 +46,7 @@ namespace Backend.Repositories
             if (IsStringValid(filtro.Nombre))
                 empresas = empresas.Where(e => !string.IsNullOrEmpty(e.Nombre) && e.Nombre.ToLower().Contains(filtro.Nombre!.ToLower())).ToList();
 
-            // Vigencia: true = empresas vigentes (FechaFin > hoy o nula), false = no vigentes (FechaFin < hoy)
-            if (filtro.Vigencia != null)
-            {
-                if (filtro.Vigencia == true)
-                {
-                    empresas = empresas.Where(e => !e.FechaFin.HasValue || e.FechaFin > DateOnly.FromDateTime(DateTime.Today)).ToList();
-                }
-                else
-                {
-                    empresas = empresas.Where(e => e.FechaFin.HasValue && e.FechaFin < DateOnly.FromDateTime(DateTime.Today)).ToList();
-                }
-            }
-
-            if (IsStringValid(filtro.TipoContrato))
-                empresas = empresas.Where(e => !string.IsNullOrEmpty(e.TipoContrato) && e.TipoContrato.ToLower() == filtro.TipoContrato!.ToLower()).ToList();
+            // Only Nombre filtering remains after DTO reduction
 
             return empresas;
         }

@@ -23,14 +23,12 @@ namespace Backend.Mappings
             CreateMap<StudentCreateDto, Estudiante>();
 
             // Mapeo para Empresa
-            CreateMap<Empresa, EmpresaUpdateDto>()
-                .ForMember(dest => dest.Vigencia, opt => opt.MapFrom(src => src.FechaFin.HasValue && src.FechaFin.Value < DateOnly.FromDateTime(DateTime.Today) ? "no_vigente" : "vigente"));
+            CreateMap<Empresa, EmpresaUpdateDto>();
             CreateMap<EmpresaUpdateDto, Empresa>()
                 .ForMember(dest => dest.Eliminado, opt => opt.MapFrom(src => false))
                 .ForMember(dest => dest.FechaEliminacion, opt => opt.MapFrom(src => (DateTime?)null));
             
             CreateMap<Empresa, EmpresaDto>()
-                .ForMember(dest => dest.Vigencia, opt => opt.MapFrom(src => src.FechaFin.HasValue && src.FechaFin.Value < DateOnly.FromDateTime(DateTime.Today) ? "no_vigente" : "vigente"))
                 .ReverseMap()
                 .ForMember(dest => dest.Eliminado, opt => opt.MapFrom(src => false))
                 .ForMember(dest => dest.FechaEliminacion, opt => opt.MapFrom(src => (DateTime?)null)); // Para operaciones GET/CREATE
