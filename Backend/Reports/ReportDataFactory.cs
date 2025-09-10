@@ -65,7 +65,6 @@ namespace Backend.Reports
                 EmpresaNombre = SafeString(empresa?.Nombre),
                 EstudianteCarrera = SafeString(estudiante?.Carrera),
                 EstudianteEmail = SafeString(estudiante?.Email),
-                EstudianteAreaDeTrabajo = SafeString(estudiante?.AreaTrabajo),
                 EmpresaEncargado = SafeString(empresa?.Encargado),
                 EmpresaCelular = SafeString(empresa?.Celular),
                 EmpresaCorreoElectronico = SafeString(empresa?.CorreoElectronico),

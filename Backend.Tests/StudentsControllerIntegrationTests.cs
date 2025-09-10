@@ -35,7 +35,7 @@ namespace Backend.Tests
         public async Task BuscarAvanzado_ReturnsOkWithExpectedData()
         {
             // Arrange
-            var estudiante = new Estudiante { IdEstudiante = 1, Nombre = "Juan", Apellido = "Perez", Carrera = "Ing", AreaTrabajo = "IT", Documento = "43850228"  };
+            var estudiante = new Estudiante { IdEstudiante = 1, Nombre = "Juan", Apellido = "Perez", Carrera = "Ing", Documento = "43850228"  };
             _dbContext.Estudiantes.Add(estudiante);
             _dbContext.SaveChanges();
 

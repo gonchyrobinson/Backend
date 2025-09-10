@@ -142,7 +142,7 @@ namespace Backend.Tests
                 Apellido = "Perez",
                 Documento = "12345678",
                 Carrera = "Ing",
-                AreaTrabajo = "IT"
+                    // AreaTrabajo = "IT" // Removed AreaTrabajo assignment
             };
             var estudiante2 = new Estudiante { IdEstudiante = 2, Nombre = "Maria", Documento = "87654321" };
             var convenio1 = new Convenio { IdConvenio = 1 };

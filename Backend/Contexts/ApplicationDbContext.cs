@@ -153,9 +153,7 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.Apellido)
                 .HasMaxLength(100)
                 .HasColumnName("apellido");
-            entity.Property(e => e.AreaTrabajo)
-                .HasMaxLength(100)
-                .HasColumnName("area_trabajo");
+            // AreaTrabajo column removed from model and database mapping
             entity.Property(e => e.Carrera)
                 .HasMaxLength(100)
                 .HasColumnName("carrera");

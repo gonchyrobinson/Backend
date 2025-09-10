@@ -8,10 +8,9 @@ namespace Backend.DTOs.StudentDtos
         public string? Apellido { get; set; }
         public string? Nombre { get; set; }
         public string? Documento { get; set; }
-        public string? Domicilio { get; set; }
-        public string? Carrera { get; set; }
-        public string? AreaTrabajo { get; set; }
-        public string? Email { get; set; }
+    public string? Domicilio { get; set; }
+    public string? Carrera { get; set; }
+    public string? Email { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
