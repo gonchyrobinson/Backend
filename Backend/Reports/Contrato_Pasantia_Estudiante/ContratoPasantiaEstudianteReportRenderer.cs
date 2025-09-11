@@ -11,7 +11,7 @@ namespace Backend.Reports.Contrato_Pasantia_Estudiante
                 ["ConvenioRepresentanteFacultad"] = data.ConvenioRepresentanteFacultad ?? string.Empty,
                 ["ConvenioDNIRepresentanteFacultad"] = data.ConvenioDNIRepresentanteFacultad ?? string.Empty,
                 ["ConvenioDomicilioLegal"] = data.ConvenioDomicilioLegal ?? string.Empty,
-                ["ConvenioExpediente"] = data.ConvenioExpediente ?? string.Empty,
+                ["NumeroConvenio"] = data.NumeroConvenio ?? string.Empty,
                 ["AsignacionMensual"] = data.AsignacionMensual ?? string.Empty,
                 ["ObraSocial"] = data.ObraSocial ?? string.Empty,
                 ["Art"] = data.Art ?? string.Empty,

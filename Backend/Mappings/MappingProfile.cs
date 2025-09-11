@@ -15,7 +15,9 @@ namespace Backend.Mappings
             // Mapeo para Convenio
             CreateMap<Convenio, ConvenioUpdateDto>().ReverseMap();
             CreateMap<Convenio, ConvenioDto>().ReverseMap(); // Para operaciones GET/CREATE
-            CreateMap<ConvenioCreateDto, Convenio>();
+            // En creación ignoramos NroAcuerdoMarco: lo asigna el trigger en DB
+            CreateMap<ConvenioCreateDto, Convenio>()
+                .ForMember(dest => dest.NroAcuerdoMarco, opt => opt.Ignore());
 
             // Mapeo para Estudiante
             CreateMap<Estudiante, StudentUpdateDto>().ReverseMap();

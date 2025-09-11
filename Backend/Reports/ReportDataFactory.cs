@@ -38,11 +38,10 @@ namespace Backend.Reports
                 // Convenio
                 ConvenioRepresentanteEmpresa = SafeString(convenio?.RepresentanteEmpresa),
                 ConvenioDNIRepresentante = SafeString(convenio?.DocRepresentanteEmpresa),
-                ConvenioRepresentanteFacultad = SafeString(convenio?.RepresentanteFacultad),
-                ConvenioDNIRepresentanteFacultad = SafeString(convenio?.DocRepresentanteFacultad),
+                ConvenioRepresentanteFacultad = SafeString(convenio?.NombreDecano),
+                ConvenioDNIRepresentanteFacultad = SafeString(convenio?.DocumentoDecano),
                 ConvenioDomicilioLegal = SafeString(convenio?.DomicilioLegal),
-                ConvenioExpediente = convenio != null ? $"TRA-FACET-{convenio.IdConvenio:D3}" : null,
-                ConvenioDomicilioAlternativo = SafeString(convenio?.DomicilioAlternativo),
+                NumeroConvenio = convenio != null ? convenio.IdConvenio.ToString() : null,
 
                 // Pasantía
                 AsignacionMensual = SafeDecimal(pasantia?.AsignacionMensual),

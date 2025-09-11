@@ -77,31 +77,28 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.DocRepresentanteEmpresa)
                 .HasMaxLength(255)
                 .HasColumnName("doc_representante_empresa");
-            entity.Property(e => e.DocRepresentanteFacultad)
+            entity.Property(e => e.DocumentoDecano)
                 .HasMaxLength(255)
-                .HasColumnName("doc_representante_facultad");
+                .HasColumnName("documento_decano");
             entity.Property(e => e.DomicilioLegal)
                 .HasMaxLength(255)
                 .HasColumnName("domicilio_legal");
             entity.Property(e => e.FechaCaducidad).HasColumnName("fecha_caducidad");
-            entity.Property(e => e.FechaFirma).HasColumnName("fecha_firma");
+            entity.Property(e => e.FechaInicio).HasColumnName("fecha_inicio");
             entity.Property(e => e.IdEmpresa).HasColumnName("id_empresa");
             entity.Property(e => e.NroAcuerdoMarco).HasColumnName("nro_acuerdo_marco");
             entity.Property(e => e.RepresentanteEmpresa)
                 .HasMaxLength(255)
                 .HasColumnName("representante_empresa");
-            entity.Property(e => e.RepresentanteFacultad)
+            entity.Property(e => e.NombreDecano)
                 .HasMaxLength(255)
-                .HasColumnName("representante_facultad");
-            entity.Property(e => e.DomicilioAlternativo)
+                .HasColumnName("nombre_decano");
+            entity.Property(e => e.TipoAcuerdo)
                 .HasMaxLength(255)
-                .HasColumnName("domicilio_alternativo");
-            entity.Property(e => e.Caracter)
-                .HasMaxLength(255)
-                .HasColumnName("caracter");
-            entity.Property(e => e.Sudocu)
+                .HasColumnName("tipo_acuerdo");
+            entity.Property(e => e.ExpedienteSudocu)
                     .HasMaxLength(255)
-                    .HasColumnName("sudocu");
+                    .HasColumnName("expediente_sudocu");
 
             entity.HasOne(d => d.IdEmpresaNavigation).WithMany(p => p.Convenios)
                 .HasForeignKey(d => d.IdEmpresa)

@@ -39,7 +39,7 @@ namespace Backend.Tests
             // Arrange
             var createDto = new ConvenioCreateDto
             {
-                FechaFirma = System.DateOnly.FromDateTime(System.DateTime.Today),
+                FechaInicio = System.DateOnly.FromDateTime(System.DateTime.Today),
                 FechaCaducidad = System.DateOnly.FromDateTime(System.DateTime.Today.AddYears(1))
             };
 
@@ -57,11 +57,11 @@ namespace Backend.Tests
         public async Task Update_ReturnsOkWithUpdatedData()
         {
             // Arrange
-            var convenio = new Convenio { IdConvenio = 10, DomicilioAlternativo = "Casa vieja" };
+            var convenio = new Convenio { IdConvenio = 10 };
             _dbContext.Convenios.Add(convenio);
             _dbContext.SaveChanges();
 
-            var updateDto = new ConvenioUpdateDto { IdConvenio = 10, DomicilioAlternativo = "Mi casa" };
+            var updateDto = new ConvenioUpdateDto { IdConvenio = 10 };
 
             // Act
             var result = await _controller.Update(updateDto);
@@ -70,7 +70,6 @@ namespace Backend.Tests
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
             var dto = Assert.IsType<ConvenioDto>(okResult.Value);
             Assert.Equal(10, dto.IdConvenio);
-            // Assert.Equal("EXP-NEW", dto.Expediente); // Solo si el campo es relevante
         }
 
         [Fact]
@@ -96,7 +95,7 @@ namespace Backend.Tests
             {
                 IdConvenio = 1,
                 IdEmpresa = 1,
-                NroAcuerdoMarco = 123
+                // NroAcuerdoMarco se asignará automáticamente por trigger en la base (en memoria puede quedar null)
             };
 
             _dbContext.Empresas.Add(empresa);
@@ -105,8 +104,8 @@ namespace Backend.Tests
 
             var filtro = new ConvenioEmpresaFiltroDto
             {
-                NombreEmpresa = "Empresa Test",
-                NumeroAcuerdoMarco = "123"
+                NombreEmpresa = "Empresa Test"
+                // ExpedienteSudocu opcional, se puede agregar para filtrar
             };
 
             // Act

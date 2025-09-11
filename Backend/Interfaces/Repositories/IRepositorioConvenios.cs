@@ -14,11 +14,7 @@ namespace Backend.Interfaces.Repositories
         // Caducar convenio
         Task<bool> CaducarConvenioAsync(int convenioId, DateOnly? fechaCaducidad);
         
-        // Método para obtener sugerencias de convenios para dropdown
-        Task<IEnumerable<object>> GetSugerenciasDropdownAsync();
-
-        // Método para obtener sugerencias de números de acuerdo marco
-        Task<IEnumerable<string>> GetSugerenciasAcuerdosMarcoAsync();
+    // Métodos de sugerencias eliminados (dropdown y acuerdos marco)
 
         // Método para obtener empresas con último convenio vigente (para dropdown de pasantías)
         Task<IEnumerable<EmpresaConvenioDropdownDto>> GetEmpresasConUltimoConvenioVigenteAsync();

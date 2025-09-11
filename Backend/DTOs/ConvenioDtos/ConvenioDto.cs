@@ -7,14 +7,13 @@ namespace Backend.DTOs.ConvenioDtos
         public string? RepresentanteEmpresa { get; set; }
         public int? NroAcuerdoMarco { get; set; }
         public string? DomicilioLegal { get; set; }
-        public string? DomicilioAlternativo { get; set; }
-        public string Expediente => $"EXP-FACET-{IdConvenio:D3}";
+        public string NumeroConvenio => IdConvenio.ToString();
         public string? DocRepresentanteEmpresa { get; set; }
-        public string? RepresentanteFacultad { get; set; }
-        public string? DocRepresentanteFacultad { get; set; }
-        public DateOnly? FechaFirma { get; set; }
+        public string? NombreDecano { get; set; }
+        public string? DocumentoDecano { get; set; }
+        public DateOnly? FechaInicio { get; set; }
         public DateOnly? FechaCaducidad { get; set; }
-        public string? Caracter { get; set; }
-        public string? Sudocu { get; set; }
+        public string? TipoAcuerdo { get; set; }
+        public string? ExpedienteSudocu { get; set; }
     }
 }
