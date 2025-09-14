@@ -69,10 +69,29 @@ namespace Backend.Services
 
         public override async Task<PasantiaDto> CreateAsync(PasantiaCreateDto dto)
         {
+            // Buscar el estudiante por DNI si se proporciona
+            int? estudianteId = null;
+            if (!string.IsNullOrEmpty(dto.DniEstudiante))
+            {
+                var estudiante = await _repoEstudiantes.GetByDocumentoAsync(dto.DniEstudiante);
+                if (estudiante == null)
+                {
+                    throw new NotFoundException($"No se encontró un estudiante con DNI {dto.DniEstudiante}");
+                }
+                estudianteId = estudiante.IdEstudiante;
+            }
+
             _validationService.ValidateCreate(dto);
-            await _validationService.ValidateLegalRequirementsAsync(dto, _repoPasantias, _repoEstudiantes, _repoConvenios);
-            await _validationService.ValidateForeignKeysAsync(dto.IdEstudiante, dto.IdConvenio, _repoEstudiantes, _repoConvenios);
-            var pasantiaDto = await base.CreateAsync(dto);
+            await _validationService.ValidateLegalRequirementsAsync(dto, _repoPasantias, _repoEstudiantes, _repoConvenios, estudianteId);
+            await _validationService.ValidateForeignKeysAsync(estudianteId, dto.IdConvenio, _repoEstudiantes, _repoConvenios);
+            
+            // Crear una entidad Pasantia manualmente para incluir el IdEstudiante encontrado
+            var pasantia = _mapper.Map<Pasantia>(dto);
+            pasantia.IdEstudiante = estudianteId;
+            
+            var result = await _repoPasantias.AddAsync(pasantia);
+            var pasantiaDto = _mapper.Map<PasantiaDto>(result);
+            
             var pagos = _validationService.GenerarPagosAutomaticos(dto, pasantiaDto.IdPasantia);
             foreach (var pago in pagos)
             {
@@ -83,11 +102,29 @@ namespace Backend.Services
 
         public override async Task<PasantiaDto> UpdateAsync(PasantiaUpdateDto dto)
         {
-            // Convertir el UpdateDto a PasantiaDto para validación (temporal)
-            var pasantiaDto = _mapper.Map<PasantiaDto>(dto);
-            _validationService.ValidateUpdate(pasantiaDto);
-            await _validationService.ValidateForeignKeysAsync(dto.IdEstudiante, dto.IdConvenio, _repoEstudiantes, _repoConvenios);
-            return await base.UpdateAsync(dto);
+            // Buscar el estudiante por DNI si se proporciona
+            int? estudianteId = null;
+            if (!string.IsNullOrEmpty(dto.DniEstudiante))
+            {
+                var estudiante = await _repoEstudiantes.GetByDocumentoAsync(dto.DniEstudiante);
+                if (estudiante == null)
+                {
+                    throw new NotFoundException($"No se encontró un estudiante con DNI {dto.DniEstudiante}");
+                }
+                estudianteId = estudiante.IdEstudiante;
+            }
+
+            // Usar la validación específica para updates con DNI
+            _validationService.ValidateUpdateWithDni(dto, estudianteId);
+            await _validationService.ValidateForeignKeysAsync(estudianteId, dto.IdConvenio, _repoEstudiantes, _repoConvenios);
+            
+            // Crear una entidad Pasantia manualmente para incluir el IdEstudiante encontrado
+            var pasantia = _mapper.Map<Pasantia>(dto);
+            pasantia.IdEstudiante = estudianteId;
+            pasantia.IdPasantia = dto.IdPasantia; // Asignar el ID directamente
+            
+            var result = await _repository.UpdateAsync(pasantia);
+            return _mapper.Map<PasantiaDto>(result);
         }
 
         // Pasantías por vencer en X días desde hoy

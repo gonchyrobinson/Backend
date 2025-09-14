@@ -37,8 +37,8 @@ namespace Backend.Repositories
                                                 (c.IdEmpresaNavigation.Eliminado == null || c.IdEmpresaNavigation.Eliminado == false) &&
                                                 c.IdEmpresaNavigation.Nombre != null && c.IdEmpresaNavigation.Nombre.Contains(filtro.NombreEmpresa));
                     
-                    if (!string.IsNullOrWhiteSpace(filtro.NumeroAcuerdoMarco))
-                        query = query.Where(c => c.NroAcuerdoMarco != null && c.NroAcuerdoMarco.ToString().Contains(filtro.NumeroAcuerdoMarco));
+                    if (!string.IsNullOrWhiteSpace(filtro.ExpedienteSudocu))
+                        query = query.Where(c => c.ExpedienteSudocu != null && c.ExpedienteSudocu.Contains(filtro.ExpedienteSudocu));
                     
                     // Vigencia: true = convenios vigentes (FechaCaducidad > hoy o nula), false = no vigentes (FechaCaducidad < hoy)
                     if (filtro.Vigencia != null)
@@ -64,17 +64,16 @@ namespace Backend.Repositories
                     .Select(c => new ConvenioEmpresaDto
                     {
                         IdConvenio = c.IdConvenio,
-                        FechaFirma = c.FechaFirma,
+                        FechaInicio = c.FechaInicio,
                         FechaCaducidad = c.FechaCaducidad,
                         IdEmpresa = c.IdEmpresa,
                         NombreEmpresa = c.IdEmpresaNavigation != null ? c.IdEmpresaNavigation.Nombre : null,
                         RepresentanteEmpresa = c.RepresentanteEmpresa,
                         NroAcuerdoMarco = c.NroAcuerdoMarco,
                         DomicilioLegal = c.DomicilioLegal,
-                        DomicilioAlternativo = c.DomicilioAlternativo,
-                        DocRepresentanteFacultad = c.DocRepresentanteFacultad,
-                        Caracter = c.Caracter,
-                        Sudocu = c.Sudocu
+                        DocumentoDecano = c.DocumentoDecano,
+                        TipoAcuerdo = c.TipoAcuerdo,
+                        ExpedienteSudocu = c.ExpedienteSudocu
                     })
                     .OrderBy(c => 
                         // Primero los vigentes (FechaCaducidad nula o > hoy)
@@ -130,29 +129,6 @@ namespace Backend.Repositories
             }
         }
 
-        public async Task<IEnumerable<object>> GetSugerenciasDropdownAsync()
-        {
-            return await _dbSet
-                .AsNoTracking()
-                .Select(c => new 
-                {
-                    value = c.IdConvenio,
-                    label = $"EXP-FACET-{c.IdConvenio:D3}"
-                })
-                .OrderBy(x => x.value)
-                .ToListAsync();
-        }
-
-        public async Task<IEnumerable<string>> GetSugerenciasAcuerdosMarcoAsync()
-        {
-            return await _dbSet
-                .AsNoTracking()
-                .Where(c => c.NroAcuerdoMarco.HasValue)
-                .Select(c => c.NroAcuerdoMarco!.Value.ToString())
-                .Distinct()
-                .OrderBy(numero => numero)
-                .ToListAsync();
-        }
 
         public async Task<IEnumerable<EmpresaConvenioDropdownDto>> GetEmpresasConUltimoConvenioVigenteAsync()
         {
@@ -173,10 +149,10 @@ namespace Backend.Repositories
                 {
                     IdEmpresa = g.Key.IdEmpresa!.Value,
                     NombreEmpresa = g.Key.NombreEmpresa ?? "Empresa sin nombre",
-                    IdConvenio = g.OrderByDescending(c => c.FechaFirma ?? DateOnly.MinValue)
+                    IdConvenio = g.OrderByDescending(c => c.FechaInicio ?? DateOnly.MinValue)
                                   .First().IdConvenio,
-                    FechaInicio = g.OrderByDescending(c => c.FechaFirma ?? DateOnly.MinValue)
-                                   .First().FechaFirma ?? DateOnly.MinValue
+                    FechaInicio = g.OrderByDescending(c => c.FechaInicio ?? DateOnly.MinValue)
+                                   .First().FechaInicio ?? DateOnly.MinValue
                 })
                 .OrderBy(x => x.NombreEmpresa)
                 .ToListAsync();
@@ -200,17 +176,16 @@ namespace Backend.Repositories
                 .Select(c => new ConvenioEmpresaDto
                 {
                     IdConvenio = c.IdConvenio,
-                    FechaFirma = c.FechaFirma,
+                    FechaInicio = c.FechaInicio,
                     FechaCaducidad = c.FechaCaducidad,
                     IdEmpresa = c.IdEmpresa,
                     NombreEmpresa = c.IdEmpresaNavigation != null ? c.IdEmpresaNavigation.Nombre : null,
                     RepresentanteEmpresa = c.RepresentanteEmpresa,
                     NroAcuerdoMarco = c.NroAcuerdoMarco,
                     DomicilioLegal = c.DomicilioLegal,
-                    DomicilioAlternativo = c.DomicilioAlternativo,
-                    DocRepresentanteFacultad = c.DocRepresentanteFacultad,
-                    Caracter = c.Caracter,
-                    Sudocu = c.Sudocu
+                    DocumentoDecano = c.DocumentoDecano,
+                    TipoAcuerdo = c.TipoAcuerdo,
+                    ExpedienteSudocu = c.ExpedienteSudocu
                 })
                 .ToListAsync();
 

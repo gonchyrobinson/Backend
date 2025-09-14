@@ -70,15 +70,6 @@ namespace Backend.Services
             return await base.UpdateAsync(dto);
         }
 
-        public async Task<IEnumerable<object>> GetSugerenciasDropdownAsync()
-        {
-            return await _repoConvenios.GetSugerenciasDropdownAsync();
-        }
-
-        public async Task<IEnumerable<string>> GetSugerenciasAcuerdosMarcoAsync()
-        {
-            return await _repoConvenios.GetSugerenciasAcuerdosMarcoAsync();
-        }
 
         public async Task<IEnumerable<EmpresaConvenioDropdownDto>> GetEmpresasConUltimoConvenioVigenteAsync()
         {

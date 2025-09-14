@@ -15,9 +15,6 @@ public partial class Estudiante
     public string? Libreta { get; set; }
 
     public string? Carrera { get; set; }
-
-    public string? AreaTrabajo { get; set; }
-
     public string? Email { get; set; }
 
     public bool? Eliminado { get; set; }

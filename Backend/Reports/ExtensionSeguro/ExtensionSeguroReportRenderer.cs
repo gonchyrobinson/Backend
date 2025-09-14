@@ -19,7 +19,7 @@ namespace Backend.Reports.ExtensionSeguro
                 ["ConvenioDomicilioLegal"] = data.ConvenioDomicilioLegal ?? string.Empty,
                 ["TutorFacultad"] = data.TutorFacultad ?? string.Empty,
                 ["DNITutorFacultad"] = data.DniTutorFacultad ?? string.Empty,
-                ["ConvenioDomicilioAlternativo"] = data.ConvenioDomicilioAlternativo ?? string.Empty
+                // Removed ConvenioDomicilioAlternativo
             };
         }
     }

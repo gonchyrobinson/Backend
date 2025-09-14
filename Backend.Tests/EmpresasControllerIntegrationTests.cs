@@ -116,7 +116,7 @@ namespace Backend.Tests
         public async Task Create_ReturnsCreatedWithEmpresa()
         {
             // Arrange
-            var createDto = new EmpresaCreateDto { Nombre = "Empresa Nueva", TipoContrato = "temporal" };
+            var createDto = new EmpresaCreateDto { Nombre = "Empresa Nueva" };
 
             // Act
             var result = await _controller.Create(createDto);

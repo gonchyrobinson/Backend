@@ -64,21 +64,7 @@ namespace Backend.Controllers
             return BadRequest();
         }
 
-        [HttpGet("sugerencias-dropdown")]
-        [Authorize]
-        public async Task<ActionResult<IEnumerable<object>>> GetSugerenciasDropdown()
-        {
-            var result = await _conveniosService.GetSugerenciasDropdownAsync();
-            return Ok(result);
-        }
-
-        [HttpGet("sugerencias-acuerdos-marco")]
-        [Authorize]
-        public async Task<ActionResult<IEnumerable<string>>> GetSugerenciasAcuerdosMarco()
-        {
-            var result = await _conveniosService.GetSugerenciasAcuerdosMarcoAsync();
-            return Ok(result);
-        }
+    // Endpoints de sugerencias eliminados (dropdown y acuerdos marco)
 
         [HttpGet("empresas-convenio-vigente")]
         [Authorize]

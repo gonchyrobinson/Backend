@@ -5,7 +5,7 @@ namespace Backend.DTOs.PasantiaDtos
 {
     public class PasantiaCreateDto : IValidatableObject
     {
-        public int? IdEstudiante { get; set; }
+        public string? DniEstudiante { get; set; } // Cambiado de IdEstudiante a DniEstudiante
         public int? IdConvenio { get; set; }
         public decimal? AsignacionMensual { get; set; }
         public string? ObraSocial { get; set; }
@@ -25,8 +25,8 @@ namespace Backend.DTOs.PasantiaDtos
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            return PasantiaDtoValidator.ValidatePasantia(
-                IdEstudiante, IdConvenio, FechaInicio, FechaFin,
+            return PasantiaDtoValidator.ValidatePasantiaWithDni(
+                DniEstudiante, IdConvenio, FechaInicio, FechaFin,
                 TutorEmpresa, TutorFacultad, DniTutorFacultad,
                 AsignacionMensual, ObraSocial, Art,
                 TipoAcuerdo, FrecuenciaPago, HorasSemanales, isCreate: true);

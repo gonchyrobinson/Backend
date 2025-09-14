@@ -15,7 +15,9 @@ namespace Backend.Mappings
             // Mapeo para Convenio
             CreateMap<Convenio, ConvenioUpdateDto>().ReverseMap();
             CreateMap<Convenio, ConvenioDto>().ReverseMap(); // Para operaciones GET/CREATE
-            CreateMap<ConvenioCreateDto, Convenio>();
+            // En creación ignoramos NroAcuerdoMarco: lo asigna el trigger en DB
+            CreateMap<ConvenioCreateDto, Convenio>()
+                .ForMember(dest => dest.NroAcuerdoMarco, opt => opt.Ignore());
 
             // Mapeo para Estudiante
             CreateMap<Estudiante, StudentUpdateDto>().ReverseMap();
@@ -23,14 +25,12 @@ namespace Backend.Mappings
             CreateMap<StudentCreateDto, Estudiante>();
 
             // Mapeo para Empresa
-            CreateMap<Empresa, EmpresaUpdateDto>()
-                .ForMember(dest => dest.Vigencia, opt => opt.MapFrom(src => src.FechaFin.HasValue && src.FechaFin.Value < DateOnly.FromDateTime(DateTime.Today) ? "no_vigente" : "vigente"));
+            CreateMap<Empresa, EmpresaUpdateDto>();
             CreateMap<EmpresaUpdateDto, Empresa>()
                 .ForMember(dest => dest.Eliminado, opt => opt.MapFrom(src => false))
                 .ForMember(dest => dest.FechaEliminacion, opt => opt.MapFrom(src => (DateTime?)null));
             
             CreateMap<Empresa, EmpresaDto>()
-                .ForMember(dest => dest.Vigencia, opt => opt.MapFrom(src => src.FechaFin.HasValue && src.FechaFin.Value < DateOnly.FromDateTime(DateTime.Today) ? "no_vigente" : "vigente"))
                 .ReverseMap()
                 .ForMember(dest => dest.Eliminado, opt => opt.MapFrom(src => false))
                 .ForMember(dest => dest.FechaEliminacion, opt => opt.MapFrom(src => (DateTime?)null)); // Para operaciones GET/CREATE
@@ -38,19 +38,20 @@ namespace Backend.Mappings
 
             // Mapeo para Pasantía
             CreateMap<Pasantia, PasantiaUpdateDto>()
-                .ForMember(dest => dest.HorasSemanales, opt => opt.MapFrom(src => src.HorasSemanales));
+                .ForMember(dest => dest.HorasSemanales, opt => opt.MapFrom(src => src.HorasSemanales))
+                .ForMember(dest => dest.DniEstudiante, opt => opt.MapFrom(src => src.IdEstudianteNavigation != null ? src.IdEstudianteNavigation.Documento : null));
             CreateMap<PasantiaUpdateDto, Pasantia>()
+                .ForMember(dest => dest.IdEstudiante, opt => opt.Ignore()) // Ignorar porque usamos DNI y lo asignamos manualmente
                 .ForMember(dest => dest.IdEstudianteNavigation, opt => opt.Ignore());
             CreateMap<PasantiaUpdateDto, PasantiaDto>();
             
             CreateMap<Pasantia, PasantiaDto>()
                 .ForMember(dest => dest.Tramite, opt => opt.MapFrom(src => $"TRA-FACET-{src.IdPasantia:D3}"))
                 .ForMember(dest => dest.HorasSemanales, opt => opt.MapFrom(src => src.HorasSemanales))
-                .ForMember(dest => dest.AreaTrabajo, opt => opt.MapFrom(src => src.IdEstudianteNavigation != null ? src.IdEstudianteNavigation.AreaTrabajo : null))
                 .ReverseMap()
                 .ForMember(dest => dest.IdEstudianteNavigation, opt => opt.Ignore()); // Compatibilidad
             CreateMap<PasantiaCreateDto, Pasantia>()
-                .ForMember(dest => dest.IdEstudiante, opt => opt.MapFrom(src => src.IdEstudiante))
+                .ForMember(dest => dest.IdEstudiante, opt => opt.Ignore()) // Ignorar porque usamos DNI y lo asignamos manualmente
                 .ForMember(dest => dest.IdConvenio, opt => opt.MapFrom(src => src.IdConvenio))
                 .ForMember(dest => dest.AsignacionMensual, opt => opt.MapFrom(src => src.AsignacionMensual))
                 .ForMember(dest => dest.ObraSocial, opt => opt.MapFrom(src => src.ObraSocial))

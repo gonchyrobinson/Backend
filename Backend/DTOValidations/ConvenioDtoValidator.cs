@@ -6,9 +6,9 @@ namespace Backend.DTOValidations
     {
         public static IEnumerable<ValidationResult> ValidateConvenio(
             int? idEmpresa, string? representanteEmpresa, string? docRepresentanteEmpresa,
-            string? representanteFacultad, string? docRepresentanteFacultad,
-            DateOnly? fechaFirma, DateOnly? fechaCaducidad, string? domicilioLegal,
-            string? domicilioAlternativo, bool isCreate = false)
+            string? nombreDecano, string? documentoDecano,
+            DateOnly? fechaInicio, DateOnly? fechaCaducidad, string? domicilioLegal,
+            string? tipoAcuerdo = null, bool isCreate = false)
         {
             // Validaciones requeridas
             if (!idEmpresa.HasValue || idEmpresa <= 0)
@@ -20,14 +20,14 @@ namespace Backend.DTOValidations
             if (IsNullOrWhiteSpace(docRepresentanteEmpresa))
                 yield return CreateValidationResult("El documento del representante de empresa es obligatorio.", nameof(docRepresentanteEmpresa));
 
-            if (IsNullOrWhiteSpace(representanteFacultad))
-                yield return CreateValidationResult("El representante de facultad es obligatorio.", nameof(representanteFacultad));
+            if (IsNullOrWhiteSpace(nombreDecano))
+                yield return CreateValidationResult("El nombre del decano es obligatorio.", nameof(nombreDecano));
 
-            if (IsNullOrWhiteSpace(docRepresentanteFacultad))
-                yield return CreateValidationResult("El documento del representante de facultad es obligatorio.", nameof(docRepresentanteFacultad));
+            if (IsNullOrWhiteSpace(documentoDecano))
+                yield return CreateValidationResult("El documento del decano es obligatorio.", nameof(documentoDecano));
 
-            if (!fechaFirma.HasValue)
-                yield return CreateValidationResult("La fecha de firma es obligatoria.", nameof(fechaFirma));
+            if (!fechaInicio.HasValue)
+                yield return CreateValidationResult("La fecha de inicio es obligatoria.", nameof(fechaInicio));
 
             if (IsNullOrWhiteSpace(domicilioLegal))
                 yield return CreateValidationResult("El domicilio legal es obligatorio.", nameof(domicilioLegal));
@@ -36,35 +36,43 @@ namespace Backend.DTOValidations
             if (!string.IsNullOrEmpty(docRepresentanteEmpresa) && !CommonValidations.EsDniValido(docRepresentanteEmpresa))
                 yield return CreateValidationResult("El documento del representante de empresa debe ser un DNI válido.", nameof(docRepresentanteEmpresa));
 
-            if (!string.IsNullOrEmpty(docRepresentanteFacultad) && !CommonValidations.EsDniValido(docRepresentanteFacultad))
-                yield return CreateValidationResult("El documento del representante de facultad debe ser un DNI válido.", nameof(docRepresentanteFacultad));
+            if (!string.IsNullOrEmpty(documentoDecano) && !CommonValidations.EsDniValido(documentoDecano))
+                yield return CreateValidationResult("El documento del decano debe ser un DNI válido.", nameof(documentoDecano));
 
             // Validaciones de fechas
-            if (fechaFirma.HasValue && fechaFirma < DateOnly.FromDateTime(DateTime.Now.AddYears(-10)))
-                yield return CreateValidationResult("La fecha de firma no puede ser anterior a 10 años.", nameof(fechaFirma));
+            if (fechaInicio.HasValue && fechaInicio < DateOnly.FromDateTime(DateTime.Now.AddYears(-10)))
+                yield return CreateValidationResult("La fecha de inicio no puede ser anterior a 10 años.", nameof(fechaInicio));
 
-            if (fechaFirma.HasValue && fechaFirma > DateOnly.FromDateTime(DateTime.Now.AddDays(30)))
-                yield return CreateValidationResult("La fecha de firma no puede ser más de 30 días en el futuro.", nameof(fechaFirma));
+            if (fechaInicio.HasValue && fechaInicio > DateOnly.FromDateTime(DateTime.Now.AddDays(30)))
+                yield return CreateValidationResult("La fecha de inicio no puede ser más de 30 días en el futuro.", nameof(fechaInicio));
 
-            if (fechaCaducidad.HasValue && fechaFirma.HasValue && fechaCaducidad <= fechaFirma)
-                yield return CreateValidationResult("La fecha de caducidad debe ser posterior a la fecha de firma.", nameof(fechaCaducidad));
+            if (fechaCaducidad.HasValue && fechaInicio.HasValue && fechaCaducidad <= fechaInicio)
+                yield return CreateValidationResult("La fecha de caducidad debe ser posterior a la fecha de inicio.", nameof(fechaCaducidad));
 
             // Validaciones de longitud
             if (!string.IsNullOrEmpty(representanteEmpresa) && representanteEmpresa.Length > 100)
                 yield return CreateValidationResult("El representante de empresa no puede exceder 100 caracteres.", nameof(representanteEmpresa));
 
-            if (!string.IsNullOrEmpty(representanteFacultad) && representanteFacultad.Length > 100)
-                yield return CreateValidationResult("El representante de facultad no puede exceder 100 caracteres.", nameof(representanteFacultad));
+            if (!string.IsNullOrEmpty(nombreDecano) && nombreDecano.Length > 100)
+                yield return CreateValidationResult("El nombre del decano no puede exceder 100 caracteres.", nameof(nombreDecano));
 
             if (!string.IsNullOrEmpty(domicilioLegal) && domicilioLegal.Length > 255)
                 yield return CreateValidationResult("El domicilio legal no puede exceder 255 caracteres.", nameof(domicilioLegal));
 
-            if (!string.IsNullOrEmpty(domicilioAlternativo) && domicilioAlternativo.Length > 255)
-                yield return CreateValidationResult("El domicilio alternativo no puede exceder 255 caracteres.", nameof(domicilioAlternativo));
+            // Validación de TipoAcuerdo (solo validamos si viene un valor; valores históricos distintos permanecen)
+            if (!string.IsNullOrWhiteSpace(tipoAcuerdo))
+            {
+                if (!Backend.Constants.AppConstants.ConvenioTipoAcuerdoPermitidos.Contains(tipoAcuerdo))
+                    yield return CreateValidationResult(
+                        $"TipoAcuerdo debe ser uno de: {string.Join(", ", Backend.Constants.AppConstants.ConvenioTipoAcuerdoPermitidos)}",
+                        nameof(tipoAcuerdo));
+            }
+
+            // domicilioAlternativo eliminado del modelo/DTOs; validación removida
         }
 
         public static IEnumerable<ValidationResult> ValidateConvenioEmpresaFiltro(
-            string? nombreEmpresa, string? numeroAcuerdoMarco, bool? vigencia)
+            string? nombreEmpresa, string? expedienteSudocu, bool? vigencia)
         {
             // No se requieren validaciones específicas para estos campos de búsqueda
             // Los campos son opcionales y se validan en el repositorio
