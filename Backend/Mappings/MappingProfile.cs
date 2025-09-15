@@ -14,7 +14,11 @@ namespace Backend.Mappings
         {
             // Mapeo para Convenio
             CreateMap<Convenio, ConvenioUpdateDto>().ReverseMap();
-            CreateMap<Convenio, ConvenioDto>().ReverseMap(); // Para operaciones GET/CREATE
+            CreateMap<Convenio, ConvenioDto>()
+                .ForMember(dest => dest.NombreEmpresa, 
+                    opt => opt.MapFrom(src => src.IdEmpresaNavigation != null ? src.IdEmpresaNavigation.Nombre : null))
+                .ReverseMap()
+                .ForMember(dest => dest.IdEmpresaNavigation, opt => opt.Ignore()); // Para operaciones GET/CREATE
             // En creación ignoramos NroAcuerdoMarco: lo asigna el trigger en DB
             CreateMap<ConvenioCreateDto, Convenio>()
                 .ForMember(dest => dest.NroAcuerdoMarco, opt => opt.Ignore());
