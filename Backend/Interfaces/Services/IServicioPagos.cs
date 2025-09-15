@@ -11,5 +11,6 @@ namespace Backend.Interfaces.Services
         Task<IEnumerable<PagosDto>> BuscarAvanzadoAsync(PagosBusquedaAvanzadaDto filtro);
         Task<IEnumerable<object>> GetSugerenciasEmpresasAsync();
         Task<IEnumerable<object>> GetSugerenciasEstudiantesAsync();
+        Task<IEnumerable<string>> GetSugerenciasTramitesSudocuAsync();
     }
 }

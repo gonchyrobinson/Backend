@@ -10,5 +10,6 @@ namespace Backend.Interfaces.Repositories
         Task<IEnumerable<Pago>> BuscarAvanzadoAsync(PagosBusquedaAvanzadaDto filtro);
         Task<IEnumerable<object>> GetSugerenciasEmpresasAsync();
         Task<IEnumerable<object>> GetSugerenciasEstudiantesAsync();
+        Task<IEnumerable<string>> GetSugerenciasTramitesSudocuAsync();
     }
 }

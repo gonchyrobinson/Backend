@@ -100,7 +100,7 @@ namespace Backend.DTOValidations
         }
 
         public static IEnumerable<ValidationResult> ValidatePasantiaBusqueda(
-            string? numeroTramite, string? tipo, string? estudiante, string? empresa,
+            string? tramiteSudocu, string? tipo, string? estudiante, string? empresa,
             bool? vigente, string? carrera)
         {
             // Validar tipo de acuerdo si se proporciona

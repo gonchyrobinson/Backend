@@ -7,6 +7,7 @@ namespace Backend.DTOs.PagosDtos
     {
         public int? IdEmpresa { get; set; }
         public string? Estudiante { get; set; }
+        public string? TramiteSudocu { get; set; }
         public bool? EstadoPago { get; set; }
         public string? FechaVencimiento { get; set; }
 
