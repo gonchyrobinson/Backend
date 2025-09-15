@@ -6,9 +6,6 @@ public partial class Pasantia
 {
     public int IdPasantia { get; set; }
 
-    [NotMapped]
-    public string Tramite => $"TRA-FACET-{IdPasantia:D3}";
-
     public int? IdEstudiante { get; set; }
 
     public int? IdConvenio { get; set; }
@@ -20,6 +17,8 @@ public partial class Pasantia
     public string? Art { get; set; }
 
     public string? TutorEmpresa { get; set; }
+
+    public string? DniTutorEmpresa { get; set; }
 
     public string? TutorFacultad { get; set; }
     public string? DniTutorFacultad { get; set; }
@@ -34,8 +33,9 @@ public partial class Pasantia
 
     [Column("frecuencia_pago")]
     public string? FrecuenciaPago { get; set; }
-    public string? Sudocu { get; set; }
+    public string? TramiteSudocu { get; set; }
     public int? HorasSemanales { get; set; }
+    public string? AreaTrabajo { get; set; }
 
     public virtual Convenio? IdConvenioNavigation { get; set; }
 

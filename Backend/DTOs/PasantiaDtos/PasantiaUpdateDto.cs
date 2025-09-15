@@ -12,6 +12,7 @@ namespace Backend.DTOs.PasantiaDtos
         public string? ObraSocial { get; set; }
         public string? Art { get; set; }
         public string? TutorEmpresa { get; set; }
+        public string? DniTutorEmpresa { get; set; }
         public string? TutorFacultad { get; set; }
         public string? DniTutorFacultad { get; set; }
         public DateOnly? FechaInicio { get; set; }
@@ -19,8 +20,9 @@ namespace Backend.DTOs.PasantiaDtos
         public string? TipoAcuerdo { get; set; }
         public string? FrecuenciaPago { get; set; }
         public string? Observaciones { get; set; }
-        public string? Sudocu { get; set; }
+        public string? TramiteSudocu { get; set; }
         public int? HorasSemanales { get; set; }
+        public string? AreaTrabajo { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

@@ -17,10 +17,36 @@ namespace Backend.Repositories
             var hoy = DateOnly.FromDateTime(DateTime.Now);
             return await _dbSet
                 .AsNoTracking()
-                .Where(c => !c.FechaCaducidad.HasValue || c.FechaCaducidad > hoy)
+                .Include(c => c.IdEmpresaNavigation)
+                .Where(c => 
+                    (!c.FechaCaducidad.HasValue || c.FechaCaducidad > hoy) &&
+                    (c.IdEmpresaNavigation == null || 
+                     (c.IdEmpresaNavigation.Eliminado == null || c.IdEmpresaNavigation.Eliminado == false)))
                 .OrderBy(c => c.FechaCaducidad == null)
                 .ThenBy(c => c.FechaCaducidad)
                 .ToListAsync();
+        }
+
+        public override async Task<Convenio?> GetByIdAsync(int id)
+        {
+            var convenio = await _dbSet
+                .Include(c => c.IdEmpresaNavigation)
+                .FirstOrDefaultAsync(c => c.IdConvenio == id);
+
+            if (convenio == null)
+                throw new NotFoundException($"Convenio con ID {id} no encontrado.");
+
+            // Si la empresa está lógicamente eliminada, ocultamos su información
+            // pero mantenemos la entidad trackeada para compatibilidad con base repository
+            if (convenio.IdEmpresaNavigation != null && 
+                convenio.IdEmpresaNavigation.Eliminado == true)
+            {
+                // Detach la navegación eliminada para evitar conflictos
+                _context.Entry(convenio.IdEmpresaNavigation).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
+                convenio.IdEmpresaNavigation = null;
+            }
+
+            return convenio;
         }
 
         // Listar convenios junto a empresa (nombre)

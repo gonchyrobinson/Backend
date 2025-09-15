@@ -5,7 +5,7 @@ namespace Backend.DTOs.PasantiaDtos
 {
     public class PasantiaBusquedaAvanzadaDto : IValidatableObject
     {
-        public string? NumeroTramite { get; set; }
+        public string? TramiteSudocu { get; set; }
         public string? Tipo { get; set; }
         public string? Estudiante { get; set; }
         public string? Empresa { get; set; }
@@ -15,7 +15,7 @@ namespace Backend.DTOs.PasantiaDtos
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             return PasantiaDtoValidator.ValidatePasantiaBusqueda(
-                NumeroTramite, Tipo, Estudiante, Empresa, Vigente, Carrera);
+                TramiteSudocu, Tipo, Estudiante, Empresa, Vigente, Carrera);
         }
     }
 }

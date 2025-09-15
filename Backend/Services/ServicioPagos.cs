@@ -73,5 +73,10 @@ namespace Backend.Services
         {
             return await _repoPagos.GetSugerenciasEstudiantesAsync();
         }
+
+        public async Task<IEnumerable<string>> GetSugerenciasTramitesSudocuAsync()
+        {
+            return await _repoPagos.GetSugerenciasTramitesSudocuAsync();
+        }
     }
 }

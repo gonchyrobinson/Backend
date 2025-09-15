@@ -234,17 +234,23 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.TutorEmpresa)
                 .HasMaxLength(100)
                 .HasColumnName("tutor_empresa");
+            entity.Property(e => e.DniTutorEmpresa)
+                .HasMaxLength(100)
+                .HasColumnName("dni_tutor_empresa");
             entity.Property(e => e.TutorFacultad)
                 .HasMaxLength(100)
                 .HasColumnName("tutor_facultad");
             entity.Property(e => e.DniTutorFacultad)
                 .HasMaxLength(100)
                 .HasColumnName("dni_tutor_facultad");
-            entity.Property(e => e.Sudocu)
+            entity.Property(e => e.TramiteSudocu)
                 .HasMaxLength(255)
-                .HasColumnName("sudocu");
+                .HasColumnName("tramite_sudocu");
             entity.Property(e => e.HorasSemanales)
                 .HasColumnName("horas_semanales");
+            entity.Property(e => e.AreaTrabajo)
+                .HasMaxLength(255)
+                .HasColumnName("area_trabajo");
             entity.HasOne(d => d.IdConvenioNavigation).WithMany(p => p.Pasantia)
                 .HasForeignKey(d => d.IdConvenio)
                 .HasConstraintName("PASANTIAS_ibfk_2");

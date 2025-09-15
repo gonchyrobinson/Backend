@@ -78,5 +78,13 @@ namespace Backend.Controllers
             var result = await _pagosService.GetSugerenciasEstudiantesAsync();
             return Ok(result);
         }
+
+        [HttpGet("sugerencias-tramites-sudocu")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<string>>> GetSugerenciasTramitesSudocu()
+        {
+            var result = await _pagosService.GetSugerenciasTramitesSudocuAsync();
+            return Ok(result);
+        }
     }
 }

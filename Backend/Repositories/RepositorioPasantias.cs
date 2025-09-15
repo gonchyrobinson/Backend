@@ -60,14 +60,16 @@ namespace Backend.Repositories
                         ObraSocial = p.ObraSocial,
                         Art = p.Art,
                         TutorEmpresa = p.TutorEmpresa,
+                        DniTutorEmpresa = p.DniTutorEmpresa,
                         TutorFacultad = p.TutorFacultad,
                         DniTutorFacultad = p.DniTutorFacultad,
                         FechaInicio = p.FechaInicio,
                         FechaFin = p.FechaFin,
                         TipoAcuerdo = p.TipoAcuerdo,
                         Observaciones = p.Observaciones,
-                        Sudocu = p.Sudocu,
+                        TramiteSudocu = p.TramiteSudocu,
                         FrecuenciaPago = p.FrecuenciaPago,
+                        AreaTrabajo = p.AreaTrabajo
                     },
                     Estudiante = p.IdEstudianteNavigation != null ? new StudentDto
                     {
@@ -99,7 +101,7 @@ namespace Backend.Repositories
                           (p.IdEstudianteNavigation.Eliminado == null || p.IdEstudianteNavigation.Eliminado == false))
                 .Select(p => new
                 {
-                    Tramite = $"TRA-FACET-{p.IdPasantia:D3}",
+                    TramiteSudocu = p.TramiteSudocu,
                     Estudiante = p.IdEstudianteNavigation != null
                         ? $"{p.IdEstudianteNavigation.Apellido}, {p.IdEstudianteNavigation.Nombre}"
                         : "Sin estudiante",
@@ -125,7 +127,7 @@ namespace Backend.Repositories
             
             return result.Select(p => new PasantiaShowTableDto
             {
-                Tramite = p.Tramite,
+                TramiteSudocu = p.TramiteSudocu,
                 Estudiante = p.Estudiante,
                 Empresa = p.Empresa,
                 TipoAcuerdo = p.TipoAcuerdo,
@@ -166,28 +168,26 @@ namespace Backend.Repositories
 
         public async Task<IEnumerable<string>> GetSugerenciasTramitesAsync()
         {
-            // Obtener todos los IDs de pasantías y generar los trámites
-            var pasantiaIds = await _dbSet
+            // Obtener todos los TramiteSudocu que no sean nulos
+            return await _dbSet
                 .AsNoTracking()
-                .Select(p => p.IdPasantia)
-                .OrderBy(id => id)
+                .Where(p => !string.IsNullOrEmpty(p.TramiteSudocu))
+                .Select(p => p.TramiteSudocu!)
+                .Distinct()
+                .OrderBy(t => t)
                 .ToListAsync();
-
-            // Generar los números de trámite usando la misma lógica del modelo
-            return pasantiaIds.Select(id => $"TRA-FACET-{id:D3}").ToList();
         }
 
         public async Task<IEnumerable<string>> GetSugerenciasNumerosTramiteAsync()
         {
-            // Obtener todos los IDs de pasantías y generar los números de trámite
-            var pasantiaIds = await _dbSet
+            // Obtener todos los TramiteSudocu que no sean nulos
+            return await _dbSet
                 .AsNoTracking()
-                .Select(p => p.IdPasantia)
-                .OrderBy(id => id)
+                .Where(p => !string.IsNullOrEmpty(p.TramiteSudocu))
+                .Select(p => p.TramiteSudocu!)
+                .Distinct()
+                .OrderBy(t => t)
                 .ToListAsync();
-
-            // Generar los números de trámite usando la misma lógica del modelo
-            return pasantiaIds.Select(id => $"TRA-FACET-{id:D3}").ToList();
         }
 
         public async Task<IEnumerable<object>> GetSugerenciasDropdownAsync()
@@ -203,6 +203,7 @@ namespace Backend.Repositories
                 .Select(p => new
                 {
                     value = p.IdPasantia,
+                    tramiteSudocu = p.TramiteSudocu,
                     estudianteDocumento = p.IdEstudianteNavigation != null ? p.IdEstudianteNavigation.Documento : "Sin estudiante",
                     empresaNombre = p.IdConvenioNavigation != null && p.IdConvenioNavigation.IdEmpresaNavigation != null 
                         ? p.IdConvenioNavigation.IdEmpresaNavigation.Nombre 
@@ -215,7 +216,7 @@ namespace Backend.Repositories
             return pasantias.Select(p => new
             {
                 value = p.value,
-                label = $"TRA-FACET-{p.value:D3} - {p.estudianteDocumento} - {p.empresaNombre}"
+                label = $"{(!string.IsNullOrEmpty(p.tramiteSudocu) ? p.tramiteSudocu : $"ID-{p.value}")} - {p.estudianteDocumento} - {p.empresaNombre}"
             });
         }
 
@@ -234,24 +235,13 @@ namespace Backend.Repositories
 
             bool IsStringValid(string? s) => !string.IsNullOrWhiteSpace(s) && s != "string";
 
-            // Filtro por número de trámite - extraer ID del formato TRA-FACET-XXX
-            if (IsStringValid(filtro.NumeroTramite))
+            // Filtro por TramiteSudocu - búsqueda directa en el campo
+            if (IsStringValid(filtro.TramiteSudocu))
             {
-                var tramite = filtro.NumeroTramite!.Trim();
-                // Si el trámite tiene el formato TRA-FACET-XXX, extraer el ID
-                if (tramite.StartsWith("TRA-FACET-", StringComparison.OrdinalIgnoreCase))
-                {
-                    var idPart = tramite.Substring("TRA-FACET-".Length);
-                    if (int.TryParse(idPart, out int tramiteId))
-                    {
-                        pasantias = pasantias.Where(p => p.IdPasantia == tramiteId).ToList();
-                    }
-                }
-                else
-                {
-                    // Búsqueda parcial en el formato generado
-                    pasantias = pasantias.Where(p => $"TRA-FACET-{p.IdPasantia:D3}".Contains(tramite, StringComparison.OrdinalIgnoreCase)).ToList();
-                }
+                var tramite = filtro.TramiteSudocu!.Trim();
+                // Búsqueda directa en el campo TramiteSudocu
+                pasantias = pasantias.Where(p => !string.IsNullOrEmpty(p.TramiteSudocu) && 
+                                               p.TramiteSudocu.Contains(tramite, StringComparison.OrdinalIgnoreCase)).ToList();
             }
 
             // Filtro por tipo de acuerdo
@@ -309,7 +299,7 @@ namespace Backend.Repositories
             // Convertir a DTOs con ordenamiento
             return pasantias.Select(p => new
             {
-                Tramite = $"TRA-FACET-{p.IdPasantia:D3}",
+                TramiteSudocu = p.TramiteSudocu,
                 Estudiante = p.IdEstudianteNavigation != null
                     ? $"{p.IdEstudianteNavigation.Apellido}, {p.IdEstudianteNavigation.Nombre}"
                     : "Sin estudiante",
@@ -332,7 +322,7 @@ namespace Backend.Repositories
             .ThenBy(p => p.EstudianteOrden) // Finalmente por estudiante alfabéticamente
             .Select(p => new PasantiaShowTableDto
             {
-                Tramite = p.Tramite,
+                TramiteSudocu = p.TramiteSudocu,
                 Estudiante = p.Estudiante,
                 Empresa = p.Empresa,
                 TipoAcuerdo = p.TipoAcuerdo,

@@ -77,6 +77,14 @@ namespace Backend.Repositories
                                         p.IdPasantiaNavigation.IdEstudianteNavigation.Documento.Contains(filtro.Estudiante, StringComparison.OrdinalIgnoreCase)).ToList();
             }
 
+            // Filtro por TramiteSudocu
+            if (IsStringValid(filtro.TramiteSudocu))
+            {
+                pagos = pagos.Where(p => p.IdPasantiaNavigation != null && 
+                                        !string.IsNullOrEmpty(p.IdPasantiaNavigation.TramiteSudocu) &&
+                                        p.IdPasantiaNavigation.TramiteSudocu.Contains(filtro.TramiteSudocu!, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
             // Filtro por estado del pago
             if (filtro.EstadoPago != null)
             {
@@ -135,6 +143,19 @@ namespace Backend.Repositories
                 .ToListAsync();
 
             return estudiantes;
+        }
+
+        public async Task<IEnumerable<string>> GetSugerenciasTramitesSudocuAsync()
+        {
+            return await _dbSet
+                .AsNoTracking()
+                .Include(p => p.IdPasantiaNavigation)
+                .Where(p => p.IdPasantiaNavigation != null && 
+                           !string.IsNullOrEmpty(p.IdPasantiaNavigation.TramiteSudocu))
+                .Select(p => p.IdPasantiaNavigation.TramiteSudocu!)
+                .Distinct()
+                .OrderBy(t => t)
+                .ToListAsync();
         }
     }
 }
