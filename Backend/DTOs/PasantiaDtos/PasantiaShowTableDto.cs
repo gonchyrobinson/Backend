@@ -2,6 +2,7 @@ namespace Backend.DTOs.PasantiaDtos
 {
     public class PasantiaShowTableDto
     {
+        public int IdPasantia { get; set; }
         public string? TramiteSudocu { get; set; }
         public string Estudiante { get; set; } = string.Empty;
         public string Empresa { get; set; } = string.Empty;
