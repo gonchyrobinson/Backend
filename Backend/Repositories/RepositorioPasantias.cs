@@ -101,6 +101,7 @@ namespace Backend.Repositories
                           (p.IdEstudianteNavigation.Eliminado == null || p.IdEstudianteNavigation.Eliminado == false))
                 .Select(p => new
                 {
+                    IdPasantia = p.IdPasantia,
                     TramiteSudocu = p.TramiteSudocu,
                     Estudiante = p.IdEstudianteNavigation != null
                         ? $"{p.IdEstudianteNavigation.Apellido}, {p.IdEstudianteNavigation.Nombre}"
@@ -127,6 +128,7 @@ namespace Backend.Repositories
             
             return result.Select(p => new PasantiaShowTableDto
             {
+                IdPasantia = p.IdPasantia,
                 TramiteSudocu = p.TramiteSudocu,
                 Estudiante = p.Estudiante,
                 Empresa = p.Empresa,
@@ -299,6 +301,7 @@ namespace Backend.Repositories
             // Convertir a DTOs con ordenamiento
             return pasantias.Select(p => new
             {
+                IdPasantia = p.IdPasantia,
                 TramiteSudocu = p.TramiteSudocu,
                 Estudiante = p.IdEstudianteNavigation != null
                     ? $"{p.IdEstudianteNavigation.Apellido}, {p.IdEstudianteNavigation.Nombre}"
@@ -322,6 +325,7 @@ namespace Backend.Repositories
             .ThenBy(p => p.EstudianteOrden) // Finalmente por estudiante alfabéticamente
             .Select(p => new PasantiaShowTableDto
             {
+                IdPasantia = p.IdPasantia,
                 TramiteSudocu = p.TramiteSudocu,
                 Estudiante = p.Estudiante,
                 Empresa = p.Empresa,
