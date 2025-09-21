@@ -17,7 +17,7 @@ namespace Backend.Interfaces.Repositories
     // Métodos de sugerencias eliminados (dropdown y acuerdos marco)
 
         // Método para obtener empresas con último convenio vigente (para dropdown de pasantías)
-        Task<IEnumerable<EmpresaConvenioDropdownDto>> GetEmpresasConUltimoConvenioVigenteAsync();
+        Task<IEnumerable<EmpresaConvenioDropdownDto>> GetEmpresasConUltimoConvenioVigenteAsync(string? tipoAcuerdo = null);
 
         // Método para obtener convenios por vencer en días
         Task<IEnumerable<ConvenioEmpresaDto>> GetConveniosPorVencerEnDiasAsync(int dias);

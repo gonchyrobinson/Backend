@@ -71,9 +71,9 @@ namespace Backend.Services
         }
 
 
-        public async Task<IEnumerable<EmpresaConvenioDropdownDto>> GetEmpresasConUltimoConvenioVigenteAsync()
+        public async Task<IEnumerable<EmpresaConvenioDropdownDto>> GetEmpresasConUltimoConvenioVigenteAsync(string? tipoAcuerdo = null)
         {
-            return await _repoConvenios.GetEmpresasConUltimoConvenioVigenteAsync();
+            return await _repoConvenios.GetEmpresasConUltimoConvenioVigenteAsync(tipoAcuerdo);
         }
 
         // Convenios por vencer en X días desde hoy

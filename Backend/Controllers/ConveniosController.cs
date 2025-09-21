@@ -68,9 +68,9 @@ namespace Backend.Controllers
 
         [HttpGet("empresas-convenio-vigente")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<EmpresaConvenioDropdownDto>>> GetEmpresasConUltimoConvenioVigente()
+        public async Task<ActionResult<IEnumerable<EmpresaConvenioDropdownDto>>> GetEmpresasConUltimoConvenioVigente([FromQuery] string? tipoAcuerdo = null)
         {
-            var result = await _conveniosService.GetEmpresasConUltimoConvenioVigenteAsync();
+            var result = await _conveniosService.GetEmpresasConUltimoConvenioVigenteAsync(tipoAcuerdo);
             return Ok(result);
         }
 
