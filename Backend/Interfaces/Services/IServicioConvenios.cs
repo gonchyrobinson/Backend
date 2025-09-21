@@ -8,7 +8,7 @@ namespace Backend.Interfaces.Services
         Task<IEnumerable<ConvenioEmpresaDto>> ListarConveniosConEmpresaAsync(ConvenioEmpresaFiltroDto filtro);
         Task<bool> AsignarEmpresaAsync(AsignarEmpresaDto dto);
         Task<bool> CaducarConvenioAsync(int convenioId, DateOnly? fechaCaducidad = null);
-        Task<IEnumerable<EmpresaConvenioDropdownDto>> GetEmpresasConUltimoConvenioVigenteAsync();
+        Task<IEnumerable<EmpresaConvenioDropdownDto>> GetEmpresasConUltimoConvenioVigenteAsync(string? tipoAcuerdo = null);
         Task<IEnumerable<ConvenioEmpresaDto>> GetConveniosPorVencerEnDiasAsync(int dias);
     }
 }

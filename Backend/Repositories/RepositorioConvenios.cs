@@ -156,17 +156,25 @@ namespace Backend.Repositories
         }
 
 
-        public async Task<IEnumerable<EmpresaConvenioDropdownDto>> GetEmpresasConUltimoConvenioVigenteAsync()
+        public async Task<IEnumerable<EmpresaConvenioDropdownDto>> GetEmpresasConUltimoConvenioVigenteAsync(string? tipoAcuerdo = null)
         {
             var fechaActual = DateOnly.FromDateTime(DateTime.Now);
             
-            // Obtener empresas con al menos un convenio vigente
-            var empresasConConvenioVigente = await _dbSet
+            // Obtener empresas con al menos un convenio vigente, filtrado por tipo de acuerdo si se especifica
+            var query = _dbSet
                 .AsNoTracking()
                 .Where(c => c.IdEmpresa.HasValue && 
                            c.IdEmpresaNavigation != null &&
                            (c.IdEmpresaNavigation.Eliminado == null || c.IdEmpresaNavigation.Eliminado == false) &&
-                           (!c.FechaCaducidad.HasValue || c.FechaCaducidad > fechaActual))
+                           (!c.FechaCaducidad.HasValue || c.FechaCaducidad > fechaActual));
+
+            // Filtrar por tipo de acuerdo si se especifica
+            if (!string.IsNullOrWhiteSpace(tipoAcuerdo))
+            {
+                query = query.Where(c => c.TipoAcuerdo == tipoAcuerdo);
+            }
+
+            var empresasConConvenioVigente = await query
                 .GroupBy(c => new { 
                     c.IdEmpresa, 
                     NombreEmpresa = c.IdEmpresaNavigation!.Nombre 
