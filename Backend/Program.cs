@@ -153,6 +153,7 @@ builder.Services.AddScoped<IServicioConvenios, ServicioConvenios>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IServicioAuditoria, ServicioAuditoria>();
+builder.Services.AddScoped<IBackupService, BackupService>();
 
 // Reporte Contrato Pasantía Estudiante
 builder.Services.AddScoped<IReporteDataAggregator<int, ReportData>, ReportAggregator>();
