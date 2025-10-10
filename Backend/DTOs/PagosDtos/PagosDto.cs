@@ -12,6 +12,11 @@ namespace Backend.DTOs.PagosDtos
         public DateOnly? FechaVencimiento { get; set; }
         public decimal? Monto { get; set; }
         public string? Observaciones { get; set; }
+        
+        // Campos adicionales de navegación
+        public string? TramiteSudocu { get; set; }
+        public string? NombreEstudiante { get; set; }
+        public string? NombreEmpresa { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

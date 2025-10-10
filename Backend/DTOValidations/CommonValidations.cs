@@ -37,7 +37,7 @@ namespace Backend.DTOValidations
 
         public static readonly HashSet<string> FrecuenciasPagoValidas = new HashSet<string>
         {
-            "Mensual", "Trimestral", "Semestral", "Anual"
+            "Mensual", "Trimestral", "Semestral", "Anual", "Otro"
         };
 
         public static readonly HashSet<string> TiposContratoValidos = new HashSet<string>
@@ -70,7 +70,7 @@ namespace Backend.DTOValidations
 
         public static bool EsFrecuenciaPagoValida(string? frecuencia)
         {
-            if (string.IsNullOrWhiteSpace(frecuencia)) return false;
+            if (string.IsNullOrWhiteSpace(frecuencia)) return true; // Opcional
             return FrecuenciasPagoValidas.Contains(frecuencia);
         }
 

@@ -47,7 +47,7 @@ namespace Backend.DTOValidations
                 yield return CreateValidationResult("El tipo de acuerdo debe ser válido (Pasantia, PPS, otro).", nameof(tipoAcuerdo));
 
             if (!CommonValidations.EsFrecuenciaPagoValida(frecuenciaPago))
-                yield return CreateValidationResult("La frecuencia de pago debe ser válida (Mensual, Trimestral, Semestral, Anual).", nameof(frecuenciaPago));
+                yield return CreateValidationResult("La frecuencia de pago debe ser válida (Mensual, Trimestral, Semestral, Anual, Otro).", nameof(frecuenciaPago));
 
             // Validaciones de fechas
             if (!CommonValidations.EsRangoFechasValido(fechaInicio, fechaFin))
@@ -56,8 +56,9 @@ namespace Backend.DTOValidations
             // Validaciones específicas por tipo de acuerdo
             if (tipoAcuerdo == "Pasantia")
             {
-                if (!asignacionMensual.HasValue || asignacionMensual <= 0)
-                    yield return CreateValidationResult("Las pasantías deben ser remuneradas.", nameof(asignacionMensual));
+                // Asignación mensual es opcional - no se valida
+                // if (!asignacionMensual.HasValue || asignacionMensual <= 0)
+                //     yield return CreateValidationResult("Las pasantías deben ser remuneradas.", nameof(asignacionMensual));
 
                 // Validar duración mínima y máxima para pasantías
                 if (fechaInicio.HasValue && fechaFin.HasValue)
@@ -71,8 +72,9 @@ namespace Backend.DTOValidations
             }
             else if (tipoAcuerdo == "PPS")
             {
-                if (asignacionMensual.HasValue && asignacionMensual > 0)
-                    yield return CreateValidationResult("Las PPS no pueden ser remuneradas.", nameof(asignacionMensual));
+                // Asignación mensual es opcional - no se valida
+                // if (asignacionMensual.HasValue && asignacionMensual > 0)
+                //     yield return CreateValidationResult("Las PPS no pueden ser remuneradas.", nameof(asignacionMensual));
 
                 if (fechaInicio.HasValue && fechaFin.HasValue)
                 {
@@ -162,7 +164,7 @@ namespace Backend.DTOValidations
                 yield return CreateValidationResult("El tipo de acuerdo debe ser válido (Pasantia, PPS, otro).", nameof(tipoAcuerdo));
 
             if (!CommonValidations.EsFrecuenciaPagoValida(frecuenciaPago))
-                yield return CreateValidationResult("La frecuencia de pago debe ser válida (Mensual, Trimestral, Semestral, Anual).", nameof(frecuenciaPago));
+                yield return CreateValidationResult("La frecuencia de pago debe ser válida (Mensual, Trimestral, Semestral, Anual, Otro).", nameof(frecuenciaPago));
 
             // Validaciones de fechas
             if (!CommonValidations.EsRangoFechasValido(fechaInicio, fechaFin))
@@ -171,8 +173,9 @@ namespace Backend.DTOValidations
             // Validaciones específicas por tipo de acuerdo
             if (tipoAcuerdo == "Pasantia")
             {
-                if (!asignacionMensual.HasValue || asignacionMensual <= 0)
-                    yield return CreateValidationResult("Las pasantías deben ser remuneradas.", nameof(asignacionMensual));
+                // Asignación mensual es opcional - no se valida
+                // if (!asignacionMensual.HasValue || asignacionMensual <= 0)
+                //     yield return CreateValidationResult("Las pasantías deben ser remuneradas.", nameof(asignacionMensual));
 
                 // Validar duración mínima y máxima para pasantías
                 if (fechaInicio.HasValue && fechaFin.HasValue)
@@ -186,8 +189,9 @@ namespace Backend.DTOValidations
             }
             else if (tipoAcuerdo == "PPS")
             {
-                if (asignacionMensual.HasValue && asignacionMensual > 0)
-                    yield return CreateValidationResult("Las PPS no pueden ser remuneradas.", nameof(asignacionMensual));
+                // Asignación mensual es opcional - no se valida
+                // if (asignacionMensual.HasValue && asignacionMensual > 0)
+                //     yield return CreateValidationResult("Las PPS no pueden ser remuneradas.", nameof(asignacionMensual));
 
                 if (fechaInicio.HasValue && fechaFin.HasValue)
                 {

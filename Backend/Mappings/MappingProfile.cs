@@ -85,7 +85,18 @@ namespace Backend.Mappings
             
             // Mapeo para Pago
             CreateMap<Pago, PagosUpdateDto>().ReverseMap();
-            CreateMap<Pago, PagosDto>().ReverseMap(); // Para operaciones GET/CREATE
+            CreateMap<Pago, PagosDto>()
+                .ForMember(dest => dest.TramiteSudocu, opt => opt.MapFrom(src => src.IdPasantiaNavigation != null ? src.IdPasantiaNavigation.TramiteSudocu : null))
+                .ForMember(dest => dest.NombreEstudiante, opt => opt.MapFrom(src => 
+                    src.IdPasantiaNavigation != null && src.IdPasantiaNavigation.IdEstudianteNavigation != null 
+                        ? $"{src.IdPasantiaNavigation.IdEstudianteNavigation.Apellido}, {src.IdPasantiaNavigation.IdEstudianteNavigation.Nombre}"
+                        : null))
+                .ForMember(dest => dest.NombreEmpresa, opt => opt.MapFrom(src => 
+                    src.IdPasantiaNavigation != null && src.IdPasantiaNavigation.IdConvenioNavigation != null && src.IdPasantiaNavigation.IdConvenioNavigation.IdEmpresaNavigation != null
+                        ? src.IdPasantiaNavigation.IdConvenioNavigation.IdEmpresaNavigation.Nombre
+                        : null))
+                .ReverseMap()
+                .ForMember(dest => dest.IdPasantiaNavigation, opt => opt.Ignore()); // Para operaciones GET/CREATE
             CreateMap<CreatePagosDto, Pago>();
             CreateMap<PagosUpdateDto, PagosDto>();
         }

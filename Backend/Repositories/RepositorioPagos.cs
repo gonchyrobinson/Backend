@@ -13,9 +13,41 @@ namespace Backend.Repositories
         {
         }
 
+        public override async Task<IEnumerable<Pago>> GetAllAsync()
+        {
+            return await _dbSet
+                .AsNoTracking()
+                .Include(p => p.IdPasantiaNavigation)
+                .ThenInclude(p => p.IdEstudianteNavigation)
+                .Include(p => p.IdPasantiaNavigation)
+                .ThenInclude(p => p.IdConvenioNavigation)
+                .ThenInclude(c => c.IdEmpresaNavigation)
+                .ToListAsync();
+        }
+
+        public override async Task<Pago?> GetByIdAsync(int id)
+        {
+            return await _dbSet
+                .AsNoTracking()
+                .Include(p => p.IdPasantiaNavigation)
+                .ThenInclude(p => p.IdEstudianteNavigation)
+                .Include(p => p.IdPasantiaNavigation)
+                .ThenInclude(p => p.IdConvenioNavigation)
+                .ThenInclude(c => c.IdEmpresaNavigation)
+                .FirstOrDefaultAsync(p => p.IdPago == id);
+        }
+
         public async Task<IEnumerable<Pago>> GetByPasantiaIdAsync(int idPasantia)
         {
-            return await _dbSet.Where(p => p.IdPasantia == idPasantia).ToListAsync();
+            return await _dbSet
+                .AsNoTracking()
+                .Include(p => p.IdPasantiaNavigation)
+                .ThenInclude(p => p.IdEstudianteNavigation)
+                .Include(p => p.IdPasantiaNavigation)
+                .ThenInclude(p => p.IdConvenioNavigation)
+                .ThenInclude(c => c.IdEmpresaNavigation)
+                .Where(p => p.IdPasantia == idPasantia)
+                .ToListAsync();
         }
 
         public async Task<Pago> MarcarComoPagadoAsync(int idPago, DateOnly? fechaPago = null)
@@ -41,6 +73,11 @@ namespace Backend.Repositories
             var fechaLimite = DateOnly.FromDateTime(DateTime.Today.AddDays(dias));
             return await _dbSet
                 .AsNoTracking()
+                .Include(p => p.IdPasantiaNavigation)
+                .ThenInclude(p => p.IdEstudianteNavigation)
+                .Include(p => p.IdPasantiaNavigation)
+                .ThenInclude(p => p.IdConvenioNavigation)
+                .ThenInclude(c => c.IdEmpresaNavigation)
                 .Where(p => p.FechaVencimiento != null && 
                            p.FechaVencimiento >= DateOnly.FromDateTime(DateTime.Today) && 
                            p.FechaVencimiento <= fechaLimite &&

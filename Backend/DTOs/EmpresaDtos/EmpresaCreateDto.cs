@@ -9,6 +9,10 @@ namespace Backend.DTOs.EmpresaDtos
 
         public string? CorreoElectronico { get; set; }
 
+        public string? Celular { get; set; }
+
+        public string? Encargado { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             return EmpresaDtoValidator.ValidateEmpresa(
