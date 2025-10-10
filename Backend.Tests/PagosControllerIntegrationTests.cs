@@ -7,6 +7,7 @@ using Backend.Models;
 using Backend.Repositories;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Xunit;
 
 namespace Backend.Tests
@@ -108,6 +109,9 @@ namespace Backend.Tests
             var pago = new Pago { IdPago = 1, Monto = 1000 };
             _dbContext.Pagos.Add(pago);
             _dbContext.SaveChanges();
+            
+            // Desacoplar la entidad del contexto para evitar conflictos de tracking
+            _dbContext.Entry(pago).State = EntityState.Detached;
 
             // Act
             var result = await _controller.Delete(1);
