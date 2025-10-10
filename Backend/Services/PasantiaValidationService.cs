@@ -9,7 +9,7 @@ namespace Backend.Services
     public class PasantiaValidationService
     {
         // Constantes basadas en la Ley 26427 de Pasantías
-        private static readonly string[] ValoresFrecuencia = { "Mensual", "Trimestral", "Semestral", "Anual" };
+        private static readonly string[] ValoresFrecuencia = { "Mensual", "Trimestral", "Semestral", "Anual", "Otro" };
         private static readonly string[] ValoresTipoAcuerdo = { "Pasantia", "PPS", "otro" };
         private const int MAX_RENOVACIONES = 3;
         private const int MAX_HORAS_SEMANALES = 20;
@@ -95,12 +95,16 @@ namespace Backend.Services
         public List<Pago> GenerarPagosAutomaticos(PasantiaCreateDto dto, int idPasantia)
         {
             var pagos = new List<Pago>();
-            if (!dto.FechaInicio.HasValue || !dto.FechaFin.HasValue || string.IsNullOrEmpty(dto.FrecuenciaPago) || dto.AsignacionMensual <= 0)
+            if (!dto.FechaInicio.HasValue || !dto.FechaFin.HasValue || string.IsNullOrEmpty(dto.FrecuenciaPago) || !dto.AsignacionMensual.HasValue || dto.AsignacionMensual <= 0)
+                return pagos;
+
+            // No generar pagos automáticos si la frecuencia es "Otro"
+            if (dto.FrecuenciaPago == "Otro")
                 return pagos;
 
             var fechaActual = dto.FechaInicio.Value;
             var fechaFin = dto.FechaFin.Value;
-            var monto = dto.AsignacionMensual * 0.05m;
+            var monto = dto.AsignacionMensual.Value * 0.05m;
 
             while (fechaActual < fechaFin)
             {
@@ -147,10 +151,11 @@ namespace Backend.Services
             ValidateFrecuenciaPago(frecuenciaPago);
             ValidateHorasSemanales(horasSemanales);
 
-            if (tipoAcuerdo == "Pasantia" && (!asignacionMensual.HasValue || asignacionMensual <= 0))
+// El cambio pedido, comento por si se arrepienten
+            /*if (tipoAcuerdo == "Pasantia" && (!asignacionMensual.HasValue || asignacionMensual <= 0))
             {
                 throw new ValidationException("Las pasantías deben ser remuneradas", "Pasantia");
-            }
+            }*/
 
             if (tipoAcuerdo == "PPS" && asignacionMensual.HasValue && asignacionMensual > 0)
             {
@@ -204,7 +209,7 @@ namespace Backend.Services
             if (string.IsNullOrWhiteSpace(tutorEmpresa)) missingFields.Add("Tutor de empresa");
             if (string.IsNullOrWhiteSpace(tutorFacultad)) missingFields.Add("Tutor de facultad");
             if (string.IsNullOrWhiteSpace(DniTutorFacultad)) missingFields.Add("DNI del tutor de facultad");
-            if (!asignacionMensual.HasValue || asignacionMensual <= 0) missingFields.Add("Asignación mensual");
+            // Asignación mensual ahora es opcional - se valida según el tipo de acuerdo
             if (string.IsNullOrWhiteSpace(obraSocial)) missingFields.Add("Obra social");
             if (string.IsNullOrWhiteSpace(art)) missingFields.Add("ART");
                 
@@ -226,7 +231,7 @@ namespace Backend.Services
             if (string.IsNullOrWhiteSpace(tutorEmpresa)) missingFields.Add("Tutor de empresa");
             if (string.IsNullOrWhiteSpace(tutorFacultad)) missingFields.Add("Tutor de facultad");
             if (string.IsNullOrWhiteSpace(DniTutorFacultad)) missingFields.Add("DNI del tutor de facultad");
-            if (!asignacionMensual.HasValue || asignacionMensual <= 0) missingFields.Add("Asignación mensual");
+            // Asignación mensual ahora es opcional - se valida según el tipo de acuerdo
             if (string.IsNullOrWhiteSpace(obraSocial)) missingFields.Add("Obra social");
             if (string.IsNullOrWhiteSpace(art)) missingFields.Add("ART");
                 
@@ -249,6 +254,7 @@ namespace Backend.Services
 
         private void ValidateFrecuenciaPago(string? frecuenciaPago)
         {
+            // El campo es opcional ahora
             if (!string.IsNullOrEmpty(frecuenciaPago) && !ValoresFrecuencia.Contains(frecuenciaPago))
                 throw new ValidationException($"FrecuenciaPago debe ser uno de: {string.Join(", ", ValoresFrecuencia)}", "Pasantia");
         }
@@ -269,8 +275,9 @@ namespace Backend.Services
             if (fechaInicio >= fechaFin)
                 throw new ValidationException("La fecha de inicio debe ser anterior a la fecha de fin", "Pasantia");
 
-            if (fechaInicio < DateOnly.FromDateTime(DateTime.Today))
-                throw new ValidationException("La fecha de inicio no puede ser anterior a la fecha actual", "Pasantia");
+            // Validación de fecha anterior eliminada - se permite registrar pasantías con fechas pasadas
+            // if (fechaInicio < DateOnly.FromDateTime(DateTime.Today))
+            //     throw new ValidationException("La fecha de inicio no puede ser anterior a la fecha actual", "Pasantia");
 
             var mesesDuracion = ((fechaFin.Year - fechaInicio.Year) * 12) + (fechaFin.Month - fechaInicio.Month);
 
