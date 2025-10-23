@@ -1,3 +1,5 @@
+START TRANSACTION;
+
 INSERT INTO empresas (id_empresa, nombre, fecha_inicio, fecha_fin, tipo_contrato, encargado, celular, correo_electronico, sudocu, eliminado, fecha_eliminacion) VALUES
 ('1', 'Peugeot Citroen Argentina S.A.', '2008-02-14', NULL, NULL, NULL, NULL, NULL, NULL, '0', NULL),
 ('2', 'Grafa S.A. - Santista Textil S.A.', '2008-03-14', '2012-03-13', NULL, NULL, NULL, NULL, NULL, '0', NULL),
@@ -715,3 +717,5 @@ INSERT INTO empresas (id_empresa, nombre, fecha_inicio, fecha_fin, tipo_contrato
 ('720', 'ZAFRA', '2025-06-11', NULL, 'ACUERDO MATCO - CARTA ACUERDO DE COOPERACION Y ASISTENCIA TECNICA', 'ERICK ALANIS', '3813588864', 'erikalanis@zafra.com.ar', NULL, '0', NULL),
 ('721', 'LUXURIA', '2025-05-12', NULL, 'ACUERDO MARCO', 'FEDERICO MARCELO VARGAS', '3814016832', 'fmvargas@herrera.unt.edu.ar', NULL, '0', NULL),
 ('722', 'SUMAK', '2025-07-28', NULL, 'ACUERDO MARCO - CARTA DE COOPERACION Y ASISTENCIA TECNICA', 'RUBEN IGNACIO HERRERA', '3854040312', 'ignacio.herrera@sumakingenieria.com.ar', NULL, '0', NULL);
+
+COMMIT;
