@@ -13,6 +13,7 @@ public interface IAuthService
     Task<LoginResponseDto?> LoginAsync(LoginRequestDto request);
     Task<LoginResponseDto?> RegisterAsync(RegisterRequestDto request);
     Task<UserInfoDto?> GetUserInfoAsync(int userId);
+    Task<UserInfoDto?> UpdateUserAsync(UpdateUserRequestDto request);
     Task<bool> ValidateCredentialsAsync(string username, string password);
 }
 
@@ -123,6 +124,60 @@ public class AuthService : IAuthService
             Email = usuario.Correo ?? "",
             Role = usuario.Rol ?? ""
         };
+    }
+
+    public async Task<UserInfoDto?> UpdateUserAsync(UpdateUserRequestDto request)
+    {
+        try
+        {
+            // Verificar que el usuario existe
+            var existingUser = await _authRepository.GetUserByIdAsync(request.IdUsuario);
+            if (existingUser == null)
+            {
+                throw new InvalidOperationException("Usuario no encontrado");
+            }
+
+            // Verificar que el username o email no estén en uso por otro usuario
+            var userWithSameUsername = await _authRepository.GetUserByUsernameAsync(request.NombreUsuario);
+            if (userWithSameUsername != null && userWithSameUsername.IdUsuario != request.IdUsuario)
+            {
+                throw new InvalidOperationException("El nombre de usuario ya está en uso");
+            }
+
+            var userWithSameEmail = await _authRepository.GetUserByEmailAsync(request.Correo);
+            if (userWithSameEmail != null && userWithSameEmail.IdUsuario != request.IdUsuario)
+            {
+                throw new InvalidOperationException("El email ya está registrado");
+            }
+
+            // Actualizar usuario
+            var userToUpdate = new Usuario
+            {
+                IdUsuario = request.IdUsuario,
+                NombreUsuario = request.NombreUsuario,
+                Correo = request.Correo,
+                Rol = request.Rol
+            };
+
+            var updatedUser = await _authRepository.UpdateUserAsync(userToUpdate);
+
+            if (updatedUser == null)
+            {
+                throw new InvalidOperationException("Error al actualizar usuario");
+            }
+
+            return new UserInfoDto
+            {
+                Id = updatedUser.IdUsuario,
+                Username = updatedUser.NombreUsuario ?? "",
+                Email = updatedUser.Correo ?? "",
+                Role = updatedUser.Rol ?? ""
+            };
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException($"Error al actualizar usuario: {ex.Message}");
+        }
     }
 
     public async Task<bool> ValidateCredentialsAsync(string username, string password)

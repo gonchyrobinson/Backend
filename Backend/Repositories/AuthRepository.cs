@@ -43,6 +43,23 @@ public class AuthRepository : IAuthRepository
         return user;
     }
 
+    public async Task<Usuario?> UpdateUserAsync(Usuario user)
+    {
+        var existingUser = await _context.Usuarios
+            .FirstOrDefaultAsync(u => u.IdUsuario == user.IdUsuario && u.Eliminado != true);
+
+        if (existingUser == null)
+            return null;
+
+        existingUser.NombreUsuario = user.NombreUsuario;
+        existingUser.Correo = user.Correo;
+        existingUser.Rol = user.Rol;
+
+        _context.Usuarios.Update(existingUser);
+        await _context.SaveChangesAsync();
+        return existingUser;
+    }
+
     public async Task<bool> UserExistsAsync(string username, string email)
     {
         return await _context.Usuarios
