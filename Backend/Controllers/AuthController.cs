@@ -102,4 +102,61 @@ public class AuthController : ControllerBase
             return StatusCode(500, new { message = "Error interno del servidor", error = ex.Message });
         }
     }
+
+    /// <summary>
+    /// Obtiene información de un usuario específico por ID
+    /// </summary>
+    [HttpGet("user/{id}")]
+    [Authorize]
+    [ProducesResponseType(typeof(UserInfoDto), 200)]
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> GetUser(int id)
+    {
+        try
+        {
+            var userInfo = await _authService.GetUserInfoAsync(id);
+
+            if (userInfo == null)
+            {
+                return NotFound(new { message = "Usuario no encontrado" });
+            }
+
+            return Ok(userInfo);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Error interno del servidor", error = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// Actualiza la información de un usuario
+    /// </summary>
+    [HttpPut("user")]
+    [Authorize]
+    [ProducesResponseType(typeof(UserInfoDto), 200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> UpdateUser([FromBody] UpdateUserRequestDto request)
+    {
+        try
+        {
+            var updatedUser = await _authService.UpdateUserAsync(request);
+
+            if (updatedUser == null)
+            {
+                return NotFound(new { message = "Usuario no encontrado" });
+            }
+
+            return Ok(updatedUser);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Error interno del servidor", error = ex.Message });
+        }
+    }
 }
