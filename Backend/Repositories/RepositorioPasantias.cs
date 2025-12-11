@@ -111,6 +111,8 @@ namespace Backend.Repositories
                         : "Sin empresa",
                     TipoAcuerdo = p.TipoAcuerdo ?? "No especificado",
                     Estado = (!p.FechaFin.HasValue || p.FechaFin > hoy) ? "Activa" : "Finalizada",
+                    TutorEmpresa = p.TutorEmpresa,
+                    TutorFacultad = p.TutorFacultad,
                     FechaInicio = p.FechaInicio,
                     FechaFin = p.FechaFin,
                     // Campos auxiliares para ordenamiento
@@ -134,6 +136,8 @@ namespace Backend.Repositories
                 Empresa = p.Empresa,
                 TipoAcuerdo = p.TipoAcuerdo,
                 Estado = p.Estado,
+                TutorEmpresa = p.TutorEmpresa,
+                TutorFacultad = p.TutorFacultad,
                 FechaInicio = p.FechaInicio,
                 FechaFin = p.FechaFin
             });
@@ -311,6 +315,8 @@ namespace Backend.Repositories
                     : "Sin empresa",
                 TipoAcuerdo = p.TipoAcuerdo ?? "No especificado",
                 Estado = (!p.FechaFin.HasValue || p.FechaFin > hoy) ? "Activa" : "Finalizada",
+                TutorEmpresa = p.TutorEmpresa,
+                TutorFacultad = p.TutorFacultad,
                 FechaInicio = p.FechaInicio,
                 FechaFin = p.FechaFin,
                 // Campos auxiliares para ordenamiento
@@ -331,6 +337,8 @@ namespace Backend.Repositories
                 Empresa = p.Empresa,
                 TipoAcuerdo = p.TipoAcuerdo,
                 Estado = p.Estado,
+                TutorEmpresa = p.TutorEmpresa,
+                TutorFacultad = p.TutorFacultad,
                 FechaInicio = p.FechaInicio,
                 FechaFin = p.FechaFin
             });
